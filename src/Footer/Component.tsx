@@ -1,6 +1,5 @@
 import { getCachedGlobal } from '../utilities/getGlobals'
-import { getPayload } from 'payload'
-import configPromise from '../payload.config'
+import { safePayloadFind } from '../utilities/safePayloadQuery'
 import Link from 'next/link'
 import React from 'react'
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react'
@@ -16,10 +15,9 @@ import { NewsletterForm } from '../components/NewsletterForm'
 
 export async function Footer() {
   const siteSettings = await getCachedGlobal('site-settings', 2)()
-  const payload = await getPayload({ config: configPromise })
 
-  // Fetch services for footer (first 6 services)
-  const services = await payload.find({
+  // Fetch services for footer (first 6 services) - using safe query with proper access control
+  const services = await safePayloadFind({
     collection: 'services',
     limit: 6,
     where: {
@@ -29,6 +27,8 @@ export async function Footer() {
     },
     sort: 'createdAt',
     depth: 0,
+    draft: false, // Explicitly exclude drafts
+    overrideAccess: false, // Respect access control
   })
 
   // Type assertion for site settings

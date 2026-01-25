@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 
-import configPromise from '../../payload.config'
-import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../utilities/getGlobals'
 import { generateMeta } from '../../utilities/generateMeta'
 import { LivePreviewListener } from '../../components/LivePreviewListener'
+import { safePayloadFind } from '../../utilities/safePayloadQuery'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '../../components/ui/button'
@@ -39,7 +38,6 @@ export const revalidate = 3600
 
 export default async function HomePage() {
   const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
 
   // Fetch homepage content with type assertions - depth 3 to ensure media relationships are fully populated
   const homepageContent = (await getCachedGlobal('homepage-content', 3)()) as {
@@ -164,7 +162,7 @@ export default async function HomePage() {
 
   // Fetch services for carousel - always use published, never drafts
   // Sort by order field (ascending), then by createdAt as fallback
-  const servicesResult = await payload.find({
+  const servicesResult = await safePayloadFind({
     collection: 'services',
     limit: 100, // Fetch all services to respect ordering
     where: {
@@ -261,7 +259,7 @@ export default async function HomePage() {
   }
 
   // Fetch featured portfolio items
-  const portfolio = await payload.find({
+  const portfolio = await safePayloadFind({
     collection: 'portfolio',
     limit: 6,
     where: {
@@ -278,6 +276,8 @@ export default async function HomePage() {
         },
       ],
     },
+    draft: false,
+    overrideAccess: false,
   })
 
   // Determine which blog posts to show
@@ -300,7 +300,7 @@ export default async function HomePage() {
       .filter((id) => id !== null)
 
     if (postIds.length > 0) {
-      const fetchedPosts = await payload.find({
+      const fetchedPosts = await safePayloadFind({
         collection: 'posts',
         where: {
           id: {
@@ -330,19 +330,19 @@ export default async function HomePage() {
 
   // Fallback to latest published posts if no featured posts
   if (blogPostsToDisplay.length === 0) {
-  const blogPosts = await payload.find({
-    collection: 'posts',
-    limit: 3,
-    sort: '-publishedAt',
-    where: {
-      _status: {
-        equals: 'published',
+    const blogPosts = await safePayloadFind({
+      collection: 'posts',
+      limit: 3,
+      sort: '-publishedAt',
+      where: {
+        _status: {
+          equals: 'published',
+        },
       },
-    },
       depth: 2,
       draft: false,
       overrideAccess: false,
-  })
+    })
     blogPostsToDisplay = blogPosts.docs.map((post) => ({
       ...post,
       customImage: null,

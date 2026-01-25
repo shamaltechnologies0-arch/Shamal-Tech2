@@ -77,7 +77,7 @@ const emailAdapter = undefined // Disabled until SMTP is properly configured
 
 export default buildConfig({
   /** 🔑 REQUIRED FOR PROD ADMIN */
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  serverURL: getServerSideURL(),
 
   // Body parser limits - must stay under Lambda's 6MB request body limit
   // For AWS Amplify SSR (Lambda-based), the hard limit is 6MB
