@@ -1,0 +1,206 @@
+.user-profile-settings {
+  margin-bottom: var(--base);
+
+  &__banner {
+    margin-bottom: calc(var(--base) * 1.5);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--base) * 1.5);
+  }
+
+  &__section {
+    padding: var(--base);
+    background: var(--theme-elevation-50);
+    border-radius: var(--border-radius-m);
+    border: 1px solid var(--theme-elevation-100);
+
+    h5 {
+      margin: 0 0 calc(var(--base) * 0.5) 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--theme-text);
+    }
+
+    p {
+      margin: 0 0 calc(var(--base) * 0.5) 0;
+      color: var(--theme-text);
+      line-height: 1.6;
+    }
+  }
+
+  &__roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--base) * 0.5);
+    margin-top: calc(var(--base) * 0.5);
+  }
+
+  &__role-badge {
+    display: inline-block;
+    padding: calc(var(--base) * 0.25) calc(var(--base) * 0.75);
+    background: var(--theme-success-500);
+    color: white;
+    border-radius: var(--border-radius-s);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__no-role {
+    color: var(--theme-elevation-400);
+    font-style: italic;
+  }
+
+  &__description {
+    margin-top: calc(var(--base) * 0.5);
+
+    p {
+      margin-bottom: calc(var(--base) * 0.5);
+      color: var(--theme-text);
+      line-height: 1.6;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__permissions {
+    margin-top: calc(var(--base) * 0.5);
+  }
+
+  &__permission-item {
+    padding: calc(var(--base) * 0.5);
+    margin-bottom: calc(var(--base) * 0.25);
+    background: var(--theme-elevation-100);
+    border-radius: var(--border-radius-s);
+    color: var(--theme-text);
+    line-height: 1.5;
+  }
+
+  &__report-button {
+    margin-top: calc(var(--base) * 0.5);
+  }
+
+  &__signout-button {
+    margin-top: calc(var(--base) * 0.5);
+    width: 100%;
+  }
+
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  &__modal {
+    background: var(--theme-bg);
+    border-radius: var(--border-radius-m);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  &__modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--base);
+    border-bottom: 1px solid var(--theme-elevation-100);
+
+    h4 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+  }
+
+  &__modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--theme-elevation-400);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-s);
+
+    &:hover {
+      background: var(--theme-elevation-100);
+      color: var(--theme-text);
+    }
+  }
+
+  &__modal-body {
+    padding: var(--base);
+
+    .banner {
+      margin-bottom: var(--base);
+    }
+  }
+
+  &__form-group {
+    margin-bottom: var(--base);
+
+    label {
+      display: block;
+      margin-bottom: calc(var(--base) * 0.5);
+      font-weight: 500;
+      color: var(--theme-text);
+    }
+
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: calc(var(--base) * 0.75);
+      border: 1px solid var(--theme-elevation-200);
+      border-radius: var(--border-radius-s);
+      font-family: inherit;
+      font-size: 0.875rem;
+      background: var(--theme-bg);
+      color: var(--theme-text);
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-success-500);
+        box-shadow: 0 0 0 2px rgba(var(--color-success-500-rgb), 0.1);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+  }
+
+  &__file-name {
+    margin-top: calc(var(--base) * 0.5);
+    font-size: 0.875rem;
+    color: var(--theme-elevation-400);
+  }
+
+  &__modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: calc(var(--base) * 0.5);
+    padding: var(--base);
+    border-top: 1px solid var(--theme-elevation-100);
+  }
+}
+

@@ -1,0 +1,175 @@
+'use client'
+
+import React, { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
+import { Badge } from '../../../components/ui/badge'
+import { Button } from '../../../components/ui/button'
+import { ArrowRight, Check } from 'lucide-react'
+import { cn } from '../../../utilities/ui'
+
+type Product = {
+  id: string
+  name: string
+  category?: 'drones' | 'payloads' | 'other'
+  categoryTag?: string | null
+  description?: string | any | null // Can be string or rich text object
+  images?: Array<{ url?: string | null } | string | null> | null
+  keyFeatures?: Array<{ feature?: string | null }> | null
+  ctaText?: string | null
+}
+
+type ProductsByCategory = {
+  drones: Product[]
+  payloads: Product[]
+  other: Product[]
+}
+
+interface ProductsClientProps {
+  productsByCategory: ProductsByCategory
+  allProducts: Product[]
+}
+
+export function ProductsClient({ productsByCategory, allProducts }: ProductsClientProps) {
+  const [activeCategory, setActiveCategory] = useState<'drones' | 'payloads' | 'other'>('drones')
+
+  const categories = [
+    { id: 'drones' as const, label: 'Drones', count: productsByCategory.drones.length },
+    { id: 'payloads' as const, label: 'Payloads', count: productsByCategory.payloads.length },
+    { id: 'other' as const, label: 'Other', count: productsByCategory.other.length },
+  ]
+
+  const activeProducts = productsByCategory[activeCategory]
+
+  // Helper function to extract plain text from rich text object
+  const extractTextFromRichText = (richText: any): string => {
+    if (typeof richText === 'string') {
+      return richText
+    }
+    if (richText && typeof richText === 'object') {
+      if (richText.root?.children) {
+        return richText.root.children
+          .map((child: any) => {
+            if (child.children) {
+              return child.children
+                .map((textNode: any) => textNode.text || '')
+                .join('')
+            }
+            return ''
+          })
+          .join(' ')
+      }
+    }
+    return 'No description available'
+  }
+
+  const ProductCard = ({ product }: { product: Product }) => {
+    const imageUrl =
+      product.images &&
+      Array.isArray(product.images) &&
+      product.images[0] &&
+      typeof product.images[0] === 'object' &&
+      'url' in product.images[0]
+        ? (product.images[0].url as string)
+        : null
+
+    return (
+      <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/50 overflow-hidden flex flex-col">
+        {imageUrl && (
+          <div className="relative h-64 overflow-hidden bg-muted">
+            <Image
+              src={imageUrl}
+              alt={product.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+          </div>
+        )}
+        <CardHeader className="flex-1">
+          {product.categoryTag && (
+            <Badge variant="secondary" className="w-fit mb-2">
+              {product.categoryTag}
+            </Badge>
+          )}
+          <CardTitle className="text-2xl group-hover:text-primary transition-colors">
+            {product.name}
+          </CardTitle>
+          {product.description && (
+            <CardDescription className="line-clamp-3 mt-2">
+              {extractTextFromRichText(product.description)}
+            </CardDescription>
+          )}
+          {product.keyFeatures && product.keyFeatures.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <h4 className="text-sm font-semibold text-foreground">Key Features:</h4>
+              <ul className="space-y-1.5">
+                {product.keyFeatures.slice(0, 4).map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>{feature.feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </CardHeader>
+        <CardContent>
+          <Button asChild className="w-full">
+            <Link href="/contact">
+              {product.ctaText || 'Request Quote'}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Category Tabs */}
+      <div className="flex flex-wrap justify-center gap-4 border-b border-border pb-4">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => setActiveCategory(category.id)}
+            className={cn(
+              'px-6 py-3 text-base font-medium transition-all duration-200 relative',
+              'hover:text-primary',
+              activeCategory === category.id
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-muted-foreground'
+            )}
+          >
+            {category.label}
+            {category.count > 0 && (
+              <span className="ml-2 text-xs opacity-70">({category.count})</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Products Grid */}
+      {activeProducts.length === 0 ? (
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader className="text-center">
+            <CardTitle>No Products Available</CardTitle>
+            <CardDescription>
+              There are no products in this category yet. Please check back later or contact us
+              for more information.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activeProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+

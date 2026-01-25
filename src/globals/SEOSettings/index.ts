@@ -1,0 +1,65 @@
+import type { GlobalConfig } from 'payload'
+
+import { anyone } from '../../access/anyone'
+import { adminOrMarketing } from '../../access/adminOrMarketing'
+
+export const SEOSettings: GlobalConfig = {
+  slug: 'seo-settings',
+  access: {
+    read: anyone,
+    update: adminOrMarketing,
+  },
+  fields: [
+    {
+      name: 'primaryKeywords',
+      type: 'text',
+      hasMany: true,
+      label: 'Primary SEO Keywords',
+      defaultValue: [
+        'drone survey Saudi Arabia',
+        'geospatial solutions KSA',
+        'drone services Jeddah',
+      ],
+    },
+    {
+      name: 'secondaryKeywords',
+      type: 'text',
+      hasMany: true,
+      label: 'Secondary SEO Keywords',
+    },
+    {
+      name: 'longTailKeywords',
+      type: 'text',
+      hasMany: true,
+      label: 'Long-tail Keywords',
+    },
+    {
+      name: 'serviceKeywords',
+      type: 'json',
+      label: 'Service-specific Keywords Mapping',
+    },
+    {
+      name: 'sectorKeywords',
+      type: 'json',
+      label: 'Sector-specific Keywords Mapping',
+    },
+    {
+      name: 'metaDescriptionTemplate',
+      type: 'textarea',
+      label: 'Meta Description Template',
+    },
+    {
+      name: 'ogImageDefault',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Default Open Graph Image',
+    },
+    {
+      name: 'twitterCardDefault',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Default Twitter Card Image',
+    },
+  ],
+}
+

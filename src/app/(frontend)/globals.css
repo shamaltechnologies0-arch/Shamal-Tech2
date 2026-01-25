@@ -1,0 +1,268 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: unset;
+    font-weight: unset;
+  }
+
+  :root {
+    /* Bright Theme with Logo Colors - Eye-catching & Premium */
+    /* Logo Colors: #0A3254 (navy), #226093 (blue), #939598 (gray), white */
+    
+    /* Base Colors - Bright & Clean */
+    --background: 0 0% 100%;
+    --foreground: 210 78% 18%; /* Logo navy for text - high contrast */
+
+    --card: 0 0% 99%;
+    --card-foreground: 210 78% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 78% 18%;
+
+    /* Primary: Logo navy blue #0A3254 - Main brand color */
+    --primary: 210 78% 18%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Logo blue #226093 - Accent & highlights */
+    --secondary: 208 65% 34%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted: Logo gray #939598 - Subtle backgrounds & borders */
+    --muted: 220 5% 60%;
+    --muted-foreground: 210 78% 18%;
+
+    /* Accent: Logo blue #226093 - Interactive elements */
+    --accent: 208 65% 34%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 95%;
+    --ring: 208 65% 34%;
+
+    --radius: 0.75rem;
+
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --error: 0 84.2% 60.2%;
+
+    /* Custom Logo Colors - Extended Palette */
+    --logo-navy: 210 78% 18%; /* #0A3254 */
+    --logo-blue: 208 65% 34%; /* #226093 */
+    --logo-gray: 220 5% 60%; /* #939598 */
+    
+    /* Gradient Colors for Eye-catching Effects */
+    --gradient-start: 208 65% 34%; /* Logo blue */
+    --gradient-end: 210 78% 18%; /* Logo navy */
+    
+    /* Section Backgrounds - Subtle variations */
+    --section-bg-1: 0 0% 100%;
+    --section-bg-2: 210 20% 98%;
+    --section-bg-3: 208 30% 97%;
+    
+    /* Text Colors - High Contrast */
+    --text-primary: 210 78% 18%;
+    --text-secondary: 210 50% 30%;
+    --text-muted: 220 5% 60%;
+    --text-inverse: 0 0% 100%;
+  }
+
+  [data-theme='dark'] {
+    /* Dark Theme - Modern & Professional */
+    
+    /* Base Colors - Dark & Clean */
+    --background: 222 47% 11%; /* Dark navy background */
+    --foreground: 210 40% 98%; /* Light text for contrast */
+
+    --card: 222 47% 13%; /* Slightly lighter than background */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Primary: Lighter navy blue for dark mode */
+    --primary: 210 60% 35%; /* Adjusted navy for dark mode */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Brighter blue for dark mode */
+    --secondary: 208 70% 50%; /* Brighter blue for visibility */
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted: Lighter gray for dark mode */
+    --muted: 220 13% 40%;
+    --muted-foreground: 210 40% 85%;
+
+    /* Accent: Brighter blue for dark mode */
+    --accent: 208 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 25%; /* Darker borders */
+    --input: 220 13% 18%; /* Dark input backgrounds */
+    --ring: 208 70% 50%; /* Brighter ring for focus */
+
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --error: 0 84.2% 60.2%;
+
+    /* Custom Logo Colors - Adjusted for dark mode */
+    --logo-navy: 210 60% 45%; /* Lighter navy for dark mode */
+    --logo-blue: 208 70% 55%; /* Brighter blue for dark mode */
+    --logo-gray: 220 13% 50%; /* Lighter gray for dark mode */
+    
+    /* Gradient Colors - Adjusted for dark mode */
+    --gradient-start: 208 70% 50%; /* Brighter blue */
+    --gradient-end: 210 60% 35%; /* Lighter navy */
+    
+    /* Section Backgrounds - Dark variations */
+    --section-bg-1: 222 47% 11%; /* Main dark background */
+    --section-bg-2: 222 47% 13%; /* Slightly lighter */
+    --section-bg-3: 222 47% 15%; /* Even lighter */
+    
+    /* Text Colors - Light for dark backgrounds */
+    --text-primary: 210 40% 98%; /* Light text */
+    --text-secondary: 210 30% 85%; /* Slightly dimmer */
+    --text-muted: 220 13% 60%; /* Muted light text */
+    --text-inverse: 210 78% 18%; /* Dark text for light elements */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground min-h-[100vh] flex flex-col antialiased;
+  }
+
+  /* Full-viewport section base styles */
+  .section-full {
+    @apply min-h-screen flex items-center justify-center;
+  }
+  
+  /* Flexible height sections with smooth transitions */
+  .section-flexible {
+    @apply py-24 md:py-32 lg:py-40;
+  }
+
+  /* Scroll animation utilities - Enhanced for high-impact */
+  .reveal {
+    opacity: 0;
+    transform: translateY(3rem);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Parallax container */
+  .parallax-container {
+    @apply relative overflow-hidden;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+  }
+  
+  /* Section background variations */
+  .section-bg-1 {
+    background-color: hsl(var(--section-bg-1));
+  }
+  
+  .section-bg-2 {
+    background-color: hsl(var(--section-bg-2));
+  }
+  
+  .section-bg-3 {
+    background-color: hsl(var(--section-bg-3));
+  }
+
+  /* Enhanced dark/neutral surface variants for cinematic feel */
+  .surface-neutral {
+    background: linear-gradient(135deg, hsl(210 20% 98%) 0%, hsl(210 15% 97%) 100%);
+  }
+
+  .surface-dark {
+    background: linear-gradient(135deg, hsl(210 78% 15%) 0%, hsl(210 78% 18%) 100%);
+    color: hsl(0 0% 100%);
+  }
+
+  .surface-elevated {
+    background: hsl(var(--card));
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Typography enhancements */
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--logo-blue)), hsl(var(--logo-navy)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Enhanced typography hierarchy for cinematic feel */
+  .text-hero {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .text-display-large {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .text-display-medium {
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .text-body-large {
+    font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  
+  /* Smooth scroll indicator */
+  .scroll-indicator {
+    @apply fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-2;
+  }
+  
+  .scroll-dot {
+    @apply w-2 h-2 rounded-full transition-all duration-300;
+    background-color: hsl(var(--logo-gray));
+  }
+  
+  .scroll-dot.active {
+    @apply scale-125;
+    background-color: hsl(var(--logo-blue));
+  }
+}
+
+html {
+  opacity: 0;
+}
+
+html[data-theme='dark'],
+html[data-theme='light'] {
+  opacity: initial;
+}

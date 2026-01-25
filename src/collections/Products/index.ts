@@ -1,0 +1,159 @@
+import type { CollectionConfig } from 'payload'
+
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
+import { slugField } from 'payload'
+
+import { anyone } from '../../access/anyone'
+import { adminOrSales } from '../../access/adminOrSales'
+import { adminOrMarketing, adminOrMarketingField } from '../../access/adminOrMarketing'
+import { revalidateProduct } from './hooks/revalidateProduct'
+
+export const Products: CollectionConfig = {
+  slug: 'products',
+  access: {
+    read: anyone,
+    create: adminOrSales,
+    update: adminOrSales,
+    delete: adminOrSales,
+  },
+  admin: {
+    defaultColumns: ['name', 'slug', 'category', 'featured', 'updatedAt'],
+    useAsTitle: 'name',
+  },
+  fields: [
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Content',
+          fields: [
+            {
+              name: 'images',
+              type: 'upload',
+              relationTo: 'media',
+              hasMany: true,
+              required: true,
+            },
+            {
+              name: 'description',
+              type: 'richText',
+            },
+            {
+              name: 'specifications',
+              type: 'json',
+              label: 'Specifications',
+            },
+            {
+              name: 'category',
+              type: 'select',
+              required: true,
+              options: [
+                {
+                  label: 'Drones',
+                  value: 'drones',
+                },
+                {
+                  label: 'Payloads',
+                  value: 'payloads',
+                },
+                {
+                  label: 'Other',
+                  value: 'other',
+                },
+              ],
+            },
+            {
+              name: 'categoryTag',
+              type: 'text',
+              label: 'Category Tag',
+              admin: {
+                description: 'Display tag like "Autonomous Docking", "Enterprise Drones", etc.',
+              },
+            },
+            {
+              name: 'keyFeatures',
+              type: 'array',
+              label: 'Key Features',
+              fields: [
+                {
+                  name: 'feature',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+              admin: {
+                description: 'List of key features to display on the product card',
+              },
+            },
+            {
+              name: 'featured',
+              type: 'checkbox',
+              defaultValue: false,
+            },
+            {
+              name: 'ctaText',
+              type: 'text',
+              label: 'CTA Button Text',
+              defaultValue: 'Request Quote',
+            },
+          ],
+        },
+        {
+          name: 'seo',
+          label: 'SEO',
+          fields: [
+            OverviewField({
+              titlePath: 'seo.metaTitle',
+              descriptionPath: 'seo.metaDescription',
+              imagePath: 'seo.ogImage',
+            }),
+            MetaTitleField({
+              hasGenerateFn: true,
+            }),
+            MetaImageField({
+              relationTo: 'media',
+            }),
+            MetaDescriptionField({}),
+            {
+              name: 'keywords',
+              type: 'text',
+              label: 'Keywords',
+              access: {
+                update: adminOrMarketingField,
+              },
+            },
+            PreviewField({
+              hasGenerateFn: true,
+              titlePath: 'seo.metaTitle',
+              descriptionPath: 'seo.metaDescription',
+            }),
+          ],
+        },
+      ],
+    },
+    slugField({ fieldToUse: 'name' }),
+  ],
+  hooks: {
+    afterChange: [revalidateProduct],
+  },
+  versions: {
+    drafts: {
+      autosave: {
+        interval: 100,
+      },
+    },
+    maxPerDoc: 50,
+  },
+}
+

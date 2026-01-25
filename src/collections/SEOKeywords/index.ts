@@ -1,0 +1,82 @@
+import type { CollectionConfig } from 'payload'
+
+import { anyone } from '../../access/anyone'
+import { adminOrMarketing } from '../../access/adminOrMarketing'
+
+export const SEOKeywords: CollectionConfig = {
+  slug: 'seo-keywords',
+  access: {
+    read: anyone,
+    create: adminOrMarketing,
+    update: adminOrMarketing,
+    delete: adminOrMarketing,
+  },
+  admin: {
+    defaultColumns: ['keyword', 'category', 'priority', 'active'],
+    useAsTitle: 'keyword',
+  },
+  fields: [
+    {
+      name: 'keyword',
+      type: 'text',
+      required: true,
+      unique: true,
+      label: 'SEO Keyword/Phrase',
+    },
+    {
+      name: 'category',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          label: 'Primary',
+          value: 'primary',
+        },
+        {
+          label: 'Secondary',
+          value: 'secondary',
+        },
+        {
+          label: 'Long-tail',
+          value: 'long-tail',
+        },
+        {
+          label: 'Service-specific',
+          value: 'service-specific',
+        },
+        {
+          label: 'Sector-specific',
+          value: 'sector-specific',
+        },
+      ],
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: 'Description/Usage Notes',
+    },
+    {
+      name: 'relatedPages',
+      type: 'relationship',
+      relationTo: ['pages', 'services', 'products', 'portfolio'],
+      hasMany: true,
+      label: 'Related Pages',
+    },
+    {
+      name: 'priority',
+      type: 'number',
+      label: 'Priority (1-10)',
+      min: 1,
+      max: 10,
+      defaultValue: 5,
+    },
+    {
+      name: 'active',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Active',
+    },
+  ],
+  timestamps: true,
+}
+

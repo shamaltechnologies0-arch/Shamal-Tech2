@@ -1,0 +1,230 @@
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import sharp from 'sharp'
+import path from 'path'
+import { buildConfig, PayloadRequest } from 'payload'
+import { fileURLToPath } from 'url'
+
+import { Categories } from './collections/Categories'
+import { Career } from './collections/Career'
+import { ChatSummaries } from './collections/ChatSummaries'
+import { ContactSubmissions } from './collections/ContactSubmissions'
+import { IssueReports } from './collections/IssueReports'
+import { Leads } from './collections/Leads'
+import { Media } from './collections/Media'
+import { NewsletterSubscriptions } from './collections/NewsletterSubscriptions'
+import { Pages } from './collections/Pages'
+import { Portfolio } from './collections/Portfolio'
+import { Posts } from './collections/Posts'
+import { Products } from './collections/Products'
+import { SEOKeywords } from './collections/SEOKeywords'
+import { Services } from './collections/Services'
+import { Users } from './collections/Users'
+import { AboutPageContent } from './globals/AboutPageContent'
+import { CareersPageContent } from './globals/CareersPageContent'
+import { ContactPageContent } from './globals/ContactPageContent'
+import { Footer } from './Footer/config'
+import { Header } from './Header/config'
+import { HomepageContent } from './globals/HomepageContent'
+import { PostsPageContent } from './globals/PostsPageContent'
+import { ProductsPageContent } from './globals/ProductsPageContent'
+import { SEOSettings } from './globals/SEOSettings'
+import { SectorsContent } from './globals/SectorsContent'
+import { ServicesPageContent } from './globals/ServicesPageContent'
+import { SiteSettings } from './globals/SiteSettings'
+import { plugins } from './plugins'
+import { defaultLexical } from './fields/defaultLexical'
+import { getServerSideURL } from './utilities/getURL'
+
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
+
+// Configure email adapter
+// nodemailerAdapter returns a Promise, which Payload's buildConfig handles automatically
+const emailAdapter = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD
+  ? nodemailerAdapter({
+      defaultFromAddress: process.env.SMTP_FROM || process.env.SMTP_USER,
+      defaultFromName: process.env.SMTP_FROM_NAME || 'Shamal Technologies',
+      skipVerify: process.env.NODE_ENV === 'development', // Skip verification in development for faster startup
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        secure: process.env.SMTP_SECURE === 'true', // false for port 587 (STARTTLS), true for port 465 (SSL)
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
+          ciphers: 'SSLv3', // Office 365 may require specific cipher settings
+        },
+        requireTLS: true, // Office 365 requires TLS
+      },
+    })
+  : undefined
+
+export default buildConfig({
+  admin: {
+    components: {
+      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
+      // Feel free to delete this at any time. Simply remove the line below.
+      beforeLogin: ['/src/components/BeforeLogin'],
+      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
+      // Feel free to delete this at any time. Simply remove the line below.
+      beforeDashboard: ['/src/components/BeforeDashboard'],
+      // Add signout button to header
+      header: ['/src/components/AdminHeader'],
+    },
+    importMap: {
+      baseDir: path.resolve(dirname),
+    },
+    user: Users.slug,
+    livePreview: {
+      url: ({ data, collectionConfig, globalConfig }) => {
+        const baseURL = getServerSideURL()
+        
+        // Handle collections
+        if (collectionConfig?.slug === 'pages') {
+          const slug = typeof data?.slug === 'string' ? data.slug : 'home'
+          return `${baseURL}/${slug === 'home' ? '' : slug}`
+        }
+        
+        if (collectionConfig?.slug === 'posts') {
+          const slug = typeof data?.slug === 'string' ? data.slug : ''
+          return `${baseURL}/posts/${slug}`
+        }
+        
+        if (collectionConfig?.slug === 'services') {
+          const slug = typeof data?.slug === 'string' ? data.slug : ''
+          return `${baseURL}/services/${slug}`
+        }
+        
+        if (collectionConfig?.slug === 'portfolio') {
+          const slug = typeof data?.slug === 'string' ? data.slug : ''
+          return `${baseURL}/portfolio/${slug}`
+        }
+        
+        if (collectionConfig?.slug === 'career') {
+          const slug = typeof data?.slug === 'string' ? data.slug : ''
+          return `${baseURL}/careers/${slug}`
+        }
+        
+        // Handle globals
+        if (globalConfig?.slug === 'homepage-content') {
+          return `${baseURL}`
+        }
+        
+        if (globalConfig?.slug === 'about-page-content') {
+          return `${baseURL}/about`
+        }
+        
+        if (globalConfig?.slug === 'posts-page-content') {
+          return `${baseURL}/posts`
+        }
+        
+        if (globalConfig?.slug === 'careers-page-content') {
+          return `${baseURL}/careers`
+        }
+        
+        if (globalConfig?.slug === 'contact-page-content') {
+          return `${baseURL}/contact`
+        }
+        
+        if (globalConfig?.slug === 'products-page-content') {
+          return `${baseURL}/products`
+        }
+        
+        if (globalConfig?.slug === 'services-page-content') {
+          return `${baseURL}/services`
+        }
+        
+        return baseURL
+      },
+      breakpoints: [
+        {
+          label: 'Mobile',
+          name: 'mobile',
+          width: 375,
+          height: 667,
+        },
+        {
+          label: 'Tablet',
+          name: 'tablet',
+          width: 768,
+          height: 1024,
+        },
+        {
+          label: 'Desktop',
+          name: 'desktop',
+          width: 1440,
+          height: 900,
+        },
+      ],
+      collections: ['pages', 'posts', 'services', 'portfolio'],
+      globals: ['homepage-content', 'about-page-content', 'posts-page-content', 'careers-page-content', 'contact-page-content', 'products-page-content', 'services-page-content'],
+    },
+  },
+  // This config helps us configure global or default features that the other editors can inherit
+  editor: defaultLexical,
+  email: emailAdapter,
+  db: mongooseAdapter({
+    url: process.env.DATABASE_URL || '',
+  }),
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    Services,
+    Products,
+    Portfolio,
+    Career,
+    ContactSubmissions,
+    Leads,
+    NewsletterSubscriptions,
+    SEOKeywords,
+    IssueReports,
+    ChatSummaries,
+  ],
+  cors: [
+    getServerSideURL(),
+    // Allow localhost for development
+    process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null,
+  ].filter(Boolean) as string[],
+  globals: [
+    Header,
+    Footer,
+    SiteSettings,
+    HomepageContent,
+    AboutPageContent,
+    PostsPageContent,
+    CareersPageContent,
+    ContactPageContent,
+    ProductsPageContent,
+    ServicesPageContent,
+    SectorsContent,
+    SEOSettings,
+  ],
+  plugins,
+  secret: process.env.PAYLOAD_SECRET,
+  sharp,
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
+  jobs: {
+    access: {
+      run: ({ req }: { req: PayloadRequest }): boolean => {
+        // Allow logged in users to execute this endpoint (default)
+        if (req.user) return true
+
+        // If there is no logged in user, then check
+        // for the Vercel Cron secret to be present as an
+        // Authorization header:
+        const authHeader = req.headers.get('authorization')
+        return authHeader === `Bearer ${process.env.CRON_SECRET}`
+      },
+    },
+    tasks: [],
+  },
+})

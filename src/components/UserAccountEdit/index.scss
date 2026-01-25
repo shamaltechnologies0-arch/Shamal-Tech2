@@ -1,0 +1,9 @@
+.user-account-edit {
+  position: relative;
+
+  // Style for injected Update Password button
+  .password-update-btn {
+    margin-left: calc(var(--base) * 0.5) !important;
+  }
+}
+

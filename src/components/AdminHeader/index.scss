@@ -1,0 +1,11 @@
+.admin-header-signout {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: var(--base);
+
+  &__button {
+    font-size: 0.875rem;
+  }
+}
+

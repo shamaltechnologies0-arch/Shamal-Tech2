@@ -1,0 +1,40 @@
+.password-update-section {
+  margin-top: var(--base);
+  margin-bottom: var(--base);
+
+  &__banner {
+    margin-bottom: var(--base);
+  }
+
+  &__trigger {
+    margin-bottom: var(--base);
+  }
+
+  &__update {
+    padding: var(--base);
+    background: var(--theme-elevation-50);
+    border-radius: var(--border-radius-m);
+    border: 1px solid var(--theme-elevation-200);
+  }
+
+  &__note {
+    margin-bottom: var(--base);
+    padding: calc(var(--base) * 0.75);
+    background: var(--theme-elevation-100);
+    border-radius: var(--border-radius-s);
+
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--theme-elevation-600);
+      line-height: 1.5;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: calc(var(--base) * 0.5);
+    justify-content: flex-end;
+  }
+}
+

@@ -1,0 +1,17 @@
+.custom-password-field {
+  &__banner {
+    margin-bottom: var(--base);
+  }
+
+  &__field {
+    margin-bottom: var(--base);
+  }
+
+  &__actions {
+    display: flex;
+    gap: calc(var(--base) * 0.5);
+    justify-content: flex-end;
+    margin-top: calc(var(--base) * 0.5);
+  }
+}
+
