@@ -55,6 +55,21 @@ const isS3Configured = (): boolean => {
 export const plugins: Plugin[] = [
   // S3 Storage adapter for cloud storage (required for Vercel deployment)
   // Only configure if S3 environment variables are provided
+  // 
+  // IMPORTANT: Ensure your S3 bucket policy allows public read access (GetObject) for media files.
+  // Example bucket policy:
+  // {
+  //   "Version": "2012-10-17",
+  //   "Statement": [
+  //     {
+  //       "Sid": "PublicReadGetObject",
+  //       "Effect": "Allow",
+  //       "Principal": "*",
+  //       "Action": "s3:GetObject",
+  //       "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/media/*"
+  //     }
+  //   ]
+  // }
   ...(isS3Configured()
     ? [
         s3Storage({

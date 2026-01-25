@@ -8,7 +8,7 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { anyone } from '../access/anyone'
+import { authenticated } from '../access/authenticated'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,10 +17,12 @@ export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
   access: {
-    create: anyone,
-    delete: anyone,
-    read: anyone,
-    update: anyone,
+    // Public read access - allow frontend to access media files
+    read: () => true,
+    // Restrict create/update/delete to authenticated users only
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     {

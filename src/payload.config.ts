@@ -164,23 +164,51 @@ export default buildConfig({
     ChatSummaries,
   ],
 
-  cors: [
-    getServerSideURL(),
-    'https://shamal.vercel.app',
-    'https://*.vercel.app',
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : null,
-  ].filter(Boolean) as string[],
+  // CORS configuration - allow frontend requests from the server URL and localhost
+  cors: (() => {
+    const origins: string[] = []
+    const serverURL = getServerSideURL()
+    
+    // Add the server URL (handles NEXT_PUBLIC_SERVER_URL, Vercel, AWS Amplify, or localhost)
+    if (serverURL) {
+      origins.push(serverURL)
+    }
+    
+    // Add specific Vercel domain if different from serverURL
+    if (process.env.VERCEL_URL && serverURL !== `https://${process.env.VERCEL_URL}`) {
+      origins.push(`https://${process.env.VERCEL_URL}`)
+    }
+    
+    // Add localhost for development
+    if (process.env.NODE_ENV === 'development') {
+      origins.push('http://localhost:3000')
+    }
+    
+    return origins
+  })(),
 
-  csrf: [
-    getServerSideURL(),
-    'https://shamal.vercel.app',
-    'https://*.vercel.app',
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : null,
-  ].filter(Boolean) as string[],
+  // CSRF configuration - same as CORS for consistency
+  csrf: (() => {
+    const origins: string[] = []
+    const serverURL = getServerSideURL()
+    
+    // Add the server URL (handles NEXT_PUBLIC_SERVER_URL, Vercel, AWS Amplify, or localhost)
+    if (serverURL) {
+      origins.push(serverURL)
+    }
+    
+    // Add specific Vercel domain if different from serverURL
+    if (process.env.VERCEL_URL && serverURL !== `https://${process.env.VERCEL_URL}`) {
+      origins.push(`https://${process.env.VERCEL_URL}`)
+    }
+    
+    // Add localhost for development
+    if (process.env.NODE_ENV === 'development') {
+      origins.push('http://localhost:3000')
+    }
+    
+    return origins
+  })(),
 
   globals: [
     Header,
