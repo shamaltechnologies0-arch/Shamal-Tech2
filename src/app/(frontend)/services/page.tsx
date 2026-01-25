@@ -12,6 +12,7 @@ import { ScrollSection } from '../../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../../components/sections/ParallaxElement'
 import { CinematicReveal } from '../../../utilities/animations'
 import { ServicesShowcaseCarousel } from '../../../components/sections/ServicesShowcaseCarousel.client'
+import { SlidingServicesSection } from '../../../components/sections/SlidingServicesSection.client'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -162,6 +163,17 @@ export default async function ServicesPage() {
           </CinematicReveal>
         </ParallaxElement>
       </ScrollSection>
+
+      {/* Dynamic Sliding Services Section */}
+      {services.docs.length > 0 && (
+        <SlidingServicesSection
+          services={services.docs.map((service) => ({
+            id: String(service.id),
+            title: service.title || null,
+            slug: service.slug || null,
+          }))}
+        />
+      )}
 
       {/* Services Showcase Carousel - Flexible Height */}
       <ScrollSection id="services" flexible bgVariant="1" parallax>

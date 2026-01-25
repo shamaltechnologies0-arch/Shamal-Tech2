@@ -15,7 +15,11 @@ function getServerURL() {
     return `https://${branch}.${process.env.AWS_APP_ID}.amplifyapp.com`
   }
 
-  // Vercel support (for backward compatibility)
+  // Vercel support
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  // Vercel production URL (for backward compatibility)
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }

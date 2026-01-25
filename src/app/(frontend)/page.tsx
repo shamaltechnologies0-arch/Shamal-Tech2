@@ -25,6 +25,7 @@ import { ParallaxElement } from '../../components/sections/ParallaxElement'
 import { ScrollIndicator } from '../../components/sections/ScrollIndicator'
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter.client'
 import { LogoSlider } from '../../components/sections/LogoSlider.client'
+import { SlidingServicesSection } from '../../components/sections/SlidingServicesSection.client'
 
 export const metadata: Metadata = {
   title: 'Shamal Technologies | Drone Survey & Geospatial Solutions in Saudi Arabia',
@@ -408,6 +409,17 @@ export default async function HomePage() {
           </div>
         </HeroEnhanced>
       </section>
+
+      {/* Dynamic Sliding Services Section */}
+      {services.docs.length > 0 && (
+        <SlidingServicesSection
+          services={services.docs.map((service) => ({
+            id: String(service.id),
+            title: service.title || null,
+            slug: service.slug || null,
+          }))}
+        />
+      )}
 
       {/* Client Logos Slider - Automatic Scrolling */}
       {aboutContent?.clients && aboutContent.clients.length > 0 && (
