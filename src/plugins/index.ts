@@ -24,25 +24,50 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
+// Helper function to check if S3 is properly configured
+const isS3Configured = (): boolean => {
+  const hasBucket = !!process.env.S3_BUCKET
+  const hasAccessKey = !!process.env.S3_ACCESS_KEY_ID
+  const hasSecretKey = !!process.env.S3_SECRET_ACCESS_KEY
+  const hasRegion = !!process.env.S3_REGION
+
+  const isConfigured = hasBucket && hasAccessKey && hasSecretKey && hasRegion
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (isConfigured) {
+      console.log('✅ S3 Storage configured:', {
+        bucket: process.env.S3_BUCKET,
+        region: process.env.S3_REGION,
+        prefix: process.env.S3_PREFIX || 'media',
+      })
+    } else {
+      console.warn('⚠️  S3 Storage not configured. Using local storage for development.')
+      if (!hasBucket) console.warn('   Missing: S3_BUCKET')
+      if (!hasAccessKey) console.warn('   Missing: S3_ACCESS_KEY_ID')
+      if (!hasSecretKey) console.warn('   Missing: S3_SECRET_ACCESS_KEY')
+      if (!hasRegion) console.warn('   Missing: S3_REGION')
+    }
+  }
+
+  return isConfigured
+}
+
 export const plugins: Plugin[] = [
   // S3 Storage adapter for cloud storage (required for Vercel deployment)
   // Only configure if S3 environment variables are provided
-  ...(process.env.S3_BUCKET &&
-  process.env.S3_ACCESS_KEY_ID &&
-  process.env.S3_SECRET_ACCESS_KEY &&
-  process.env.S3_REGION
+  ...(isS3Configured()
     ? [
         s3Storage({
           collections: {
             media: true,
           },
-          bucket: process.env.S3_BUCKET,
+          bucket: process.env.S3_BUCKET!,
           config: {
             credentials: {
-              accessKeyId: process.env.S3_ACCESS_KEY_ID,
-              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+              accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
             },
-            region: process.env.S3_REGION,
+            region: process.env.S3_REGION!,
           },
           prefix: process.env.S3_PREFIX || 'media',
         }),
