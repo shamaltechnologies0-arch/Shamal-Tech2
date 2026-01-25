@@ -22,12 +22,12 @@ declare global {
       NEWSLETTER_PROVIDER?: string
       // Other
       CRON_SECRET?: string
-      // AWS S3 Storage - Commented out, using local storage only
-      // S3_BUCKET?: string
-      // S3_ACCESS_KEY_ID?: string
-      // S3_SECRET_ACCESS_KEY?: string
-      // S3_REGION?: string
-      // S3_PREFIX?: string
+      // AWS S3 Storage - Required for Vercel deployment
+      S3_BUCKET?: string
+      S3_ACCESS_KEY_ID?: string
+      S3_SECRET_ACCESS_KEY?: string
+      S3_REGION?: string
+      S3_PREFIX?: string
     }
   }
 }

@@ -14,7 +14,10 @@ export const getServerSideURL = () => {
     return `https://${branch}.${process.env.AWS_APP_ID}.amplifyapp.com`
   }
 
-  // Vercel support (for backward compatibility)
+  // Vercel support - check both VERCEL_URL (runtime) and VERCEL_PROJECT_PRODUCTION_URL (production)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }

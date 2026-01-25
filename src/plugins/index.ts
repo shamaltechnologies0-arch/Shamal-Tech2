@@ -3,7 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
-// import { s3Storage } from '@payloadcms/storage-s3' // Removed - using local storage only
+import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '../hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -25,8 +25,29 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 }
 
 export const plugins: Plugin[] = [
-  // S3 Storage adapter removed - using local file storage only
-  // All media files are saved to public/media directory in the project
+  // S3 Storage adapter for cloud storage (required for Vercel deployment)
+  // Only configure if S3 environment variables are provided
+  ...(process.env.S3_BUCKET &&
+  process.env.S3_ACCESS_KEY_ID &&
+  process.env.S3_SECRET_ACCESS_KEY &&
+  process.env.S3_REGION
+    ? [
+        s3Storage({
+          collections: {
+            media: true,
+          },
+          bucket: process.env.S3_BUCKET,
+          config: {
+            credentials: {
+              accessKeyId: process.env.S3_ACCESS_KEY_ID,
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+            },
+            region: process.env.S3_REGION,
+          },
+          prefix: process.env.S3_PREFIX || 'media',
+        }),
+      ]
+    : []),
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {

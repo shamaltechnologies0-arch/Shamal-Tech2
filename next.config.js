@@ -50,20 +50,24 @@ const nextConfig = {
           return null
         }
       }).filter(Boolean),
-      // S3 bucket image patterns commented out - using local storage only
-      // {
-      //   protocol: 'https',
-      //   hostname: '*.s3.*.amazonaws.com',
-      // },
-      // {
-      //   protocol: 'https',
-      //   hostname: '*.s3.amazonaws.com',
-      // },
+      // S3 bucket image patterns for cloud storage
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com',
+      },
       // Also allow direct S3 bucket URLs (bucket.s3.region.amazonaws.com format)
-      // ...(process.env.S3_BUCKET ? [{
-      //   protocol: 'https',
-      //   hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION || process.env.AWS_REGION || 'us-east-1'}.amazonaws.com`,
-      // }] : []),
+      ...(process.env.S3_BUCKET && process.env.S3_REGION
+        ? [
+            {
+              protocol: 'https',
+              hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com`,
+            },
+          ]
+        : []),
     ],
   },
   // Body size limit for server actions - must stay under Lambda's 6MB limit

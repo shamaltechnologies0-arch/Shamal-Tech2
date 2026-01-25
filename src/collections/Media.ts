@@ -40,8 +40,16 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Using local file storage - all media files saved to public/media directory
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // Using S3 cloud storage for production (Vercel) or local storage for development
+    // staticDir is only used when S3 is not configured (local development)
+    ...(process.env.S3_BUCKET &&
+    process.env.S3_ACCESS_KEY_ID &&
+    process.env.S3_SECRET_ACCESS_KEY &&
+    process.env.S3_REGION
+      ? {}
+      : {
+          staticDir: path.resolve(dirname, '../../public/media'),
+        }),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     // Lambda has a 6MB request body limit - set maxFileSize accordingly
