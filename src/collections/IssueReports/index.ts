@@ -1,15 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
-import { adminOnly } from '../../access/adminOnly'
-import { authenticated } from '../../access/authenticated'
+import { anyone } from '../../access/anyone'
 
 export const IssueReports: CollectionConfig = {
   slug: 'issue-reports',
   access: {
-    create: authenticated, // Any authenticated user can create reports
-    read: adminOnly, // Only admins can read reports
-    update: adminOnly, // Only admins can update reports
-    delete: adminOnly, // Only admins can delete reports
+    create: anyone,
+    read: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['title', 'userName', 'userEmail', 'status', 'createdAt'],

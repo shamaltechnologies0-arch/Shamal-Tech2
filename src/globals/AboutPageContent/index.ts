@@ -1,14 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOnly } from '../../access/adminOnly'
 import { revalidateAbout } from './hooks/revalidateAbout'
 
 export const AboutPageContent: GlobalConfig = {
   slug: 'about-page-content',
   access: {
     read: anyone,
-    update: adminOnly,
+    update: anyone,
   },
   hooks: {
     afterChange: [revalidateAbout],

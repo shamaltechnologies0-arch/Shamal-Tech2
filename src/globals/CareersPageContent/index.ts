@@ -1,13 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 
 export const CareersPageContent: GlobalConfig = {
   slug: 'careers-page-content',
   access: {
     read: anyone,
-    update: adminOrDesigner,
+    update: anyone,
   },
   fields: [
     {

@@ -10,17 +10,15 @@ import {
 import { slugField } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrSales } from '../../access/adminOrSales'
-import { adminOrMarketing, adminOrMarketingField } from '../../access/adminOrMarketing'
 import { revalidateProduct } from './hooks/revalidateProduct'
 
 export const Products: CollectionConfig = {
   slug: 'products',
   access: {
     read: anyone,
-    create: adminOrSales,
-    update: adminOrSales,
-    delete: adminOrSales,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['name', 'slug', 'category', 'featured', 'updatedAt'],
@@ -129,9 +127,6 @@ export const Products: CollectionConfig = {
               name: 'keywords',
               type: 'text',
               label: 'Keywords',
-              access: {
-                update: adminOrMarketingField,
-              },
             },
             PreviewField({
               hasGenerateFn: true,

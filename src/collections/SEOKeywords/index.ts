@@ -1,15 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrMarketing } from '../../access/adminOrMarketing'
 
 export const SEOKeywords: CollectionConfig = {
   slug: 'seo-keywords',
   access: {
     read: anyone,
-    create: adminOrMarketing,
-    update: adminOrMarketing,
-    delete: adminOrMarketing,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['keyword', 'category', 'priority', 'active'],

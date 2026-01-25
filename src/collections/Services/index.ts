@@ -10,7 +10,6 @@ import {
 import { slugField } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 import { revalidateService } from './hooks/revalidateService'
 import { getServerSideURL } from '../../utilities/getURL'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -19,9 +18,9 @@ export const Services: CollectionConfig = {
   slug: 'services',
   access: {
     read: anyone,
-    create: adminOrDesigner,
-    update: adminOrDesigner,
-    delete: adminOrDesigner,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['title', 'order', 'slug', 'updatedAt'],
@@ -204,17 +203,6 @@ export const Services: CollectionConfig = {
               name: 'keywords',
               type: 'text',
               label: 'Keywords',
-              access: {
-                update: ({ req: { user } }) => {
-                  if (!user) return false
-                  return (
-                    user.roles?.includes('admin') ||
-                    user.roles?.includes('designer') ||
-                    user.roles?.includes('marketing') ||
-                    false
-                  )
-                },
-              },
             },
             PreviewField({
               hasGenerateFn: true,

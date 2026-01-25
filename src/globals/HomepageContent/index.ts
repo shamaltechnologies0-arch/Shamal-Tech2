@@ -8,14 +8,13 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 import { revalidateHomepage } from './hooks/revalidateHomepage'
 
 export const HomepageContent: GlobalConfig = {
   slug: 'homepage-content',
   access: {
     read: anyone,
-    update: adminOrDesigner,
+    update: anyone,
   },
   hooks: {
     afterChange: [revalidateHomepage],

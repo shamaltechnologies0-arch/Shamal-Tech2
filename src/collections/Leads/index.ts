@@ -1,31 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrMarketing } from '../../access/adminOrMarketing'
-import { adminOrSales } from '../../access/adminOrSales'
 
 export const Leads: CollectionConfig = {
   slug: 'leads',
   access: {
     create: anyone,
-    read: ({ req: { user } }) => {
-      // Admins and marketing can see all leads
-      if (user?.roles?.includes('admin') || user?.roles?.includes('marketing')) {
-        return true
-      }
-      // Sales can see leads assigned to them or unassigned leads
-      if (user?.roles?.includes('sales')) {
-        return {
-          or: [
-            { assignedTo: { equals: user.id } },
-            { assignedTo: { exists: false } },
-          ],
-        }
-      }
-      return false
-    },
-    update: adminOrSales,
-    delete: adminOrMarketing,
+    read: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['name', 'email', 'status', 'assignedTo', 'source', 'createdAt'],

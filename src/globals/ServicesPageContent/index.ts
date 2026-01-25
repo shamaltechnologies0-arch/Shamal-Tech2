@@ -1,14 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 import { revalidateServices } from './hooks/revalidateServices'
 
 export const ServicesPageContent: GlobalConfig = {
   slug: 'services-page-content',
   access: {
     read: anyone,
-    update: adminOrDesigner,
+    update: anyone,
   },
   hooks: {
     afterChange: [revalidateServices],

@@ -1,14 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 import { revalidateSectors } from './hooks/revalidateSectors'
 
 export const SectorsContent: GlobalConfig = {
   slug: 'sectors-content',
   access: {
     read: anyone,
-    update: adminOrDesigner,
+    update: anyone,
   },
   hooks: {
     afterChange: [revalidateSectors],

@@ -1,14 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrDesigner } from '../../access/adminOrDesigner'
 import { revalidateProducts } from './hooks/revalidateProducts'
 
 export const ProductsPageContent: GlobalConfig = {
   slug: 'products-page-content',
   access: {
     read: anyone,
-    update: adminOrDesigner,
+    update: anyone,
   },
   hooks: {
     afterChange: [revalidateProducts],

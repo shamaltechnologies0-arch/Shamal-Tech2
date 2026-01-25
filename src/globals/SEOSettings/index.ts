@@ -1,13 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrMarketing } from '../../access/adminOrMarketing'
 
 export const SEOSettings: GlobalConfig = {
   slug: 'seo-settings',
   access: {
     read: anyone,
-    update: adminOrMarketing,
+    update: anyone,
   },
   fields: [
     {

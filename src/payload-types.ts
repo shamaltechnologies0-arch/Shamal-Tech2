@@ -460,7 +460,7 @@ export interface Category {
   createdAt: string;
 }
 /**
- * Users are created by admins. New users will receive an invitation email to set their password. When updating, leave password fields blank to keep current password.
+ * Admin users. New users will receive an invitation email to set their password. When updating, leave password fields blank to keep current password.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
@@ -469,15 +469,6 @@ export interface User {
   id: string;
   name: string;
   profilePicture?: (string | null) | Media;
-  roles?: ('admin' | 'author' | 'sales' | 'career' | 'designer' | 'marketing')[] | null;
-  /**
-   * Description of your assigned role(s)
-   */
-  roleDescription?: string | null;
-  /**
-   * What you are allowed to do based on your role(s)
-   */
-  permissions?: string | null;
   /**
    * Indicates if the user has set their password
    */
@@ -1961,9 +1952,6 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   profilePicture?: T;
-  roles?: T;
-  roleDescription?: T;
-  permissions?: T;
   passwordSet?: T;
   updatedAt?: T;
   createdAt?: T;

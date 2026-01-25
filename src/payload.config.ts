@@ -166,6 +166,17 @@ export default buildConfig({
 
   cors: [
     getServerSideURL(),
+    'https://shamal.vercel.app',
+    'https://*.vercel.app',
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
+      : null,
+  ].filter(Boolean) as string[],
+
+  csrf: [
+    getServerSideURL(),
+    'https://shamal.vercel.app',
+    'https://*.vercel.app',
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:3000'
       : null,

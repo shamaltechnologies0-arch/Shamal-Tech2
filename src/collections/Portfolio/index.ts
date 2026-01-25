@@ -10,7 +10,6 @@ import {
 import { slugField } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOnly } from '../../access/adminOnly'
 import { revalidatePortfolio } from './hooks/revalidatePortfolio'
 import { getServerSideURL } from '../../utilities/getURL'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -19,9 +18,9 @@ export const Portfolio: CollectionConfig = {
   slug: 'portfolio',
   access: {
     read: anyone,
-    create: adminOnly,
-    update: adminOnly,
-    delete: adminOnly,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['title', 'client', 'sector', 'featured', 'updatedAt'],
@@ -190,16 +189,6 @@ export const Portfolio: CollectionConfig = {
               name: 'keywords',
               type: 'text',
               label: 'Keywords',
-              access: {
-                update: ({ req: { user } }) => {
-                  if (!user) return false
-                  return (
-                    user.roles?.includes('admin') ||
-                    user.roles?.includes('marketing') ||
-                    false
-                  )
-                },
-              },
             },
             PreviewField({
               hasGenerateFn: true,

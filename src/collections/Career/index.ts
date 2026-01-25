@@ -10,16 +10,14 @@ import {
 import { slugField } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrCareer } from '../../access/adminOrCareer'
-import { adminOrMarketing, adminOrMarketingField } from '../../access/adminOrMarketing'
 
 export const Career: CollectionConfig = {
   slug: 'career',
   access: {
     read: anyone,
-    create: adminOrCareer,
-    update: adminOrCareer,
-    delete: adminOrCareer,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['title', 'slug', 'department', 'location', 'status', 'updatedAt'],
@@ -236,9 +234,6 @@ export const Career: CollectionConfig = {
               name: 'keywords',
               type: 'text',
               label: 'Keywords',
-              access: {
-                update: adminOrMarketingField,
-              },
             },
             PreviewField({
               hasGenerateFn: true,

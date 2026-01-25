@@ -1,15 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOnly } from '../../access/adminOnly'
 
 export const ChatSummaries: CollectionConfig = {
   slug: 'chat-summaries',
   access: {
-    read: adminOnly,
-    create: anyone, // Allow chatbot to create summaries
-    update: adminOnly,
-    delete: adminOnly,
+    read: anyone,
+    create: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['userName', 'userEmail', 'selectedItem', 'createdAt'],

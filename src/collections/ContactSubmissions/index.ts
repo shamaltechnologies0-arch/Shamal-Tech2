@@ -1,15 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { adminOrMarketing } from '../../access/adminOrMarketing'
 
 export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
   access: {
     create: anyone,
-    read: adminOrMarketing,
-    update: adminOrMarketing,
-    delete: adminOrMarketing,
+    read: anyone,
+    update: anyone,
+    delete: anyone,
   },
   admin: {
     defaultColumns: ['name', 'email', 'status', 'submittedAt'],
