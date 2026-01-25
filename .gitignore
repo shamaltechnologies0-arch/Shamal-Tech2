@@ -12,6 +12,8 @@ public/sitemap*.xml
 .env
 .env.local
 .env*.local
+shamal.env
+test.env
 
 # Playwright
 node_modules/

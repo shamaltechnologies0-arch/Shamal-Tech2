@@ -45,20 +45,35 @@ const getPortfolioBySlug = cache(async (slug: string) => {
 })
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const portfolio = await payload.find({
-    collection: 'portfolio',
-    limit: 1000,
-    where: {
-      _status: {
-        equals: 'published',
+  try {
+    // Add timeout to prevent build hangs
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database connection timeout')), 10000)
+    )
+
+    const payloadPromise = getPayload({ config: configPromise })
+    const payload = await Promise.race([payloadPromise, timeoutPromise]) as Awaited<ReturnType<typeof getPayload>>
+
+    const portfolio = await payload.find({
+      collection: 'portfolio',
+      limit: 1000,
+      where: {
+        _status: {
+          equals: 'published',
+        },
       },
-    },
-    select: {
-      slug: true,
-    },
-  })
-  return portfolio.docs.map((item) => ({ slug: item.slug }))
+      select: {
+        slug: true,
+      },
+    })
+    return portfolio.docs.map((item) => ({ slug: item.slug }))
+  } catch (error) {
+    // Log error but don't fail the build
+    console.warn('Failed to generate static params for portfolio:', error)
+    // Return empty array to allow build to continue
+    // Portfolio items will be generated dynamically at runtime
+    return []
+  }
 }
 
 export async function generateMetadata({
