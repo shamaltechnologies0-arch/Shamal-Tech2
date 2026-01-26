@@ -12,6 +12,7 @@ declare global {
       SMTP_USER?: string
       SMTP_PASSWORD?: string
       SMTP_FROM?: string
+      SMTP_FROM_NAME?: string
       SMTP_REJECT_UNAUTHORIZED?: string
       // Contact Information
       CONTACT_EMAIL?: string

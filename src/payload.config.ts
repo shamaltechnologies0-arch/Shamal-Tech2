@@ -1,6 +1,6 @@
 
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
-// import { nodemailerAdapter } from '@payloadcms/email-nodemailer' // Commented out - SMTP disabled
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -43,35 +43,34 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 /* ---------------- EMAIL CONFIG ---------------- */
-// SMTP configuration commented out - will be enabled when proper SMTP variables are provided
-// TODO: Uncomment and configure when SMTP credentials are ready
-
-// const emailAdapter =
-//   process.env.SMTP_HOST &&
-//   process.env.SMTP_USER &&
-//   process.env.SMTP_PASSWORD
-//     ? nodemailerAdapter({
-//         defaultFromAddress:
-//           process.env.SMTP_FROM || process.env.SMTP_USER,
-//         defaultFromName:
-//           process.env.SMTP_FROM_NAME || 'Shamal Technologies',
-//         transportOptions: {
-//           host: process.env.SMTP_HOST,
-//           port: Number(process.env.SMTP_PORT || 587),
-//           secure: process.env.SMTP_SECURE === 'true',
-//           auth: {
-//             user: process.env.SMTP_USER,
-//             pass: process.env.SMTP_PASSWORD,
-//           },
-//           tls: {
-//             rejectUnauthorized:
-//               process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
-//           },
-//         },
-//       })
-//     : undefined
-
-const emailAdapter = undefined // Disabled until SMTP is properly configured
+// Configure email adapter for Outlook SMTP
+const emailAdapter =
+  process.env.SMTP_HOST &&
+  process.env.SMTP_USER &&
+  process.env.SMTP_PASSWORD
+    ? nodemailerAdapter({
+        defaultFromAddress:
+          process.env.SMTP_FROM || process.env.SMTP_USER,
+        defaultFromName:
+          process.env.SMTP_FROM_NAME || 'Shamal Technologies',
+        skipVerify: process.env.NODE_ENV === 'development', // Skip verification in development for faster startup
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587', 10),
+          secure: process.env.SMTP_SECURE === 'true', // false for port 587 (STARTTLS), true for port 465 (SSL)
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
+          },
+          tls: {
+            rejectUnauthorized:
+              process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
+            ciphers: 'TLSv1.2', // Outlook/Office 365 compatible cipher
+          },
+          requireTLS: true, // Office 365 requires TLS
+        },
+      })
+    : undefined
 
 /* ---------------- PAYLOAD CONFIG ---------------- */
 
