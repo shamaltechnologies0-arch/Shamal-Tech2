@@ -175,9 +175,23 @@ export default buildConfig({
     }
     
     // Add specific Vercel domain if different from serverURL
-    if (process.env.VERCEL_URL && serverURL !== `https://${process.env.VERCEL_URL}`) {
-      origins.push(`https://${process.env.VERCEL_URL}`)
+    if (process.env.VERCEL_URL) {
+      const vercelURL = `https://${process.env.VERCEL_URL}`
+      if (!origins.includes(vercelURL)) {
+        origins.push(vercelURL)
+      }
     }
+    
+    // Add Vercel production URL if available
+    if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+      const prodURL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      if (!origins.includes(prodURL)) {
+        origins.push(prodURL)
+      }
+    }
+    
+    // Note: Payload doesn't support wildcard patterns in CORS/CSRF
+    // Each specific domain must be added explicitly via NEXT_PUBLIC_SERVER_URL
     
     // Add localhost for development
     if (process.env.NODE_ENV === 'development') {
@@ -198,9 +212,23 @@ export default buildConfig({
     }
     
     // Add specific Vercel domain if different from serverURL
-    if (process.env.VERCEL_URL && serverURL !== `https://${process.env.VERCEL_URL}`) {
-      origins.push(`https://${process.env.VERCEL_URL}`)
+    if (process.env.VERCEL_URL) {
+      const vercelURL = `https://${process.env.VERCEL_URL}`
+      if (!origins.includes(vercelURL)) {
+        origins.push(vercelURL)
+      }
     }
+    
+    // Add Vercel production URL if available
+    if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+      const prodURL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      if (!origins.includes(prodURL)) {
+        origins.push(prodURL)
+      }
+    }
+    
+    // Note: Payload doesn't support wildcard patterns in CORS/CSRF
+    // Each specific domain must be added explicitly via NEXT_PUBLIC_SERVER_URL
     
     // Add localhost for development
     if (process.env.NODE_ENV === 'development') {
