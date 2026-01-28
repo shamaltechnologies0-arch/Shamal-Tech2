@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const payload = await getPayload({ config: configPromise })
+
   const siteSettings = (await getCachedGlobal('site-settings', 2)()) as {
     siteName?: string
     siteDescription?: string
@@ -30,6 +31,40 @@ export default async function ContactPage() {
       mapLink?: string
     }
   } | null
+
+  const contactPageContent = (await getCachedGlobal('contact-page-content', 2)()) as {
+    hero?: {
+      title?: string
+      subtitle?: string
+      backgroundImage?:
+        | {
+            url?: string
+            alt?: string
+          }
+        | string
+        | null
+    }
+  } | null
+
+  const heroTitle = contactPageContent?.hero?.title || 'Contact Us'
+  const heroSubtitle =
+    contactPageContent?.hero?.subtitle ||
+    'Get in touch with our team to discuss your project needs'
+
+  const heroBackgroundImage = contactPageContent?.hero?.backgroundImage
+
+  // Use only the URL from the API (S3 in production — do not use local /media/ paths)
+  let heroBackgroundImageSrc: string | null = null
+  if (heroBackgroundImage && typeof heroBackgroundImage === 'object') {
+    const url = (heroBackgroundImage as { url?: string }).url
+    if (url) {
+      heroBackgroundImageSrc = url.startsWith('http')
+        ? url
+        : url.startsWith('/')
+          ? url
+          : `/${url}`
+    }
+  }
 
   // Fetch services for the form checkboxes
   const services = await payload.find({
@@ -51,9 +86,25 @@ export default async function ContactPage() {
     <main className="flex flex-col relative">
       {/* Hero Section - Reduced Height */}
       <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
+        {/* Background Image */}
+        {heroBackgroundImageSrc && (
+          <div className="absolute inset-0 z-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroBackgroundImageSrc}
+              alt={
+                (heroBackgroundImage && typeof heroBackgroundImage === 'object'
+                  ? (heroBackgroundImage as { alt?: string }).alt
+                  : undefined) || 'Contact page background'
+              }
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+        )}
         <ParallaxElement speed={0.2} direction="up">
           <CinematicReveal delay={0.1} duration={1.2}>
-            <div className="container mx-auto px-4 w-full">
+            <div className="container mx-auto px-4 w-full relative z-10">
               <div className="max-w-4xl mx-auto text-center space-y-8">
                 <Badge
                   variant="outline"
@@ -62,10 +113,10 @@ export default async function ContactPage() {
                   Get In Touch
                 </Badge>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold tracking-tight text-white drop-shadow-lg">
-                  Contact Us
+                  {heroTitle}
                 </h1>
                 <p className="text-xl md:text-2xl lg:text-3xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
-                  Get in touch with our team to discuss your project needs
+                  {heroSubtitle}
                 </p>
               </div>
             </div>

@@ -25,10 +25,13 @@ export default async function CareersPage() {
     hero?: {
       title?: string
       description?: string
-      backgroundImage?: {
-        url?: string
-        alt?: string
-      } | null
+      backgroundImage?:
+        | {
+            url?: string
+            alt?: string
+          }
+        | string
+        | null
     }
     seo?: {
       metaTitle?: string
@@ -56,8 +59,23 @@ export default async function CareersPage() {
   })
 
   const heroTitle = careersPageContent?.hero?.title || 'Careers'
-  const heroDescription = careersPageContent?.hero?.description || 'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia'
+  const heroDescription =
+    careersPageContent?.hero?.description ||
+    'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia'
   const heroBackgroundImage = careersPageContent?.hero?.backgroundImage
+
+  // Use only the URL from the API (S3 in production — do not use local /media/ paths)
+  let heroBackgroundImageSrc: string | null = null
+  if (heroBackgroundImage && typeof heroBackgroundImage === 'object') {
+    const url = (heroBackgroundImage as { url?: string }).url
+    if (url) {
+      heroBackgroundImageSrc = url.startsWith('http')
+        ? url
+        : url.startsWith('/')
+          ? url
+          : `/${url}`
+    }
+  }
 
   return (
     <main className="flex flex-col">
@@ -65,11 +83,11 @@ export default async function CareersPage() {
       
       {/* Hero Section */}
       <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden py-12 md:py-16">
-        {heroBackgroundImage?.url ? (
+        {heroBackgroundImageSrc ? (
           <>
             <div className="absolute inset-0 z-0">
               <Image
-                src={heroBackgroundImage.url}
+                src={heroBackgroundImageSrc}
                 alt={heroBackgroundImage.alt || 'Careers hero background'}
                 fill
                 className="object-cover"

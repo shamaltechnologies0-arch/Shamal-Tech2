@@ -28,10 +28,13 @@ export default async function Page() {
     hero?: {
       title?: string
       description?: string
-      backgroundImage?: {
-        url?: string
-        alt?: string
-      } | null
+      backgroundImage?:
+        | {
+            url?: string
+            alt?: string
+          }
+        | string
+        | null
     }
     seo?: {
       metaTitle?: string
@@ -63,23 +66,30 @@ export default async function Page() {
       {/* Hero Section - Reduced Height */}
       <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
         {/* Background Image */}
-        {postsPageContent?.hero?.backgroundImage &&
-          typeof postsPageContent.hero.backgroundImage === 'object' &&
-          'url' in postsPageContent.hero.backgroundImage && (
+        {(() => {
+          const bg = postsPageContent?.hero?.backgroundImage
+          if (!bg || typeof bg !== 'object') return null
+
+          const { url, alt } = bg as { url?: string; alt?: string }
+          // Use only the URL from the API (S3 in production — do not use local /media/ paths)
+          if (!url) return null
+
+          const src =
+            url.startsWith('http') ? url : url.startsWith('/') ? url : `/${url}`
+
+          return (
             <div className="absolute inset-0 z-0">
               <Image
-                src={postsPageContent.hero.backgroundImage.url as string}
-                alt={
-                  (postsPageContent.hero.backgroundImage as any).alt ||
-                  'Blog posts background'
-                }
+                src={src}
+                alt={alt || 'Blog posts background'}
                 fill
                 className="object-cover"
                 priority
               />
               <div className="absolute inset-0 bg-black/50" />
             </div>
-          )}
+          )
+        })()}
         <div className="relative z-10 container mx-auto px-4 py-20 w-full">
           <ParallaxElement speed={0.2} direction="up">
             <CinematicReveal delay={0.1} duration={1.2}>

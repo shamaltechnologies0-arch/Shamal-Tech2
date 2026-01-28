@@ -24,8 +24,9 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   }, [])
 
   if (resource && typeof resource === 'object') {
-    const { filename, url } = resource
-    const videoSrc = url ? getMediaUrl(url, resource.updatedAt) : filename ? getMediaUrl(`/media/${filename}`, resource.updatedAt) : null
+    const { url } = resource
+    // Use only the URL from the API (S3 in production — do not use local /media/ paths)
+    const videoSrc = url ? getMediaUrl(url, resource.updatedAt) : null
 
     if (!videoSrc) return null
 

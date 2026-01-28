@@ -43,7 +43,6 @@ export default async function ProductsPage() {
       backgroundImage?: {
         id?: string
         url?: string
-        filename?: string
         alt?: string
         mimeType?: string
       } | string | null
@@ -86,22 +85,19 @@ export default async function ProductsPage() {
       {/* Hero Section - Reduced Height */}
       <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
         {/* Background Image */}
+        {/* Use only the URL from the API (S3 in production — do not use local /media/ paths) */}
         {heroBackgroundImage &&
         typeof heroBackgroundImage === 'object' &&
         heroBackgroundImage !== null &&
-        (heroBackgroundImage.url || heroBackgroundImage.filename) && (
+        heroBackgroundImage.url && (
           <div className="absolute inset-0 z-0">
             <Image
               src={
-                heroBackgroundImage.url
-                  ? heroBackgroundImage.url.startsWith('http')
+                heroBackgroundImage.url.startsWith('http')
+                  ? heroBackgroundImage.url
+                  : heroBackgroundImage.url.startsWith('/')
                     ? heroBackgroundImage.url
-                    : heroBackgroundImage.url.startsWith('/')
-                      ? heroBackgroundImage.url
-                      : `/${heroBackgroundImage.url}`
-                  : heroBackgroundImage.filename
-                    ? `/media/${heroBackgroundImage.filename}`
-                    : ''
+                    : `/${heroBackgroundImage.url}`
               }
               alt={heroBackgroundImage.alt || 'Products page hero background'}
               fill

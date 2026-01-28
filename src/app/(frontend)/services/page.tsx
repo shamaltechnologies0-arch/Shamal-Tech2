@@ -48,7 +48,6 @@ export default async function ServicesPage() {
       backgroundImage?: {
         id?: string
         url?: string
-        filename?: string
         alt?: string
         mimeType?: string
       } | string | null
@@ -114,22 +113,19 @@ export default async function ServicesPage() {
       {/* Hero Section - Reduced Height */}
       <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
         {/* Background Image */}
+        {/* Use only the URL from the API (S3 in production — do not use local /media/ paths) */}
         {heroBackgroundImage &&
         typeof heroBackgroundImage === 'object' &&
         heroBackgroundImage !== null &&
-        (heroBackgroundImage.url || heroBackgroundImage.filename) && (
+        heroBackgroundImage.url && (
           <div className="absolute inset-0 z-0">
             <Image
               src={
-                heroBackgroundImage.url
-                  ? heroBackgroundImage.url.startsWith('http')
+                heroBackgroundImage.url.startsWith('http')
+                  ? heroBackgroundImage.url
+                  : heroBackgroundImage.url.startsWith('/')
                     ? heroBackgroundImage.url
-                    : heroBackgroundImage.url.startsWith('/')
-                      ? heroBackgroundImage.url
-                      : `/${heroBackgroundImage.url}`
-                  : heroBackgroundImage.filename
-                    ? `/media/${heroBackgroundImage.filename}`
-                    : ''
+                    : `/${heroBackgroundImage.url}`
               }
               alt={heroBackgroundImage.alt || 'Services page hero background'}
               fill
