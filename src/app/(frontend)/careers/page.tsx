@@ -64,16 +64,18 @@ export default async function CareersPage() {
     'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia'
   const heroBackgroundImage = careersPageContent?.hero?.backgroundImage
 
-  // Use only the URL from the API (S3 in production — do not use local /media/ paths)
+  // Use URL from API (S3 in production) or filename fallback for local storage
   let heroBackgroundImageSrc: string | null = null
   if (heroBackgroundImage && typeof heroBackgroundImage === 'object') {
-    const url = (heroBackgroundImage as { url?: string }).url
-    if (url) {
-      heroBackgroundImageSrc = url.startsWith('http')
-        ? url
-        : url.startsWith('/')
-          ? url
-          : `/${url}`
+    const media = heroBackgroundImage as { url?: string; filename?: string }
+    if (media.url) {
+      heroBackgroundImageSrc = media.url.startsWith('http')
+        ? media.url
+        : media.url.startsWith('/')
+          ? media.url
+          : `/${media.url}`
+    } else if (media.filename) {
+      heroBackgroundImageSrc = `/media/${media.filename}`
     }
   }
 
