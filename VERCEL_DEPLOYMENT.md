@@ -13,7 +13,7 @@ This project is configured for deployment on Vercel.
 Set these in your Vercel project settings:
 
 ### Required Variables:
-- `MONGODB_URI` - Your MongoDB connection string (e.g., `mongodb+srv://user:pass@cluster.mongodb.net/dbname`)
+- `MONGODB_URI` - Your MongoDB connection string. **For M0 + Vercel**, add `?maxPoolSize=5&minPoolSize=0&maxIdleTimeMS=60000` to stay under the 500 connection limit (e.g., `mongodb+srv://user:pass@cluster.mongodb.net/dbname?maxPoolSize=5&minPoolSize=0&maxIdleTimeMS=60000`)
 - `PAYLOAD_SECRET` - A random secret string for Payload CMS encryption (generate with: `openssl rand -base64 32`)
 - `NEXT_PUBLIC_SERVER_URL` - Your production URL (e.g., `https://your-domain.vercel.app`)
 
@@ -107,4 +107,5 @@ Set these in your Vercel project settings:
 
 - **Build Fails:** Check build logs in Vercel dashboard for specific errors
 - **Database Connection Issues:** Verify `MONGODB_URI` is correct and MongoDB Atlas allows connections from Vercel IPs (0.0.0.0/0)
+- **"cannot connect to MongoDB" / 500 errors:** M0 clusters limit 500 connections. Add `maxPoolSize=5` to your connection string and redeploy. See `MONGODB_OPTIMIZATION.md`.
 - **Admin Panel Not Loading:** Ensure `PAYLOAD_SECRET` and `NEXT_PUBLIC_SERVER_URL` are set correctly

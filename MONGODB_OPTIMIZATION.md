@@ -4,6 +4,25 @@
 
 This document explains how to prevent MongoDB session expiration errors (`MongoExpiredSessionError`) and optimize database connections in your Payload CMS + Next.js application.
 
+## M0 Free Tier + Vercel Serverless (Critical)
+
+**M0 clusters have a 500 connection limit.** Vercel serverless spawns many instances; each uses Mongoose's default `maxPoolSize=100`. A few concurrent instances can exhaust the limit, causing:
+
+- `Error: cannot connect to MongoDB`
+- 500 errors on `/posts/*`, `/api/media/*`, admin pages
+- MongoDB Atlas "connections exceeded threshold" alerts
+
+**Fix:** The `payload.config.ts` sets `maxPoolSize=5` when `VERCEL` is set (Vercel sets this automatically). This limits each instance to 5 connections. You can also add these params to your `MONGODB_URI` in Vercel:
+
+```
+?maxPoolSize=5&minPoolSize=0&maxIdleTimeMS=60000
+```
+
+**Immediate steps if you hit the limit:**
+1. Redeploy on Vercel to close existing connections
+2. Ensure `maxPoolSize=5` is in your connection string or config
+3. Consider upgrading to M10+ for higher connection limits
+
 ## Common Issues
 
 ### 1. MongoExpiredSessionError: Cannot use a session that has ended

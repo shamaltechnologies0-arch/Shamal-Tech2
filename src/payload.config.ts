@@ -77,15 +77,13 @@ export default buildConfig({
   /** 🔑 REQUIRED FOR PROD ADMIN */
   serverURL: getServerSideURL(),
 
-  // Body parser limits - must stay under Lambda's 6MB request body limit
-  // For AWS Amplify SSR (Lambda-based), the hard limit is 6MB
+  // Body parser limits for multipart/form-data - must stay under Lambda's 6MB request body limit
+  // For AWS Amplify SSR (Lambda-based), the hard limit is 6MB.
+  // bodyParser uses BusboyConfig (multipart only); limits are in bytes. 5MB = 5242880
   bodyParser: {
-    json: {
-      limit: '5mb',
-    },
-    urlencoded: {
-      limit: '5mb',
-      extended: true,
+    limits: {
+      fieldSize: 5 * 1024 * 1024, // 5MB for field values (e.g. JSON in _payload)
+      fileSize: 5 * 1024 * 1024,  // 5MB for file uploads
     },
   },
 
@@ -135,9 +133,17 @@ export default buildConfig({
 
   email: emailAdapter,
 
-  /** ✅ FIXED MONGODB CONFIG */
+  /** ✅ FIXED MONGODB CONFIG - Connection pool limits for M0/Vercel serverless */
   db: mongooseAdapter({
     url: process.env.MONGODB_URI!,
+    connectOptions: {
+      // M0 cluster limit: 500 connections. Vercel serverless spawns many instances.
+      // Default maxPoolSize=100 per instance exhausts the limit quickly.
+      // Use 5 connections per instance to stay under 500 total.
+      maxPoolSize: process.env.VERCEL ? 5 : 10,
+      minPoolSize: 0,
+      maxIdleTimeMS: 60000,
+    },
   }),
 
   collections: [
