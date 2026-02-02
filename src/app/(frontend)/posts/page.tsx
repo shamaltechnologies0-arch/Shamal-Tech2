@@ -48,7 +48,7 @@ export default async function Page() {
 
   const posts = await payload.find({
     collection: 'posts',
-    depth: 1,
+    depth: 2,
     limit: 12,
     overrideAccess: false,
     select: {
@@ -56,6 +56,8 @@ export default async function Page() {
       slug: true,
       categories: true,
       meta: true,
+      featuredImage: true,
+      heroImage: true,
     },
   })
 

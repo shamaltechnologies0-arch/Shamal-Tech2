@@ -10,7 +10,23 @@ import { Media } from '../Media'
 import { Card as ShadcnCard, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<
+  Post,
+  'slug' | 'categories' | 'meta' | 'title' | 'featuredImage' | 'heroImage'
+>
+
+/** Helper to get a displayable media object from meta.image, featuredImage, or heroImage */
+function getDisplayImage(doc: CardPostData | undefined) {
+  if (!doc) return null
+  const { meta, featuredImage, heroImage } = doc
+  const metaImage = meta && typeof meta === 'object' && 'image' in meta ? meta.image : null
+
+  const candidates = [metaImage, featuredImage, heroImage]
+  for (const img of candidates) {
+    if (img != null && typeof img === 'object' && 'url' in img && img.url) return img
+  }
+  return null
+}
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -24,7 +40,8 @@ export const Card: React.FC<{
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
   const { slug, categories, meta, title } = doc || {}
-  const { description, image: metaImage } = meta || {}
+  const { description } = meta || {}
+  const displayImage = getDisplayImage(doc)
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
@@ -37,8 +54,8 @@ export const Card: React.FC<{
       ref={card.ref as React.Ref<HTMLDivElement>}
     >
       <div className="relative w-full">
-        {!metaImage && <div className="h-48 bg-muted flex items-center justify-center">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
+        {!displayImage && <div className="h-48 bg-muted flex items-center justify-center">No image</div>}
+        {displayImage && <Media resource={displayImage} size="33vw" />}
       </div>
       <CardHeader>
         {showCategories && hasCategories && (

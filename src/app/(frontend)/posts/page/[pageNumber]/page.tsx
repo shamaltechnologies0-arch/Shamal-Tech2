@@ -27,10 +27,18 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const posts = await payload.find({
     collection: 'posts',
-    depth: 1,
+    depth: 2,
     limit: 12,
     page: sanitizedPageNumber,
     overrideAccess: false,
+    select: {
+      title: true,
+      slug: true,
+      categories: true,
+      meta: true,
+      featuredImage: true,
+      heroImage: true,
+    },
   })
 
   return (

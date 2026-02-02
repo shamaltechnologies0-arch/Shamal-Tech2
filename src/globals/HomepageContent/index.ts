@@ -298,33 +298,6 @@ export const HomepageContent: GlobalConfig = {
       ],
     },
     {
-      name: 'portfolioPreview',
-      type: 'group',
-      label: 'Portfolio Preview Section',
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-        },
-        {
-          name: 'ctaText',
-          type: 'text',
-          label: 'CTA Button Text',
-          defaultValue: 'View Portfolio',
-        },
-        {
-          name: 'backgroundImage',
-          type: 'upload',
-          relationTo: 'media',
-          label: 'Background Image',
-        },
-      ],
-    },
-    {
       name: 'blogPreview',
       type: 'group',
       label: 'Blog Preview Section',

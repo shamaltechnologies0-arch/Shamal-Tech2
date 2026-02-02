@@ -30,7 +30,6 @@ interface Sector {
     alt?: string
     mimeType?: string
   } | string | null
-  ctaPortfolio?: string
   ctaBlog?: string
   ctaContact?: string
   useCases?: Array<{
@@ -329,8 +328,8 @@ export function SectorsPinnedSection({
                   }
                 }
 
-                // Determine the primary link - prioritize contact, then portfolio, then blog
-                const primaryLink = sector.ctaContact || sector.ctaPortfolio || sector.ctaBlog
+                // Determine the primary link - prioritize contact, then blog
+                const primaryLink = sector.ctaContact || sector.ctaBlog
                 const hasLink = Boolean(primaryLink)
 
                 const cardContent = (
@@ -380,26 +379,12 @@ export function SectorsPinnedSection({
                           </div>
                         )}
                         {/* CTA Buttons */}
-                        {(sector.ctaPortfolio ||
-                          sector.ctaBlog ||
+                        {(sector.ctaBlog ||
                           sector.ctaContact) && (
                           <div 
                             className="flex flex-wrap gap-2 pt-2 border-t"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {sector.ctaPortfolio && (
-                              <Button
-                                asChild
-                                variant="outline"
-                                size="sm"
-                                className="text-xs"
-                              >
-                                <Link href={sector.ctaPortfolio}>
-                                  Portfolio
-                                  <ExternalLink className="ml-1 h-3 w-3" />
-                                </Link>
-                              </Button>
-                            )}
                             {sector.ctaBlog && (
                               <Button
                                 asChild

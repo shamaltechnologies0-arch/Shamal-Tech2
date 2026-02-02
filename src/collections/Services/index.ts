@@ -142,13 +142,6 @@ export const Services: CollectionConfig = {
               ],
             },
             {
-              name: 'portfolioExamples',
-              type: 'relationship',
-              relationTo: 'portfolio',
-              hasMany: true,
-              label: 'Portfolio Examples',
-            },
-            {
               name: 'faqs',
               type: 'array',
               label: 'Frequently Asked Questions',

@@ -15,7 +15,6 @@ import { Leads } from './collections/Leads'
 import { Media } from './collections/Media'
 import { NewsletterSubscriptions } from './collections/NewsletterSubscriptions'
 import { Pages } from './collections/Pages'
-import { Portfolio } from './collections/Portfolio'
 import { Posts } from './collections/Posts'
 import { Products } from './collections/Products'
 import { SEOKeywords } from './collections/SEOKeywords'
@@ -114,10 +113,6 @@ export default buildConfig({
           return `${baseURL}/services/${data?.slug ?? ''}`
         }
   
-        if (collectionConfig?.slug === 'portfolio') {
-          return `${baseURL}/portfolio/${data?.slug ?? ''}`
-        }
-  
         if (collectionConfig?.slug === 'career') {
           return `${baseURL}/careers/${data?.slug ?? ''}`
         }
@@ -153,7 +148,6 @@ export default buildConfig({
     Users,
     Services,
     Products,
-    Portfolio,
     Career,
     ContactSubmissions,
     Leads,

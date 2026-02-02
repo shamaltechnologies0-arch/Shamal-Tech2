@@ -15,7 +15,9 @@ const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  folders: true,
+  // Disabled to fix payload-folders 403 errors and slow media loading in admin.
+  // Re-enable with folders: true if folder organization is needed.
+  folders: false,
   access: {
     // Public read access - allow frontend to access media files
     read: () => true,

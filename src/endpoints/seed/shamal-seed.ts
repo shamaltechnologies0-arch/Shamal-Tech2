@@ -315,11 +315,6 @@ export const shamalSeed = async ({
             'Combining cutting-edge technology with deep industry expertise',
           ctaText: 'Learn More',
         },
-        portfolioPreview: {
-          title: 'Our Portfolio',
-          description: 'Explore our successful projects and case studies',
-          ctaText: 'View Portfolio',
-        },
         blogPreview: {
           title: 'Latest Insights',
           description: 'Stay updated with our latest news and insights',

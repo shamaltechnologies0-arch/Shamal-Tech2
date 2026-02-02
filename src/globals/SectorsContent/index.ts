@@ -41,14 +41,6 @@ export const SectorsContent: GlobalConfig = {
           label: 'Small Image',
         },
         {
-          name: 'ctaPortfolio',
-          type: 'text',
-          label: 'Portfolio CTA Link',
-          admin: {
-            description: 'Link to portfolio page or section',
-          },
-        },
-        {
           name: 'ctaBlog',
           type: 'text',
           label: 'Blog CTA Link',

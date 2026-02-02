@@ -101,15 +101,6 @@ export default async function HomePage() {
         alt?: string
       } | null
     }
-    portfolioPreview?: {
-      title?: string
-      description?: string
-      ctaText?: string
-      backgroundImage?: {
-        url?: string
-        alt?: string
-      } | null
-    }
     blogPreview?: {
       title?: string
       description?: string
@@ -216,7 +207,6 @@ export default async function HomePage() {
         alt?: string
         mimeType?: string
       } | string | null
-      ctaPortfolio?: string
       ctaBlog?: string
       ctaContact?: string
       useCases?: Array<{
@@ -257,28 +247,6 @@ export default async function HomePage() {
       orderedSectors = sectorsContent?.sectors || []
     }
   }
-
-  // Fetch featured portfolio items
-  const portfolio = await safePayloadFind({
-    collection: 'portfolio',
-    limit: 6,
-    where: {
-      and: [
-        {
-          _status: {
-            equals: 'published',
-          },
-        },
-        {
-          featured: {
-            equals: true,
-          },
-        },
-      ],
-    },
-    draft: false,
-    overrideAccess: false,
-  })
 
   // Determine which blog posts to show
   // If featuredPosts are set in homepageContent, use those; otherwise use latest published posts
@@ -356,7 +324,6 @@ export default async function HomePage() {
     { id: 'services', label: 'Services' },
     { id: 'sectors', label: 'Sectors' },
     { id: 'about', label: 'About' },
-    { id: 'portfolio', label: 'Portfolio' },
     { id: 'blog', label: 'Insights' },
     { id: 'contact', label: 'Contact' },
   ]
@@ -679,103 +646,6 @@ export default async function HomePage() {
             </div>
           </CinematicReveal>
           </ParallaxElement>
-        </div>
-      </ScrollSection>
-
-      {/* Portfolio Preview Section - Full Viewport Showcase */}
-      <ScrollSection id="portfolio" fullViewport bgVariant="2" parallax>
-        {/* Background Image */}
-        {homepageContent?.portfolioPreview?.backgroundImage &&
-          typeof homepageContent.portfolioPreview.backgroundImage === 'object' &&
-          'url' in homepageContent.portfolioPreview.backgroundImage && (
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={homepageContent.portfolioPreview.backgroundImage.url as string}
-                alt={
-                  (homepageContent.portfolioPreview.backgroundImage as any).alt ||
-                  'Portfolio preview background'
-                }
-                fill
-                className="object-cover opacity-20"
-                priority={false}
-                quality={85}
-              />
-              <div className="absolute inset-0 bg-background/80" />
-            </div>
-          )}
-        <div className="container mx-auto px-4 relative z-10">
-          <ParallaxElement speed={0.3} direction="up">
-            <CinematicReveal delay={0.2} duration={1.2}>
-              <div className="text-center mb-16 space-y-6">
-                <Badge variant="outline" className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold">
-                  Portfolio
-                </Badge>
-                <h2 className="text-display-large font-display font-bold tracking-tight text-foreground">
-                  <span className="text-gradient">
-                    {homepageContent?.portfolioPreview?.title || 'Our Portfolio'}
-                  </span>
-                </h2>
-                {homepageContent?.portfolioPreview?.description && (
-                  <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    {homepageContent.portfolioPreview.description}
-                  </p>
-                )}
-              </div>
-            </CinematicReveal>
-          </ParallaxElement>
-          <StaggerReveal direction="up" delay={0.3} stagger={0.1} duration={0.8}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {portfolio.docs.map((item) => (
-              <Card
-                key={item.id}
-                className="group overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
-                <Link href={`/portfolio/${item.slug}`} className="block">
-                  {item.images && Array.isArray(item.images) && item.images[0] && (
-                    <div className="relative h-64 overflow-hidden">
-                      <Image
-                        src={
-                          typeof item.images[0] === 'object' && 'url' in item.images[0]
-                            ? (item.images[0].url as string)
-                            : ''
-                        }
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-xl group-hover:text-logo-blue transition-colors">
-                      {item.title}
-                    </CardTitle>
-                  </CardHeader>
-                  {item.client && (
-                    <CardContent>
-                      <CardDescription>Client: {item.client}</CardDescription>
-                    </CardContent>
-                  )}
-                </Link>
-              </Card>
-            ))}
-          </div>
-          </StaggerReveal>
-          <ScrollReveal direction="up" delay={0.4} duration={1}>
-          <div className="text-center mt-12">
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-2 border-logo-navy text-logo-navy hover:bg-logo-navy hover:text-white"
-            >
-              <Link href="/portfolio">
-                {homepageContent?.portfolioPreview?.ctaText || 'View Full Portfolio'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-          </ScrollReveal>
         </div>
       </ScrollSection>
 

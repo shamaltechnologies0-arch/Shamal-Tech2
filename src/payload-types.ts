@@ -74,7 +74,6 @@ export interface Config {
     users: User;
     services: Service;
     products: Product;
-    portfolio: Portfolio;
     career: Career;
     'contact-submissions': ContactSubmission;
     leads: Lead;
@@ -88,16 +87,11 @@ export interface Config {
     search: Search;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
-    'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {
-    'payload-folders': {
-      documentsAndFolders: 'payload-folders' | 'media';
-    };
-  };
+  collectionsJoins: {};
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -106,7 +100,6 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
-    portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
     career: CareerSelect<false> | CareerSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
@@ -120,7 +113,6 @@ export interface Config {
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
-    'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -338,7 +330,6 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
-  folder?: (string | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -408,32 +399,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders".
- */
-export interface FolderInterface {
-  id: string;
-  name: string;
-  folder?: (string | null) | FolderInterface;
-  documentsAndFolders?: {
-    docs?: (
-      | {
-          relationTo?: 'payload-folders';
-          value: string | FolderInterface;
-        }
-      | {
-          relationTo?: 'media';
-          value: string | Media;
-        }
-    )[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  folderType?: 'media'[] | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -871,7 +836,6 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
-  portfolioExamples?: (string | Portfolio)[] | null;
   faqs?:
     | {
         question: string;
@@ -896,80 +860,6 @@ export interface Service {
   ctaTitle?: string | null;
   ctaDescription?: string | null;
   ctaButtonText?: string | null;
-  seo?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-    keywords?: string | null;
-  };
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "portfolio".
- */
-export interface Portfolio {
-  id: string;
-  title: string;
-  client?: string | null;
-  sector?:
-    | (
-        | 'government'
-        | 'transportation'
-        | 'mining'
-        | 'construction'
-        | 'real-estate'
-        | 'education'
-        | 'oil-gas'
-        | 'heritage'
-        | 'marine'
-        | 'agriculture'
-        | 'utilities'
-      )
-    | null;
-  services?: (string | Service)[] | null;
-  images: (string | Media)[];
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  useCases?:
-    | {
-        title: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  solutionsDelivered?:
-    | {
-        title: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  completionDate?: string | null;
-  featured?: boolean | null;
   seo?: {
     title?: string | null;
     /**
@@ -1288,10 +1178,6 @@ export interface SeoKeyword {
             relationTo: 'products';
             value: string | Product;
           }
-        | {
-            relationTo: 'portfolio';
-            value: string | Portfolio;
-          }
       )[]
     | null;
   priority?: number | null;
@@ -1565,10 +1451,6 @@ export interface PayloadLockedDocument {
         value: string | Product;
       } | null)
     | ({
-        relationTo: 'portfolio';
-        value: string | Portfolio;
-      } | null)
-    | ({
         relationTo: 'career';
         value: string | Career;
       } | null)
@@ -1611,10 +1493,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: string | Search;
-      } | null)
-    | ({
-        relationTo: 'payload-folders';
-        value: string | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1838,7 +1716,6 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
-  folder?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2004,7 +1881,6 @@ export interface ServicesSelect<T extends boolean = true> {
         icon?: T;
         id?: T;
       };
-  portfolioExamples?: T;
   faqs?:
     | T
     | {
@@ -2048,47 +1924,6 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   featured?: T;
   ctaText?: T;
-  seo?:
-    | T
-    | {
-        title?: T;
-        image?: T;
-        description?: T;
-        keywords?: T;
-      };
-  generateSlug?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "portfolio_select".
- */
-export interface PortfolioSelect<T extends boolean = true> {
-  title?: T;
-  client?: T;
-  sector?: T;
-  services?: T;
-  images?: T;
-  description?: T;
-  useCases?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  solutionsDelivered?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  completionDate?: T;
-  featured?: T;
   seo?:
     | T
     | {
@@ -2509,18 +2344,6 @@ export interface PayloadJobsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders_select".
- */
-export interface PayloadFoldersSelect<T extends boolean = true> {
-  name?: T;
-  folder?: T;
-  documentsAndFolders?: T;
-  folderType?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -2755,12 +2578,6 @@ export interface HomepageContent {
           id?: string | null;
         }[]
       | null;
-    ctaText?: string | null;
-    backgroundImage?: (string | null) | Media;
-  };
-  portfolioPreview?: {
-    title?: string | null;
-    description?: string | null;
     ctaText?: string | null;
     backgroundImage?: (string | null) | Media;
   };
@@ -3076,10 +2893,6 @@ export interface SectorsContent {
         description?: string | null;
         image?: (string | null) | Media;
         /**
-         * Link to portfolio page or section
-         */
-        ctaPortfolio?: string | null;
-        /**
          * Link to blog page or section
          */
         ctaBlog?: string | null;
@@ -3277,14 +3090,6 @@ export interface HomepageContentSelect<T extends boolean = true> {
                   };
               id?: T;
             };
-        ctaText?: T;
-        backgroundImage?: T;
-      };
-  portfolioPreview?:
-    | T
-    | {
-        title?: T;
-        description?: T;
         ctaText?: T;
         backgroundImage?: T;
       };
@@ -3545,7 +3350,6 @@ export interface SectorsContentSelect<T extends boolean = true> {
         slug?: T;
         description?: T;
         image?: T;
-        ctaPortfolio?: T;
         ctaBlog?: T;
         ctaContact?: T;
         useCases?:

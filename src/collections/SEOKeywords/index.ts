@@ -57,7 +57,7 @@ export const SEOKeywords: CollectionConfig = {
     {
       name: 'relatedPages',
       type: 'relationship',
-      relationTo: ['pages', 'services', 'products', 'portfolio'],
+      relationTo: ['pages', 'services', 'products'],
       hasMany: true,
       label: 'Related Pages',
     },

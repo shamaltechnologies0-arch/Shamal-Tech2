@@ -21,7 +21,6 @@ const collections: CollectionSlug[] = [
   'search',
   'services',
   'products',
-  'portfolio',
   'contact-submissions',
   'newsletter-subscriptions',
   'seo-keywords',

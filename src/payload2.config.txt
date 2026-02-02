@@ -14,7 +14,6 @@ import { Leads } from './collections/Leads'
 import { Media } from './collections/Media'
 import { NewsletterSubscriptions } from './collections/NewsletterSubscriptions'
 import { Pages } from './collections/Pages'
-import { Portfolio } from './collections/Portfolio'
 import { Posts } from './collections/Posts'
 import { Products } from './collections/Products'
 import { SEOKeywords } from './collections/SEOKeywords'
@@ -99,11 +98,6 @@ export default buildConfig({
           return `${baseURL}/services/${slug}`
         }
         
-        if (collectionConfig?.slug === 'portfolio') {
-          const slug = typeof data?.slug === 'string' ? data.slug : ''
-          return `${baseURL}/portfolio/${slug}`
-        }
-        
         if (collectionConfig?.slug === 'career') {
           const slug = typeof data?.slug === 'string' ? data.slug : ''
           return `${baseURL}/careers/${slug}`
@@ -160,7 +154,7 @@ export default buildConfig({
           height: 900,
         },
       ],
-      collections: ['pages', 'posts', 'services', 'portfolio'],
+      collections: ['pages', 'posts', 'services'],
       globals: ['homepage-content', 'about-page-content', 'posts-page-content', 'careers-page-content', 'contact-page-content', 'products-page-content', 'services-page-content'],
     },
   },
@@ -178,7 +172,6 @@ export default buildConfig({
     Users,
     Services,
     Products,
-    Portfolio,
     Career,
     ContactSubmissions,
     Leads,
