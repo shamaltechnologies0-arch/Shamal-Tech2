@@ -7,7 +7,7 @@ export const Employees: CollectionConfig = {
   access: {
     create: authenticated,
     read: ({ req }) => {
-      if (req.user) return true
+      if (req?.user) return true
       return { status: { equals: 'published' } }
     },
     update: authenticated,

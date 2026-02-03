@@ -4,9 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { cache } from 'react'
 
-import configPromise from '../../../../payload.config'
+import configPromise from '@/payload.config'
 import { getPayload } from 'payload'
-import { getServerSideURL } from '../../../../utilities/getURL'
+import { getServerSideURL } from '@/utilities/getURL'
 
 import { Mail, Phone, Linkedin, Globe, FileText, ExternalLink } from 'lucide-react'
 
@@ -24,6 +24,9 @@ interface EmployeeProfile {
   companyWebsiteUrl?: string | null
 }
 
+// Force dynamic rendering so profiles work for employees added after build/deploy
+export const dynamic = 'force-dynamic'
+
 const getEmployeeBySlug = cache(async (slug: string): Promise<EmployeeProfile | null> => {
   const payload = await getPayload({ config: configPromise })
 
@@ -35,20 +38,25 @@ const getEmployeeBySlug = cache(async (slug: string): Promise<EmployeeProfile | 
     },
     limit: 1,
     depth: 2,
+    overrideAccess: true, // Public profile page - we explicitly filter published only
   })
 
   return (result.docs[0] as EmployeeProfile | undefined) || null
 })
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const employees = await payload.find({
-    collection: 'employees',
-    where: { status: { equals: 'published' } },
-    limit: 500,
-    select: { slug: true },
-  })
-  return employees.docs.map((emp) => ({ slug: (emp as { slug: string }).slug }))
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const employees = await payload.find({
+      collection: 'employees',
+      where: { status: { equals: 'published' } },
+      limit: 500,
+      select: { slug: true },
+    })
+    return employees.docs.map((emp) => ({ slug: (emp as { slug: string }).slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({
