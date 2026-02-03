@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url'
 import { Categories } from './collections/Categories'
 import { Career } from './collections/Career'
 import { ChatSummaries } from './collections/ChatSummaries'
+import { Employees } from './collections/Employees'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { IssueReports } from './collections/IssueReports'
 import { Leads } from './collections/Leads'
@@ -114,6 +115,10 @@ export default buildConfig({
         if (collectionConfig?.slug === 'career') {
           return `${baseURL}/careers/${data?.slug ?? ''}`
         }
+
+        if (collectionConfig?.slug === 'employees') {
+          return `${baseURL}/profile/${data?.slug ?? ''}`
+        }
   
         if (globalConfig?.slug === 'homepage-content') return baseURL
         if (globalConfig?.slug === 'about-page-content') return `${baseURL}/about`
@@ -156,6 +161,7 @@ export default buildConfig({
     Products,
     Career,
     ContactSubmissions,
+    Employees,
     Leads,
     NewsletterSubscriptions,
     SEOKeywords,

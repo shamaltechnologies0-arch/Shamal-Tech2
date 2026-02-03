@@ -76,6 +76,7 @@ export interface Config {
     products: Product;
     career: Career;
     'contact-submissions': ContactSubmission;
+    employees: Employee;
     leads: Lead;
     'newsletter-subscriptions': NewsletterSubscription;
     'seo-keywords': SeoKeyword;
@@ -102,6 +103,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     career: CareerSelect<false> | CareerSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    employees: EmployeesSelect<false> | EmployeesSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
     'newsletter-subscriptions': NewsletterSubscriptionsSelect<false> | NewsletterSubscriptionsSelect<true>;
     'seo-keywords': SeoKeywordsSelect<false> | SeoKeywordsSelect<true>;
@@ -1034,6 +1036,50 @@ export interface ContactSubmission {
   createdAt: string;
 }
 /**
+ * Employee digital profiles for QR code business cards. Each employee gets a unique public URL for their profile. Export to Excel: /api/employees/export (must be logged in).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "employees".
+ */
+export interface Employee {
+  id: string;
+  fullName: string;
+  profileImage: string | Media;
+  phoneNumber: string;
+  businessEmail: string;
+  /**
+   * Full LinkedIn profile URL (e.g. https://linkedin.com/in/username)
+   */
+  linkedInUrl?: string | null;
+  websiteUrl?: string | null;
+  /**
+   * PDF file - Company profile in Arabic
+   */
+  companyProfileArabic?: (string | null) | Media;
+  /**
+   * PDF file - Company profile in English
+   */
+  companyProfileEnglish?: (string | null) | Media;
+  /**
+   * Optional: Public folder link containing both Arabic & English PDFs. If set, this will be shown instead of individual PDF buttons.
+   */
+  companyProfileFolderUrl?: string | null;
+  /**
+   * Main company website URL (displayed at bottom of profile)
+   */
+  companyWebsiteUrl?: string | null;
+  /**
+   * Published profiles are visible on the public QR page
+   */
+  status: 'draft' | 'published';
+  /**
+   * Unique URL for profile (used in QR code). Auto-generated on save.
+   */
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leads".
  */
@@ -1457,6 +1503,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contact-submissions';
         value: string | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'employees';
+        value: string | Employee;
       } | null)
     | ({
         relationTo: 'leads';
@@ -2001,6 +2051,26 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   message?: T;
   submittedAt?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "employees_select".
+ */
+export interface EmployeesSelect<T extends boolean = true> {
+  fullName?: T;
+  profileImage?: T;
+  phoneNumber?: T;
+  businessEmail?: T;
+  linkedInUrl?: T;
+  websiteUrl?: T;
+  companyProfileArabic?: T;
+  companyProfileEnglish?: T;
+  companyProfileFolderUrl?: T;
+  companyWebsiteUrl?: T;
+  status?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
