@@ -101,6 +101,13 @@ function getMediaUrl(url: string | null | undefined): string {
   return `${getServerSideURL()}${url}`
 }
 
+function normalizeExternalUrl(url: string | null | undefined): string {
+  if (!url?.trim()) return ''
+  const trimmed = url.trim()
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed
+  return `https://${trimmed}`
+}
+
 export default async function EmployeeProfilePage({
   params,
 }: {
@@ -195,7 +202,7 @@ export default async function EmployeeProfilePage({
 
             {employee.linkedInUrl && (
               <a
-                href={employee.linkedInUrl}
+                href={normalizeExternalUrl(employee.linkedInUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-slate-700 hover:text-primary transition-colors"
@@ -208,7 +215,7 @@ export default async function EmployeeProfilePage({
 
             {employee.websiteUrl && (
               <a
-                href={employee.websiteUrl}
+                href={normalizeExternalUrl(employee.websiteUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-slate-700 hover:text-primary transition-colors"
@@ -228,7 +235,7 @@ export default async function EmployeeProfilePage({
 
             {hasFolderLink ? (
               <a
-                href={employee.companyProfileFolderUrl!}
+                href={normalizeExternalUrl(employee.companyProfileFolderUrl)!}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
@@ -272,7 +279,7 @@ export default async function EmployeeProfilePage({
         {employee.companyWebsiteUrl && (
           <div className="mt-8 text-center">
             <Link
-              href={employee.companyWebsiteUrl}
+              href={normalizeExternalUrl(employee.companyWebsiteUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-slate-600 hover:text-primary transition-colors"

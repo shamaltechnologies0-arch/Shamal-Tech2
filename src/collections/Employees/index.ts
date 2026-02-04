@@ -110,7 +110,7 @@ export const Employees: CollectionConfig = {
       type: 'text',
       label: 'Company Website',
       admin: {
-        description: 'Main company website URL (displayed at bottom of profile)',
+        description: 'Main company website URL (displayed at bottom of profile). Enter with or without https:// (e.g. shamal.sa or https://shamal.sa)',
       },
     },
     {
