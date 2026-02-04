@@ -1066,7 +1066,7 @@ export interface Employee {
    */
   companyProfileFolderUrl?: string | null;
   /**
-   * Main company website URL (displayed at bottom of profile)
+   * Main company website URL (displayed at bottom of profile). Enter with or without https:// (e.g. shamal.sa or https://shamal.sa)
    */
   companyWebsiteUrl?: string | null;
   /**

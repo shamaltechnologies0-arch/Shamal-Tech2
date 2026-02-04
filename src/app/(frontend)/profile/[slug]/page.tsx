@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { cache } from 'react'
 
@@ -9,6 +8,8 @@ import { getPayload } from 'payload'
 import { getServerSideURL } from '@/utilities/getURL'
 
 import { Mail, Phone, Linkedin, Globe, FileText, ExternalLink } from 'lucide-react'
+
+import { ProfilePhotoGradient } from '@/components/ProfilePhotoGradient'
 
 interface EmployeeProfile {
   id: string
@@ -149,18 +150,15 @@ export default async function EmployeeProfilePage({
           itemType="https://schema.org/Person"
         >
           {/* Profile Image */}
-          <div className="relative aspect-square max-w-[280px] mx-auto pt-12 sm:pt-16">
+          <div className="pt-12 sm:pt-16">
             {profileImageUrl ? (
-              <Image
+              <ProfilePhotoGradient
                 src={profileImageUrl}
                 alt={employee.fullName}
-                fill
-                className="object-cover rounded-full"
                 sizes="(max-width: 400px) 280px, 320px"
-                priority
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-slate-200 flex items-center justify-center text-4xl font-bold text-slate-400">
+              <div className="relative aspect-square max-w-[280px] mx-auto w-full rounded-full bg-slate-200 flex items-center justify-center text-4xl font-bold text-slate-400 border-4 border-[#0c3254]/30">
                 {employee.fullName.charAt(0)}
               </div>
             )}
