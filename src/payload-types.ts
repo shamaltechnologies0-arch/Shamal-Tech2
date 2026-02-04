@@ -1044,6 +1044,7 @@ export interface ContactSubmission {
 export interface Employee {
   id: string;
   fullName: string;
+  position?: string | null;
   profileImage: string | Media;
   phoneNumber: string;
   businessEmail: string;
@@ -2060,6 +2061,7 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
  */
 export interface EmployeesSelect<T extends boolean = true> {
   fullName?: T;
+  position?: T;
   profileImage?: T;
   phoneNumber?: T;
   businessEmail?: T;

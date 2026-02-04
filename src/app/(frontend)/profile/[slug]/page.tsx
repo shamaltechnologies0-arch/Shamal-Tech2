@@ -13,6 +13,7 @@ import { Mail, Phone, Linkedin, Globe, FileText, ExternalLink } from 'lucide-rea
 interface EmployeeProfile {
   id: string
   fullName: string
+  position?: string | null
   profileImage?: { url?: string; alt?: string } | string | null
   phoneNumber?: string
   businessEmail?: string
@@ -133,7 +134,7 @@ export default async function EmployeeProfilePage({
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Mobile-optimized, read-only profile */}
-      <div className="container mx-auto px-4 py-8 max-w-lg">
+      <div className="container mx-auto px-4 py-8 pt-12 sm:pt-16 max-w-lg">
         {/* Profile Card */}
         <article
           className="bg-white rounded-2xl shadow-lg overflow-hidden"
@@ -141,7 +142,7 @@ export default async function EmployeeProfilePage({
           itemType="https://schema.org/Person"
         >
           {/* Profile Image */}
-          <div className="relative aspect-square max-w-[280px] mx-auto pt-8">
+          <div className="relative aspect-square max-w-[280px] mx-auto pt-12 sm:pt-16">
             {profileImageUrl ? (
               <Image
                 src={profileImageUrl}
@@ -158,11 +159,14 @@ export default async function EmployeeProfilePage({
             )}
           </div>
 
-          {/* Name */}
+          {/* Name & Position */}
           <div className="px-6 pt-6 text-center">
             <h1 className="text-2xl font-bold text-slate-900" itemProp="name">
               {employee.fullName}
             </h1>
+            {employee.position && (
+              <p className="mt-1 text-slate-600 dark:text-slate-400">{employee.position}</p>
+            )}
           </div>
 
           {/* Contact Info */}

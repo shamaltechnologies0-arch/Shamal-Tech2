@@ -46,6 +46,7 @@ export async function GET() {
 
       return {
         'Full Name': emp.fullName ?? '',
+        'Position': emp.position ?? '',
         'Phone Number': emp.phoneNumber ?? '',
         'Business Email': emp.businessEmail ?? '',
         'LinkedIn URL': emp.linkedInUrl ?? '',

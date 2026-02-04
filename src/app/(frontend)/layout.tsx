@@ -21,6 +21,7 @@ const inter = Inter({
 })
 
 import { AdminBar } from '../../components/AdminBar'
+import { ConditionalLayout } from '../../components/ConditionalLayout'
 import { Footer } from '../../Footer/Component'
 import { Header } from '../../Header/Component'
 import { Providers } from '../../providers'
@@ -53,10 +54,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
 
-          <Header />
-          {children}
-          <Footer />
-          <Chatbot />
+          <ConditionalLayout fullHeader={<Header />} footer={<Footer />} chatbot={<Chatbot />}>
+            {children}
+          </ConditionalLayout>
         </Providers>
       </body>
     </html>

@@ -14,7 +14,7 @@ export const Employees: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    defaultColumns: ['fullName', 'businessEmail', 'slug', 'status', 'updatedAt'],
+    defaultColumns: ['fullName', 'position', 'businessEmail', 'slug', 'status', 'updatedAt'],
     useAsTitle: 'fullName',
     description:
       'Employee digital profiles for QR code business cards. Each employee gets a unique public URL for their profile. Export to Excel: /api/employees/export (must be logged in).',
@@ -31,6 +31,11 @@ export const Employees: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Full Name',
+    },
+    {
+      name: 'position',
+      type: 'text',
+      label: 'Position / Job Title',
     },
     {
       name: 'profileImage',

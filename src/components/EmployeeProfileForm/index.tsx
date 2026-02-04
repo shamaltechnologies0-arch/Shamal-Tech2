@@ -5,11 +5,12 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Alert, AlertDescription } from '../ui/alert'
-import { User, Phone, Mail, Linkedin, Globe, FileText, CheckCircle2 } from 'lucide-react'
+import { User, Phone, Mail, Linkedin, Globe, FileText, CheckCircle2, Briefcase } from 'lucide-react'
 
 export function EmployeeProfileForm() {
   const [formData, setFormData] = useState({
     fullName: '',
+    position: '',
     phoneNumber: '',
     businessEmail: '',
     linkedInUrl: '',
@@ -39,6 +40,7 @@ export function EmployeeProfileForm() {
     try {
       const data = new FormData()
       data.append('fullName', formData.fullName)
+      if (formData.position) data.append('position', formData.position)
       data.append('phoneNumber', formData.phoneNumber)
       data.append('businessEmail', formData.businessEmail)
       if (formData.linkedInUrl) data.append('linkedInUrl', formData.linkedInUrl)
@@ -64,6 +66,7 @@ export function EmployeeProfileForm() {
       setProfileUrl(result.profileUrl || null)
       setFormData({
         fullName: '',
+        position: '',
         phoneNumber: '',
         businessEmail: '',
         linkedInUrl: '',
@@ -97,6 +100,21 @@ export function EmployeeProfileForm() {
           value={formData.fullName}
           onChange={handleChange}
           placeholder="Dr. John Smith"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="position">
+          <Briefcase className="inline h-4 w-4 mr-2" />
+          Position / Job Title
+        </Label>
+        <Input
+          id="position"
+          name="position"
+          type="text"
+          value={formData.position}
+          onChange={handleChange}
+          placeholder="e.g. CEO, Senior Engineer"
         />
       </div>
 

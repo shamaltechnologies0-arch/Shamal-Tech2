@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
-import { EmployeeProfileForm } from '../../../components/EmployeeProfileForm'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
-import { ScrollSection } from '../../../components/sections/ScrollSection'
-import { ParallaxElement } from '../../../components/sections/ParallaxElement'
+import { EmployeeProfileForm } from '../../../../components/EmployeeProfileForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../components/ui/card'
+import { ScrollSection } from '../../../../components/sections/ScrollSection'
+import { ParallaxElement } from '../../../../components/sections/ParallaxElement'
 
 export const metadata: Metadata = {
   title: 'Submit Your Profile | Shamal Technologies',

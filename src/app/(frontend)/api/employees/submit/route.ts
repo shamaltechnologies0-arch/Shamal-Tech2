@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData()
     const fullName = formData.get('fullName') as string
+    const position = (formData.get('position') as string) || undefined
     const phoneNumber = formData.get('phoneNumber') as string
     const businessEmail = formData.get('businessEmail') as string
     const linkedInUrl = (formData.get('linkedInUrl') as string) || undefined
@@ -111,6 +112,7 @@ export async function POST(request: Request) {
       collection: 'employees',
       data: {
         fullName: fullName.trim(),
+        position: position?.trim() || undefined,
         profileImage: profileImageId,
         phoneNumber: phoneNumber.trim(),
         businessEmail: businessEmail.trim(),
