@@ -29,6 +29,9 @@ declare global {
       S3_SECRET_ACCESS_KEY?: string
       S3_REGION?: string
       S3_PREFIX?: string
+      // ClickUp Sales Pipeline
+      CLICKUP_API_TOKEN?: string
+      CLICKUP_LIST_ID?: string
     }
   }
 }

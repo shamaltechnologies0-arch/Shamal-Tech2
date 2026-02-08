@@ -1044,7 +1044,15 @@ export interface ContactSubmission {
 export interface Employee {
   id: string;
   fullName: string;
+  /**
+   * Arabic name for profile when user selects Arabic language
+   */
+  fullNameArabic?: string | null;
   position?: string | null;
+  /**
+   * Arabic job title for profile when user selects Arabic language
+   */
+  positionArabic?: string | null;
   profileImage: string | Media;
   phoneNumber: string;
   businessEmail: string;
@@ -1115,6 +1123,10 @@ export interface Lead {
    */
   message: string;
   /**
+   * Where was this lead created? Website form triggers ClickUp sync.
+   */
+  leadOrigin: 'website' | 'admin';
+  /**
    * How did this lead find us?
    */
   source?: ('contact-form' | 'phone' | 'email' | 'referral' | 'social-media' | 'other') | null;
@@ -1182,6 +1194,18 @@ export interface Lead {
    * When the initial response email was sent
    */
   emailSentAt?: string | null;
+  /**
+   * Whether this lead was synced to ClickUp Sales Pipeline
+   */
+  pushedToClickUp?: boolean | null;
+  /**
+   * ClickUp task ID (set automatically for website leads)
+   */
+  clickupTaskId?: string | null;
+  /**
+   * Link to the ClickUp task
+   */
+  clickupTaskUrl?: string | null;
   /**
    * When the lead was first submitted
    */
@@ -2061,7 +2085,9 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
  */
 export interface EmployeesSelect<T extends boolean = true> {
   fullName?: T;
+  fullNameArabic?: T;
   position?: T;
+  positionArabic?: T;
   profileImage?: T;
   phoneNumber?: T;
   businessEmail?: T;
@@ -2088,6 +2114,7 @@ export interface LeadsSelect<T extends boolean = true> {
   subject?: T;
   services?: T;
   message?: T;
+  leadOrigin?: T;
   source?: T;
   status?: T;
   priority?: T;
@@ -2108,6 +2135,9 @@ export interface LeadsSelect<T extends boolean = true> {
   notes?: T;
   emailSent?: T;
   emailSentAt?: T;
+  pushedToClickUp?: T;
+  clickupTaskId?: T;
+  clickupTaskUrl?: T;
   submittedAt?: T;
   updatedAt?: T;
   createdAt?: T;

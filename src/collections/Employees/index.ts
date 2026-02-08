@@ -30,12 +30,28 @@ export const Employees: CollectionConfig = {
       name: 'fullName',
       type: 'text',
       required: true,
-      label: 'Full Name',
+      label: 'Full Name (English)',
+    },
+    {
+      name: 'fullNameArabic',
+      type: 'text',
+      label: 'Full Name (Arabic)',
+      admin: {
+        description: 'Arabic name for profile when user selects Arabic language',
+      },
     },
     {
       name: 'position',
       type: 'text',
-      label: 'Position / Job Title',
+      label: 'Position / Job Title (English)',
+    },
+    {
+      name: 'positionArabic',
+      type: 'text',
+      label: 'Position / Job Title (Arabic)',
+      admin: {
+        description: 'Arabic job title for profile when user selects Arabic language',
+      },
     },
     {
       name: 'profileImage',

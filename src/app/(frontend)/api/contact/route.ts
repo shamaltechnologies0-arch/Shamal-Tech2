@@ -71,6 +71,7 @@ export async function POST(request: Request) {
           subject: subject || undefined,
           services: services && Array.isArray(services) ? services : undefined,
           message,
+          leadOrigin: 'website', // Triggers ClickUp sync via afterChange hook
           source: 'contact-form',
           status: 'new',
           priority: 'medium',

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
+import { pushToClickUp } from './hooks/pushToClickUp'
 
 export const Leads: CollectionConfig = {
   slug: 'leads',
@@ -11,7 +12,7 @@ export const Leads: CollectionConfig = {
     delete: anyone,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'status', 'assignedTo', 'source', 'createdAt'],
+    defaultColumns: ['name', 'email', 'status', 'assignedTo', 'leadOrigin', 'pushedToClickUp', 'createdAt'],
     useAsTitle: 'name',
     group: 'CRM',
   },
@@ -68,6 +69,19 @@ export const Leads: CollectionConfig = {
       required: true,
       admin: {
         description: 'Initial message from the lead',
+      },
+    },
+    {
+      name: 'leadOrigin',
+      type: 'select',
+      options: [
+        { label: 'Website', value: 'website' },
+        { label: 'Admin', value: 'admin' },
+      ],
+      defaultValue: 'admin',
+      required: true,
+      admin: {
+        description: 'Where was this lead created? Website form triggers ClickUp sync.',
       },
     },
     {
@@ -308,6 +322,32 @@ export const Leads: CollectionConfig = {
         description: 'When the initial response email was sent',
       },
     },
+    // --- ClickUp integration (read-only, set by hook) ---
+    {
+      name: 'pushedToClickUp',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Whether this lead was synced to ClickUp Sales Pipeline',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'clickupTaskId',
+      type: 'text',
+      admin: {
+        description: 'ClickUp task ID (set automatically for website leads)',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'clickupTaskUrl',
+      type: 'text',
+      admin: {
+        description: 'Link to the ClickUp task',
+        readOnly: true,
+      },
+    },
     {
       name: 'submittedAt',
       type: 'date',
@@ -332,20 +372,7 @@ export const Leads: CollectionConfig = {
   ],
   timestamps: true,
   hooks: {
-    afterChange: [
-      async ({ doc, req, operation }) => {
-        // Auto-assign to sales team if unassigned and status changes to qualified
-        if (
-          operation === 'update' &&
-          doc.status === 'qualified' &&
-          !doc.assignedTo &&
-          req.user
-        ) {
-          // You can implement logic to auto-assign based on workload or round-robin
-          // For now, we'll leave it unassigned for manual assignment
-        }
-      },
-    ],
+    afterChange: [pushToClickUp],
   },
 }
 

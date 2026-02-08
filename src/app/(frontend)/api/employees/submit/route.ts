@@ -9,7 +9,9 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData()
     const fullName = formData.get('fullName') as string
+    const fullNameArabic = (formData.get('fullNameArabic') as string) || undefined
     const position = (formData.get('position') as string) || undefined
+    const positionArabic = (formData.get('positionArabic') as string) || undefined
     const phoneNumber = formData.get('phoneNumber') as string
     const businessEmail = formData.get('businessEmail') as string
     const linkedInUrl = (formData.get('linkedInUrl') as string) || undefined
@@ -112,7 +114,9 @@ export async function POST(request: Request) {
       collection: 'employees',
       data: {
         fullName: fullName.trim(),
+        fullNameArabic: fullNameArabic?.trim() || undefined,
         position: position?.trim() || undefined,
+        positionArabic: positionArabic?.trim() || undefined,
         profileImage: profileImageId,
         phoneNumber: phoneNumber.trim(),
         businessEmail: businessEmail.trim(),

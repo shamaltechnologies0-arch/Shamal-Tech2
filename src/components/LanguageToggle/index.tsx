@@ -2,32 +2,15 @@
 
 import React from 'react'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
 
 export const LanguageToggle: React.FC<{ className?: string }> = ({ className }) => {
-  // Initialize with 'en' to avoid hydration mismatch, will be updated in useEffect
-  const [language, setLanguage] = React.useState<string>('en')
-  const [mounted, setMounted] = React.useState(false)
-
-  // Initialize language from localStorage after mount
-  React.useEffect(() => {
-    setMounted(true)
-    const savedLanguage = window.localStorage.getItem('language') || 'en'
-    setLanguage(savedLanguage)
-    // Apply initial language settings (InitLanguage script handles this, but ensure consistency)
-    document.documentElement.setAttribute('lang', savedLanguage)
-    document.documentElement.setAttribute('dir', savedLanguage === 'ar' ? 'rtl' : 'ltr')
-  }, [])
-
+  const { language, setLanguage } = useLanguage()
   const isArabic = language === 'ar'
 
   const handleToggle = () => {
     const newLanguage = isArabic ? 'en' : 'ar'
-    setLanguage(newLanguage)
-    window.localStorage.setItem('language', newLanguage)
-    
-    // Update document attributes
-    document.documentElement.setAttribute('lang', newLanguage)
-    document.documentElement.setAttribute('dir', newLanguage === 'ar' ? 'rtl' : 'ltr')
+    setLanguage(newLanguage as 'en' | 'ar')
   }
 
   return (

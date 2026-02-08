@@ -10,7 +10,9 @@ import { User, Phone, Mail, Linkedin, Globe, FileText, CheckCircle2, Briefcase }
 export function EmployeeProfileForm() {
   const [formData, setFormData] = useState({
     fullName: '',
+    fullNameArabic: '',
     position: '',
+    positionArabic: '',
     phoneNumber: '',
     businessEmail: '',
     linkedInUrl: '',
@@ -40,7 +42,9 @@ export function EmployeeProfileForm() {
     try {
       const data = new FormData()
       data.append('fullName', formData.fullName)
+      if (formData.fullNameArabic) data.append('fullNameArabic', formData.fullNameArabic)
       if (formData.position) data.append('position', formData.position)
+      if (formData.positionArabic) data.append('positionArabic', formData.positionArabic)
       data.append('phoneNumber', formData.phoneNumber)
       data.append('businessEmail', formData.businessEmail)
       if (formData.linkedInUrl) data.append('linkedInUrl', formData.linkedInUrl)
@@ -66,7 +70,9 @@ export function EmployeeProfileForm() {
       setProfileUrl(result.profileUrl || null)
       setFormData({
         fullName: '',
+        fullNameArabic: '',
         position: '',
+        positionArabic: '',
         phoneNumber: '',
         businessEmail: '',
         linkedInUrl: '',
@@ -104,6 +110,19 @@ export function EmployeeProfileForm() {
       </div>
 
       <div>
+        <Label htmlFor="fullNameArabic">Full Name (Arabic)</Label>
+        <Input
+          id="fullNameArabic"
+          name="fullNameArabic"
+          type="text"
+          value={formData.fullNameArabic}
+          onChange={handleChange}
+          placeholder="الاسم الكامل"
+          dir="rtl"
+        />
+      </div>
+
+      <div>
         <Label htmlFor="position">
           <Briefcase className="inline h-4 w-4 mr-2" />
           Position / Job Title
@@ -115,6 +134,19 @@ export function EmployeeProfileForm() {
           value={formData.position}
           onChange={handleChange}
           placeholder="e.g. CEO, Senior Engineer"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="positionArabic">Position (Arabic)</Label>
+        <Input
+          id="positionArabic"
+          name="positionArabic"
+          type="text"
+          value={formData.positionArabic}
+          onChange={handleChange}
+          placeholder="المسمى الوظيفي"
+          dir="rtl"
         />
       </div>
 
