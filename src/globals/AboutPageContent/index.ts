@@ -19,13 +19,37 @@ export const AboutPageContent: GlobalConfig = {
       label: 'Hero Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Our Story',
+          admin: {
+            description: 'Small label above the title (e.g. "Our Story")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           required: true,
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'image',
@@ -56,12 +80,27 @@ export const AboutPageContent: GlobalConfig = {
           type: 'text',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
         },
         {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
+        },
+        {
           name: 'content',
           type: 'textarea',
+        },
+        {
+          name: 'contentAr',
+          type: 'textarea',
+          label: 'Content (Arabic)',
         },
         {
           name: 'image',
@@ -80,12 +119,27 @@ export const AboutPageContent: GlobalConfig = {
           type: 'text',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
         },
         {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
+        },
+        {
           name: 'content',
           type: 'textarea',
+        },
+        {
+          name: 'contentAr',
+          type: 'textarea',
+          label: 'Content (Arabic)',
         },
         {
           name: 'image',
@@ -105,8 +159,18 @@ export const AboutPageContent: GlobalConfig = {
           defaultValue: 'Why Choose Us',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'subtitle',
           type: 'text',
+        },
+        {
+          name: 'subtitleAr',
+          type: 'text',
+          label: 'Subtitle (Arabic)',
         },
         {
           name: 'items',
@@ -119,8 +183,18 @@ export const AboutPageContent: GlobalConfig = {
               required: true,
             },
             {
+              name: 'titleAr',
+              type: 'text',
+              label: 'Title (Arabic)',
+            },
+            {
               name: 'description',
               type: 'textarea',
+            },
+            {
+              name: 'descriptionAr',
+              type: 'textarea',
+              label: 'Description (Arabic)',
             },
             {
               name: 'content',
@@ -128,6 +202,11 @@ export const AboutPageContent: GlobalConfig = {
               admin: {
                 description: 'Alternative to description field',
               },
+            },
+            {
+              name: 'contentAr',
+              type: 'textarea',
+              label: 'Content (Arabic)',
             },
             {
               name: 'image',
@@ -152,6 +231,11 @@ export const AboutPageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'nameAr',
+          type: 'text',
+          label: 'Name (Arabic)',
+        },
+        {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
@@ -159,6 +243,11 @@ export const AboutPageContent: GlobalConfig = {
         {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
       ],
     },
@@ -173,8 +262,18 @@ export const AboutPageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'icon',
@@ -199,8 +298,69 @@ export const AboutPageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
+        },
+      ],
+    },
+    {
+      name: 'leadershipSection',
+      type: 'group',
+      label: 'Leadership Section Header',
+      admin: {
+        description: 'Badge, title, and description for the Leadership/Meet the Team section.',
+      },
+      fields: [
+        {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'OUR PEOPLE',
+          admin: {
+            description: 'Small label above the section title (e.g. "OUR PEOPLE")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Section Title',
+          defaultValue: 'Meet the Team Driving the Vision',
+          admin: {
+            description: 'Main heading for the leadership section',
+          },
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Description',
+          admin: {
+            description: 'Introductory text below the title',
+          },
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
       ],
     },
@@ -208,6 +368,9 @@ export const AboutPageContent: GlobalConfig = {
       name: 'leadership',
       type: 'array',
       label: 'Leadership Team',
+      admin: {
+        description: 'Team members displayed in the carousel. Each member has name, position, bio, and optional image.',
+      },
       fields: [
         {
           name: 'name',
@@ -215,9 +378,19 @@ export const AboutPageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'nameAr',
+          type: 'text',
+          label: 'Name (Arabic)',
+        },
+        {
           name: 'position',
           type: 'text',
           required: true,
+        },
+        {
+          name: 'positionAr',
+          type: 'text',
+          label: 'Position (Arabic)',
         },
         {
           name: 'bio',
@@ -234,9 +407,69 @@ export const AboutPageContent: GlobalConfig = {
           },
         },
         {
+          name: 'bioAr',
+          type: 'textarea',
+          label: 'Bio (Arabic)',
+          admin: {
+            description: 'Bio content should not exceed 700 characters for Arabic.',
+            rows: 4,
+          },
+        },
+        {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
+        },
+      ],
+    },
+    {
+      name: 'clientsSection',
+      type: 'group',
+      label: 'Clients Section Header',
+      admin: {
+        description: 'Badge, title, and description for the Clients/Partners section.',
+      },
+      fields: [
+        {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Partners',
+          admin: {
+            description: 'Small label above the section title (e.g. "Partners")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Section Title',
+          defaultValue: 'Our Clients',
+          admin: {
+            description: 'Main heading for the clients section',
+          },
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Description',
+          admin: {
+            description: 'Introductory text below the title',
+          },
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
       ],
     },
@@ -272,6 +505,11 @@ export const AboutPageContent: GlobalConfig = {
           label: 'Client Name',
         },
         {
+          name: 'nameAr',
+          type: 'text',
+          label: 'Client Name (Arabic)',
+        },
+        {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
@@ -283,6 +521,14 @@ export const AboutPageContent: GlobalConfig = {
           type: 'textarea',
           required: true,
           label: 'Testimonial Review',
+          admin: {
+            rows: 4,
+          },
+        },
+        {
+          name: 'reviewAr',
+          type: 'textarea',
+          label: 'Testimonial Review (Arabic)',
           admin: {
             rows: 4,
           },
@@ -300,8 +546,18 @@ export const AboutPageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'icon',

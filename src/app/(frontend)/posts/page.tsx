@@ -1,6 +1,6 @@
 import type { Metadata } from 'next/types'
 
-import { PageRange } from '../../../components/PageRange'
+import { PageRangeClient } from '../../../components/PageRange/PageRangeClient'
 import { Pagination } from '../../../components/Pagination'
 import { PostsClient } from './PostsClient'
 import configPromise from '../../../payload.config'
@@ -9,7 +9,7 @@ import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { LivePreviewListener } from '../../../components/LivePreviewListener'
 import Image from 'next/image'
-import { Badge } from '../../../components/ui/badge'
+import { PostsPageHero } from '../../../components/sections/PostsPageHero.client'
 import React from 'react'
 import PageClient from './page.client'
 import { ScrollSection } from '../../../components/sections/ScrollSection'
@@ -26,8 +26,12 @@ export default async function Page() {
   // Fetch posts page content from global
   const postsPageContent = (await getCachedGlobal('posts-page-content', 2)()) as {
     hero?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       backgroundImage?:
         | {
             url?: string
@@ -53,6 +57,9 @@ export default async function Page() {
     overrideAccess: false,
     select: {
       title: true,
+      titleAr: true,
+      description: true,
+      descriptionAr: true,
       slug: true,
       categories: true,
       meta: true,
@@ -95,22 +102,14 @@ export default async function Page() {
         <div className="relative z-10 container mx-auto px-4 py-20 w-full">
           <ParallaxElement speed={0.2} direction="up">
             <CinematicReveal delay={0.1} duration={1.2}>
-              <div className="max-w-4xl mx-auto text-center space-y-8">
-                <Badge
-                  variant="outline"
-                  className="mb-6 border-white/30 text-white bg-white/10 mt-20 backdrop-blur-sm px-4 py-1.5 text-sm font-semibold"
-                >
-                  Insights
-                </Badge>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold tracking-tight text-white drop-shadow-lg">
-                  {postsPageContent?.hero?.title || 'Blog Posts'}
-                </h1>
-                {postsPageContent?.hero?.description && (
-                  <p className="text-xl md:text-2xl lg:text-3xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
-                    {postsPageContent.hero.description}
-                  </p>
-                )}
-              </div>
+              <PostsPageHero
+                badge={postsPageContent?.hero?.badge}
+                badgeAr={postsPageContent?.hero?.badgeAr}
+                title={postsPageContent?.hero?.title}
+                titleAr={postsPageContent?.hero?.titleAr}
+                description={postsPageContent?.hero?.description}
+                descriptionAr={postsPageContent?.hero?.descriptionAr}
+              />
             </CinematicReveal>
           </ParallaxElement>
         </div>
@@ -119,7 +118,7 @@ export default async function Page() {
       <div className="py-16">
         <PageClient />
         <div className="container mb-8">
-          <PageRange
+          <PageRangeClient
             collection="posts"
             currentPage={posts.page}
             limit={12}

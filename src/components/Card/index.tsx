@@ -9,10 +9,12 @@ import type { Post } from '../../payload-types'
 import { Media } from '../Media'
 import { Card as ShadcnCard, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 export type CardPostData = Pick<
   Post,
-  'slug' | 'categories' | 'meta' | 'title' | 'featuredImage' | 'heroImage'
+  'slug' | 'categories' | 'meta' | 'title' | 'titleAr' | 'description' | 'descriptionAr' | 'featuredImage' | 'heroImage'
 >
 
 /** Helper to get a displayable media object from meta.image, featuredImage, or heroImage */
@@ -38,14 +40,17 @@ export const Card: React.FC<{
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
+  const { language } = useLanguage()
 
-  const { slug, categories, meta, title } = doc || {}
-  const { description } = meta || {}
+  const { slug, categories, meta, title, titleAr, description, descriptionAr } = doc || {}
+  const metaDesc = meta && typeof meta === 'object' && 'description' in meta ? meta.description : undefined
   const displayImage = getDisplayImage(doc)
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
-  const titleToUse = titleFromProps || title
-  const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
+  const localizedTitle = getLocalizedValue(title, titleAr, language)
+  const titleToUse = titleFromProps || localizedTitle
+  const excerpt = getLocalizedValue(description ?? metaDesc, descriptionAr, language)
+  const sanitizedDescription = excerpt?.replace(/\s/g, ' ') // replace non-breaking space with white space
   const href = `/${relationTo}/${slug}`
 
   return (
@@ -62,8 +67,8 @@ export const Card: React.FC<{
           <div className="flex flex-wrap gap-2 mb-2">
                 {categories?.map((category, index) => {
                   if (typeof category === 'object') {
-                    const { title: titleFromCategory } = category
-                    const categoryTitle = titleFromCategory || 'Untitled category'
+                    const { title: titleFromCategory, titleAr: titleArFromCategory } = category as { title?: string; titleAr?: string }
+                    const categoryTitle = getLocalizedValue(titleFromCategory, titleArFromCategory, language) || 'Untitled category'
                     return (
                   <Badge key={index} variant="secondary" className="uppercase text-xs">
                         {categoryTitle}

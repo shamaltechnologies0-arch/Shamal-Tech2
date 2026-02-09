@@ -7,8 +7,10 @@ import type { Service } from '../payload-types'
 export function serializeService(service: Service): {
   id: string
   title: string | null
+  titleAr?: string | null
   slug: string | null
   heroDescription: string | null
+  heroDescriptionAr?: string | null
   heroImage: {
     url?: string
     id?: string
@@ -17,8 +19,10 @@ export function serializeService(service: Service): {
   return {
     id: String(service.id || ''),
     title: service.title || null,
+    titleAr: (service as { titleAr?: string | null }).titleAr ?? null,
     slug: service.slug || null,
     heroDescription: service.heroDescription ?? null,
+    heroDescriptionAr: (service as { heroDescriptionAr?: string | null }).heroDescriptionAr ?? null,
     heroImage: (() => {
       if (!service.heroImage) return null
       

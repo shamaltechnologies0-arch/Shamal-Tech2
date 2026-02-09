@@ -19,10 +19,29 @@ export const ContactPageContent: GlobalConfig = {
       label: 'Hero Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge',
+          defaultValue: 'Get In Touch',
+          admin: {
+            description: 'Small label above the title',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           required: true,
           defaultValue: 'Contact Us',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
         },
         {
           name: 'subtitle',
@@ -31,6 +50,11 @@ export const ContactPageContent: GlobalConfig = {
           admin: {
             description: 'Subtitle or description for the contact page',
           },
+        },
+        {
+          name: 'subtitleAr',
+          type: 'textarea',
+          label: 'Subtitle (Arabic)',
         },
         {
           name: 'backgroundImage',

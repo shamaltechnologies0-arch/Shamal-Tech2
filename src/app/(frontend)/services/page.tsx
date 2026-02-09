@@ -13,6 +13,8 @@ import { ParallaxElement } from '../../../components/sections/ParallaxElement'
 import { CinematicReveal } from '../../../utilities/animations'
 import { ServicesShowcaseCarousel } from '../../../components/sections/ServicesShowcaseCarousel.client'
 import { SlidingServicesSection } from '../../../components/sections/SlidingServicesSection.client'
+import { ServicesPageHero } from '../../../components/sections/ServicesPageHero.client'
+import { ServicesCTASection } from '../../../components/sections/ServicesCTASection.client'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,8 +45,12 @@ export default async function ServicesPage() {
   // Fetch services page content from global
   const servicesPageContent = (await getCachedGlobal('services-page-content', 3)()) as {
     hero?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       subtitle?: string
+      subtitleAr?: string
       backgroundImage?: {
         id?: string
         url?: string
@@ -103,9 +109,7 @@ export default async function ServicesPage() {
     })
   }
 
-  // Get hero content from CMS or use defaults
-  const heroTitle = servicesPageContent?.hero?.title || 'Our Services'
-  const heroSubtitle = servicesPageContent?.hero?.subtitle || 'Comprehensive drone and geospatial solutions for your business needs'
+  // Get hero content from CMS - passed to client component for language support
   const heroBackgroundImage = servicesPageContent?.hero?.backgroundImage
 
   return (
@@ -136,28 +140,14 @@ export default async function ServicesPage() {
             <div className="absolute inset-0 bg-black/50" />
           </div>
         )}
-        <ParallaxElement speed={0.2} direction="up">
-          <CinematicReveal delay={0.1} duration={1.2}>
-            <div className="container mx-auto px-4 w-full relative z-10">
-              <div className="max-w-4xl mx-auto text-center space-y-8">
-                <Badge
-                  variant="outline"
-                  className="mb-6 border-white/30 text-white bg-white/10 backdrop-blur-sm px-4 py-1.5 text-sm font-semibold"
-                >
-                  Services
-                </Badge>
-                <h1 className="text-hero font-display font-bold tracking-tight text-white drop-shadow-2xl">
-                  {heroTitle}
-                </h1>
-                {heroSubtitle && (
-                  <p className="text-body-large text-white/95 max-w-3xl mx-auto font-medium drop-shadow-lg">
-                    {heroSubtitle}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CinematicReveal>
-        </ParallaxElement>
+        <ServicesPageHero
+          badge={servicesPageContent?.hero?.badge}
+          badgeAr={servicesPageContent?.hero?.badgeAr}
+          title={servicesPageContent?.hero?.title}
+          titleAr={servicesPageContent?.hero?.titleAr}
+          subtitle={servicesPageContent?.hero?.subtitle}
+          subtitleAr={servicesPageContent?.hero?.subtitleAr}
+        />
       </ScrollSection>
 
       {/* Dynamic Sliding Services Section */}
@@ -166,6 +156,7 @@ export default async function ServicesPage() {
           services={services.docs.map((service) => ({
             id: String(service.id),
             title: service.title || null,
+            titleAr: service.titleAr || null,
             slug: service.slug || null,
           }))}
         />
@@ -195,40 +186,7 @@ export default async function ServicesPage() {
 
       {/* CTA Section - Full Viewport */}
       <ScrollSection id="cta" fullViewport bgVariant="gradient" parallax>
-        <div className="container mx-auto px-4 w-full">
-          <ParallaxElement speed={0.2} direction="up">
-            <CinematicReveal delay={0.2} duration={1.2} scale>
-              <Card className="max-w-4xl mx-auto border-2 border-white/30 shadow-2xl bg-background/95 backdrop-blur-sm">
-                <CardHeader className="text-center space-y-6">
-                  <Badge
-                    variant="outline"
-                    className="w-fit mx-auto border-logo-blue/60 text-logo-blue bg-white/90 backdrop-blur-sm px-4 py-1.5 text-sm font-semibold shadow-md"
-                  >
-                    Get Started
-                  </Badge>
-                  <CardTitle className="text-display-large font-display font-bold text-foreground">
-                    <span className="text-gradient">Ready to Transform Your Projects?</span>
-                  </CardTitle>
-                  <CardDescription className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    Contact us today to discuss how our services can help you achieve your goals
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <Button
-                    asChild
-                    size="lg"
-                    className="text-base px-8 h-14 bg-logo-blue hover:bg-logo-blue/90"
-                  >
-                    <Link href="/contact">
-                      Contact Us
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </CinematicReveal>
-          </ParallaxElement>
-        </div>
+        <ServicesCTASection />
       </ScrollSection>
 
       {/* JSON-LD Structured Data */}

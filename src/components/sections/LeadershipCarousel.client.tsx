@@ -4,12 +4,17 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 type LeadershipMember = {
   name?: string
+  nameAr?: string
   position?: string
+  positionAr?: string
   role?: string
   bio?: string
+  bioAr?: string
   image?: {
     id?: string
     url?: string
@@ -23,6 +28,7 @@ interface LeadershipCarouselProps {
 }
 
 export function LeadershipCarousel({ members }: LeadershipCarouselProps) {
+  const { language } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
@@ -116,6 +122,14 @@ export function LeadershipCarousel({ members }: LeadershipCarouselProps) {
           }}
         >
           {members.map((member, index) => {
+            const displayName = getLocalizedValue(member.name, member.nameAr, language)
+            const displayPosition = getLocalizedValue(
+              member.position || member.role,
+              member.positionAr,
+              language
+            )
+            const displayBio = getLocalizedValue(member.bio, member.bioAr, language)
+
             // Handle different image formats: object with url, object with filename, or string ID
             // With depth 3, images should be fully populated objects, but handle edge cases
             let imageUrl: string | undefined
@@ -153,7 +167,7 @@ export function LeadershipCarousel({ members }: LeadershipCarouselProps) {
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
-                        alt={member.image && typeof member.image === 'object' ? (member.image.alt || member.name || 'Team member') : member.name || 'Team member'}
+                        alt={member.image && typeof member.image === 'object' ? (member.image.alt || displayName || 'Team member') : displayName || 'Team member'}
                         fill
                         className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
                         loading="lazy"
@@ -168,21 +182,21 @@ export function LeadershipCarousel({ members }: LeadershipCarouselProps) {
                   {/* Name and Position (visible by default, moves on hover) */}
                   <div className="flex flex-col relative z-10">
                     <h5 className="2xl:text-2xl xl:text-xl lg:text-lg md:text-lg text-base max-[380px]:text-sm font-bold pt-2 opacity-100 group-hover:opacity-0 transition-all duration-300 lg:text-start text-center text-logo-navy">
-                      {member.name}
+                      {displayName}
                     </h5>
                     <h6 className="xl:text-base lg:text-sm md:text-sm text-xs max-[380px]:text-xs font-normal opacity-100 group-hover:opacity-0 transition-all duration-300 lg:text-start text-center text-logo-blue">
-                      {member.position || member.role}
+                      {displayPosition}
                     </h6>
                   </div>
 
                   {/* Hover Overlay with Bio - covers entire card */}
                   <div className="people-overlay bg-[#002340ea] flex flex-col justify-center w-full h-full lg:p-[30px] p-5 absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 rounded-[10px]">
                     <h6 className="3xl:text-[28px] 2xl:text-2xl md:text-lg xl:text-xl lg:text-lg text-base max-[380px]:text-sm font-bold text-white text-start mb-4">
-                      {member.name}
+                      {displayName}
                     </h6>
-                    {member.bio && (
+                    {displayBio && (
                       <div className="main-para 3xl:!text-lg 2xl:!text-base lg:!text-sm md:!text-sm !text-white font-light text-start leading-relaxed overflow-y-auto">
-                        {member.bio}
+                        {displayBio}
                       </div>
                     )}
                   </div>

@@ -7,15 +7,22 @@ import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
 import { ArrowRight, ArrowLeft, ChevronRight } from 'lucide-react'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
+import { getCommonTranslations } from '../../lib/translations/common'
+import { getServiceImagePath } from '../../utilities/getServiceImage'
 import type { Media } from '../../payload-types'
 
 type Service = {
   id: string
   title: string
+  titleAr?: string | null
   slug: string
   heroDescription?: string | null
+  heroDescriptionAr?: string | null
   heroImage?: {
     url?: string | null
+    filename?: string | null
     alt?: string | null
   } | string | Media | null
 }
@@ -25,6 +32,8 @@ interface ServicesShowcaseCarouselProps {
 }
 
 export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselProps) {
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -63,12 +72,28 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
 
   if (!currentService) return null
 
-  const imageUrl =
-    currentService.heroImage &&
-    typeof currentService.heroImage === 'object' &&
-    'url' in currentService.heroImage
-      ? currentService.heroImage.url
-      : null
+  // Resolve image URL: support Payload url (S3/production) and filename (local /media/)
+  let imageUrl: string | null = null
+  if (currentService.heroImage && typeof currentService.heroImage === 'object' && currentService.heroImage !== null) {
+    if ('url' in currentService.heroImage && currentService.heroImage.url) {
+      const url = String(currentService.heroImage.url)
+      imageUrl = url.startsWith('http') || url.startsWith('/')
+        ? url
+        : `/${url}`
+    } else if ('filename' in currentService.heroImage && currentService.heroImage.filename) {
+      imageUrl = `/media/${currentService.heroImage.filename}`
+    }
+  }
+  if (!imageUrl) {
+    imageUrl = getServiceImagePath(currentService.title)
+  }
+
+  const displayTitle = getLocalizedValue(currentService.title, currentService.titleAr, language)
+  const displayDescription = getLocalizedValue(
+    currentService.heroDescription,
+    currentService.heroDescriptionAr,
+    language
+  )
 
   return (
     <div className="w-full">
@@ -78,23 +103,23 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
         <div className="flex flex-col justify-center space-y-6 lg:space-y-8 order-2 lg:order-1">
           {/* Badge */}
           <div>
-            <Badge
-              variant="outline"
-              className="border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Services
-            </Badge>
+          <Badge
+            variant="outline"
+            className="border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider"
+          >
+            {t.nav.services}
+          </Badge>
           </div>
 
           {/* Title */}
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-logo-navy leading-tight">
-            {currentService.title}
+            {displayTitle}
           </h2>
 
           {/* Description */}
-          {currentService.heroDescription && (
+          {displayDescription && (
             <p className="text-lg md:text-xl text-logo-blue font-medium leading-relaxed max-w-2xl">
-              {currentService.heroDescription}
+              {displayDescription}
             </p>
           )}
 
@@ -106,7 +131,7 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
               className="bg-logo-blue hover:bg-logo-blue/90 text-white px-8 py-6 text-base font-semibold group"
             >
               <Link href={`/services/${currentService.slug}`}>
-                Learn more
+                {t.learnMore}
                 <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -153,7 +178,7 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
             <>
               <Image
                 src={imageUrl}
-                alt={currentService.title}
+                alt={displayTitle}
                 fill
                 className="object-cover"
                 priority={currentIndex === 0}
@@ -163,7 +188,7 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
               {/* Service Title Overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
                 <p className="text-white text-xl lg:text-2xl font-display font-semibold">
-                  {currentService.title}
+                  {displayTitle}
                 </p>
               </div>
             </>

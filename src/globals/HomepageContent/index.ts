@@ -31,8 +31,18 @@ export const HomepageContent: GlobalConfig = {
           required: true,
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'subtitle',
           type: 'textarea',
+        },
+        {
+          name: 'subtitleAr',
+          type: 'textarea',
+          label: 'Subtitle (Arabic)',
         },
         {
           name: 'ctaText',
@@ -41,10 +51,115 @@ export const HomepageContent: GlobalConfig = {
           defaultValue: 'Get Started',
         },
         {
+          name: 'ctaTextAr',
+          type: 'text',
+          label: 'CTA Button Text (Arabic)',
+        },
+        {
           name: 'backgroundImage',
           type: 'upload',
           relationTo: 'media',
           label: 'Background Image',
+        },
+      ],
+    },
+    {
+      name: 'impactStats',
+      type: 'group',
+      label: 'Impact / Stats Section',
+      admin: {
+        description: 'KPI statistics displayed in the "Our Impact" section (e.g. Projects Completed, Client Satisfaction). Drag to reorder.',
+      },
+      fields: [
+        {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Our Impact',
+          admin: {
+            description: 'Small label above the heading (e.g. "Our Impact")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Section Heading',
+          defaultValue: 'Delivering Excellence Across Industries',
+          admin: {
+            description: 'Main heading for the stats section',
+          },
+        },
+        {
+          name: 'headingAr',
+          type: 'text',
+          label: 'Section Heading (Arabic)',
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          label: 'Statistics',
+          required: true,
+          minRows: 1,
+          admin: {
+            description: 'Add statistics. Each has a numeric value, optional suffix (%, +), and label. Drag to reorder.',
+          },
+          fields: [
+            {
+              name: 'value',
+              type: 'number',
+              required: true,
+              label: 'Number Value',
+              admin: {
+                description: 'The numeric value to display (e.g. 100, 80, 11)',
+              },
+            },
+            {
+              name: 'suffix',
+              type: 'select',
+              label: 'Suffix',
+              defaultValue: '',
+              admin: {
+                description: 'Optional suffix after the number (e.g. % for percentage, + for "more than")',
+              },
+              options: [
+                { label: 'None', value: '' },
+                { label: 'Percent (%)', value: '%' },
+                { label: 'Plus (+)', value: '+' },
+              ],
+            },
+            {
+              name: 'prefix',
+              type: 'select',
+              label: 'Prefix',
+              defaultValue: '',
+              admin: {
+                description: 'Optional prefix before the number (e.g. + for "+80")',
+              },
+              options: [
+                { label: 'None', value: '' },
+                { label: 'Plus (+)', value: '+' },
+              ],
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              label: 'Label',
+              admin: {
+                description: 'Description below the number (e.g. "Projects Completed", "Client Satisfaction")',
+              },
+            },
+            {
+              name: 'labelAr',
+              type: 'text',
+              label: 'Label (Arabic)',
+            },
+          ],
         },
       ],
     },
@@ -59,8 +174,18 @@ export const HomepageContent: GlobalConfig = {
           defaultValue: 'Our Services',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'backgroundImage',
@@ -76,13 +201,37 @@ export const HomepageContent: GlobalConfig = {
       label: 'Sectors We Serve Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Industries',
+          admin: {
+            description: 'Small label above the section title (e.g. "Industries")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           defaultValue: 'SECTORS WE SERVE',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'backgroundImage',
@@ -137,10 +286,26 @@ export const HomepageContent: GlobalConfig = {
       label: 'About Preview Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Who We Are?',
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           label: 'Section Heading',
           required: true,
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Section Heading (Arabic)',
         },
         {
           name: 'description',
@@ -149,6 +314,11 @@ export const HomepageContent: GlobalConfig = {
           admin: {
             description: 'Description text displayed below the heading',
           },
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'imageColumn',
@@ -176,6 +346,21 @@ export const HomepageContent: GlobalConfig = {
           admin: {
             description: 'Rich text content to display in the right column below the description. Use headings, paragraphs, and bullet lists.',
           },
+        },
+        {
+          name: 'textColumnAr',
+          type: 'richText',
+          label: 'Text Column (Arabic)',
+          editor: lexicalEditor({
+            features: ({ rootFeatures }) => {
+              return [
+                ...rootFeatures,
+                HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }),
+                UnorderedListFeature(),
+                OrderedListFeature(),
+              ]
+            },
+          }),
         },
         {
           name: 'enableTwoColumn',
@@ -235,6 +420,14 @@ export const HomepageContent: GlobalConfig = {
               },
             },
             {
+              name: 'headingAr',
+              type: 'text',
+              label: 'Heading Text (Arabic)',
+              admin: {
+                condition: (data, siblingData) => siblingData?.textType === 'heading',
+              },
+            },
+            {
               name: 'headingLevel',
               type: 'select',
               label: 'Heading Level',
@@ -266,6 +459,14 @@ export const HomepageContent: GlobalConfig = {
               },
             },
             {
+              name: 'paragraphAr',
+              type: 'textarea',
+              label: 'Paragraph Text (Arabic)',
+              admin: {
+                condition: (data, siblingData) => siblingData?.textType === 'paragraph',
+              },
+            },
+            {
               name: 'bullets',
               type: 'array',
               label: 'Bullet Points',
@@ -279,6 +480,11 @@ export const HomepageContent: GlobalConfig = {
                   required: true,
                   label: 'Bullet Point',
                 },
+                {
+                  name: 'textAr',
+                  type: 'text',
+                  label: 'Bullet Point (Arabic)',
+                },
               ],
             },
           ],
@@ -288,6 +494,11 @@ export const HomepageContent: GlobalConfig = {
           type: 'text',
           label: 'CTA Button Text',
           defaultValue: 'Learn More',
+        },
+        {
+          name: 'ctaTextAr',
+          type: 'text',
+          label: 'CTA Button Text (Arabic)',
         },
         {
           name: 'backgroundImage',
@@ -307,14 +518,29 @@ export const HomepageContent: GlobalConfig = {
           type: 'text',
         },
         {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+        },
+        {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'ctaText',
           type: 'text',
           label: 'CTA Button Text',
           defaultValue: 'Read Blog',
+        },
+        {
+          name: 'ctaTextAr',
+          type: 'text',
+          label: 'CTA Button Text (Arabic)',
         },
         {
           name: 'backgroundImage',
@@ -356,18 +582,61 @@ export const HomepageContent: GlobalConfig = {
       label: 'Contact CTA Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Get In Touch',
+          admin: {
+            description: 'Small label above the heading',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
         },
         {
           name: 'description',
           type: 'textarea',
         },
         {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
+        },
+        {
           name: 'ctaText',
           type: 'text',
-          label: 'CTA Button Text',
-          defaultValue: 'Contact Us',
+          label: 'Primary Button Text',
+          defaultValue: 'Contact Us Today',
+          admin: {
+            description: 'Main CTA button (e.g. "Contact Us Today")',
+          },
+        },
+        {
+          name: 'ctaTextAr',
+          type: 'text',
+          label: 'Primary Button Text (Arabic)',
+        },
+        {
+          name: 'secondaryCtaText',
+          type: 'text',
+          label: 'Secondary Button Text',
+          defaultValue: 'Explore Services',
+        },
+        {
+          name: 'secondaryCtaTextAr',
+          type: 'text',
+          label: 'Secondary Button Text (Arabic)',
         },
         {
           name: 'backgroundImage',

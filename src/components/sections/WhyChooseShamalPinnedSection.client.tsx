@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Badge } from '../ui/badge'
 import Image from 'next/image'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 // Register ScrollTrigger plugin
 if (typeof window !== 'undefined' && gsap && ScrollTrigger) {
@@ -19,8 +21,11 @@ if (typeof window !== 'undefined' && gsap && ScrollTrigger) {
 
 interface WhyChooseItem {
   title?: string
+  titleAr?: string
   description?: string
+  descriptionAr?: string
   content?: string
+  contentAr?: string
   image?: {
     id?: string
     url?: string
@@ -32,7 +37,9 @@ interface WhyChooseItem {
 
 interface WhyChooseShamalPinnedSectionProps {
   title?: string
+  titleAr?: string
   subtitle?: string
+  subtitleAr?: string
   description?: string
   items: WhyChooseItem[]
   backgroundImage?: {
@@ -43,12 +50,17 @@ interface WhyChooseShamalPinnedSectionProps {
 
 export function WhyChooseShamalPinnedSection({
   title = 'Why Choose Shamal',
+  titleAr,
   subtitle,
+  subtitleAr,
   description,
   items,
   backgroundImage,
 }: WhyChooseShamalPinnedSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const { language } = useLanguage()
+  const displayTitle = getLocalizedValue(title, titleAr, language)
+  const displaySubtitle = getLocalizedValue(subtitle, subtitleAr, language)
   const leftColumnRef = useRef<HTMLDivElement>(null)
   const rightColumnWrapperRef = useRef<HTMLDivElement>(null)
   const rightColumnInnerRef = useRef<HTMLDivElement>(null)
@@ -279,11 +291,11 @@ export function WhyChooseShamalPinnedSection({
                 Advantages
               </Badge>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-foreground">
-                {title}
+                {displayTitle}
               </h2>
-              {subtitle && (
+              {displaySubtitle && (
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-lg leading-relaxed font-medium">
-                  {subtitle}
+                  {displaySubtitle}
                 </p>
               )}
               {description && (
@@ -331,7 +343,7 @@ export function WhyChooseShamalPinnedSection({
                         <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                           <Image
                             src={itemImage}
-                            alt={item.image && typeof item.image === 'object' ? (item.image.alt || item.title || 'Why choose item image') : item.title || 'Why choose item image'}
+                            alt={item.image && typeof item.image === 'object' ? (item.image.alt || getLocalizedValue(item.title, item.titleAr, language) || 'Why choose item image') : getLocalizedValue(item.title, item.titleAr, language) || 'Why choose item image'}
                             fill
                             className="object-cover"
                           />
@@ -339,13 +351,13 @@ export function WhyChooseShamalPinnedSection({
                       )}
                       <CardHeader>
                         <CardTitle className="text-xl md:text-2xl font-display font-bold text-foreground">
-                          {item.title}
+                          {getLocalizedValue(item.title, item.titleAr, language)}
                         </CardTitle>
                       </CardHeader>
-                      {(item.description || item.content) && (
+                      {(getLocalizedValue(item.description, item.descriptionAr, language) || getLocalizedValue(item.content, item.contentAr, language)) && (
                         <CardContent>
                           <CardDescription className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                            {item.description || item.content}
+                            {getLocalizedValue(item.description, item.descriptionAr, language) || getLocalizedValue(item.content, item.contentAr, language)}
                           </CardDescription>
                         </CardContent>
                       )}

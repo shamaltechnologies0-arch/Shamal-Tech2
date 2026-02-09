@@ -1,6 +1,8 @@
 'use client'
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 type Language = 'en' | 'ar'
 
@@ -11,6 +13,27 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | null>(null)
 
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
+
+/**
+ * Refreshes GSAP ScrollTrigger after layout changes (e.g. RTL/LTR toggle).
+ * Defers execution so the DOM has time to update.
+ */
+function refreshScrollTriggerAfterLayoutChange() {
+  if (typeof window === 'undefined') return
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      try {
+        ScrollTrigger.refresh(true)
+      } catch {
+        // Ignore - layout may still be settling
+      }
+    })
+  })
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en')
 
@@ -20,12 +43,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang)
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('language', lang)
-      document.documentElement.setAttribute('lang', lang)
-      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+      try {
+        window.localStorage.setItem('language', lang)
+        document.documentElement.setAttribute('lang', lang)
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+      } catch (e) {
+        console.warn('LanguageContext: Error updating language attributes', e)
+      }
+      refreshScrollTriggerAfterLayoutChange()
     }
+    setLanguageState(lang)
   }, [])
 
   return (

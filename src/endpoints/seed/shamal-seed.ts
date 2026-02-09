@@ -301,6 +301,18 @@ export const shamalSeed = async ({
           'Pioneering provider of drone and geospatial solutions in Saudi Arabia',
         ctaText: 'Get Started',
       },
+        impactStats: {
+          badge: 'Our Impact',
+          badgeAr: 'تأثيرنا',
+          heading: 'Delivering Excellence Across Industries',
+          headingAr: 'تقديم التميز عبر الصناعات',
+          stats: [
+            { value: 100, suffix: '+', label: 'Projects Completed', labelAr: 'مشاريع منجزة' },
+            { value: 80, suffix: '+', label: 'Expert Team', labelAr: 'فريق خبراء' },
+            { value: 11, label: 'Sectors Served', labelAr: 'قطاعات نخدمها' },
+            { value: 90, suffix: '%', label: 'Client Satisfaction', labelAr: 'رضا العملاء' },
+          ],
+        },
         servicesOverview: {
           title: 'Our Services',
           description: 'Comprehensive drone and geospatial solutions for your needs',
@@ -321,9 +333,16 @@ export const shamalSeed = async ({
           ctaText: 'Read Blog',
         },
         contactCTA: {
+          badge: 'Get In Touch',
+          badgeAr: 'تواصل معنا',
           title: 'Get In Touch',
+          titleAr: 'تواصل معنا',
           description: 'Contact us to discuss your project needs',
-          ctaText: 'Contact Us',
+          descriptionAr: 'تواصل معنا لمناقشة احتياجات مشروعك',
+          ctaText: 'Contact Us Today',
+          ctaTextAr: 'تواصل معنا اليوم',
+          secondaryCtaText: 'Explore Services',
+          secondaryCtaTextAr: 'استكشف خدماتنا',
         },
     }
 

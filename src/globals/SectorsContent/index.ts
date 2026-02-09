@@ -25,6 +25,11 @@ export const SectorsContent: GlobalConfig = {
           label: 'Sector Name',
         },
         {
+          name: 'nameAr',
+          type: 'text',
+          label: 'Sector Name (Arabic)',
+        },
+        {
           name: 'slug',
           type: 'text',
           required: true,
@@ -33,6 +38,11 @@ export const SectorsContent: GlobalConfig = {
         {
           name: 'description',
           type: 'textarea',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'image',
@@ -67,8 +77,18 @@ export const SectorsContent: GlobalConfig = {
               required: true,
             },
             {
+              name: 'titleAr',
+              type: 'text',
+              label: 'Title (Arabic)',
+            },
+            {
               name: 'description',
               type: 'textarea',
+            },
+            {
+              name: 'descriptionAr',
+              type: 'textarea',
+              label: 'Description (Arabic)',
             },
           ],
         },
@@ -83,8 +103,18 @@ export const SectorsContent: GlobalConfig = {
               required: true,
             },
             {
+              name: 'titleAr',
+              type: 'text',
+              label: 'Title (Arabic)',
+            },
+            {
               name: 'description',
               type: 'textarea',
+            },
+            {
+              name: 'descriptionAr',
+              type: 'textarea',
+              label: 'Description (Arabic)',
             },
           ],
         },

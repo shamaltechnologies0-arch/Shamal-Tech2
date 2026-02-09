@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useLanguage } from '../../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../../lib/translations/common'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
@@ -32,12 +34,14 @@ interface ProductsClientProps {
 }
 
 export function ProductsClient({ productsByCategory, allProducts }: ProductsClientProps) {
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
   const [activeCategory, setActiveCategory] = useState<'drones' | 'payloads' | 'other'>('drones')
 
   const categories = [
-    { id: 'drones' as const, label: 'Drones', count: productsByCategory.drones.length },
-    { id: 'payloads' as const, label: 'Payloads', count: productsByCategory.payloads.length },
-    { id: 'other' as const, label: 'Other', count: productsByCategory.other.length },
+    { id: 'drones' as const, label: t.drones, count: productsByCategory.drones.length },
+    { id: 'payloads' as const, label: t.payloads, count: productsByCategory.payloads.length },
+    { id: 'other' as const, label: t.other, count: productsByCategory.other.length },
   ]
 
   const activeProducts = productsByCategory[activeCategory]
@@ -61,7 +65,7 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
           .join(' ')
       }
     }
-    return 'No description available'
+    return t.noDescriptionAvailable
   }
 
   const ProductCard = ({ product }: { product: Product }) => {
@@ -103,7 +107,7 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
           )}
           {product.keyFeatures && product.keyFeatures.length > 0 && (
             <div className="mt-4 space-y-2">
-              <h4 className="text-sm font-semibold text-foreground">Key Features:</h4>
+              <h4 className="text-sm font-semibold text-foreground">{t.keyFeatures}</h4>
               <ul className="space-y-1.5">
                 {product.keyFeatures.slice(0, 4).map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -118,7 +122,7 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
         <CardContent>
           <Button asChild className="w-full">
             <Link href="/contact">
-              {product.ctaText || 'Request Quote'}
+              {product.ctaText || t.requestQuote}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -155,11 +159,8 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
       {activeProducts.length === 0 ? (
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
-            <CardTitle>No Products Available</CardTitle>
-            <CardDescription>
-              There are no products in this category yet. Please check back later or contact us
-              for more information.
-            </CardDescription>
+            <CardTitle>{t.noProductsAvailable}</CardTitle>
+            <CardDescription>{t.noProductsDescription}</CardDescription>
           </CardHeader>
         </Card>
       ) : (

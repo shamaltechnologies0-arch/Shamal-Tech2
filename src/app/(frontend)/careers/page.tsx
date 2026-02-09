@@ -3,15 +3,11 @@ import type { Metadata } from 'next'
 import configPromise from '../../../payload.config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
-import Link from 'next/link'
 import Image from 'next/image'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
-import { Badge } from '../../../components/ui/badge'
-import { Button } from '../../../components/ui/button'
-import { ArrowRight, MapPin, Calendar } from 'lucide-react'
-import type { Career } from '../../../payload-types'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { LivePreviewListener } from '../../../components/LivePreviewListener'
+import { CareersPageHero } from '../../../components/sections/CareersPageHero.client'
+import { CareersPageContent } from '../../../components/sections/CareersPageContent.client'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -23,8 +19,12 @@ export default async function CareersPage() {
   // Fetch careers page content from global
   const careersPageContent = (await getCachedGlobal('careers-page-content', 2)()) as {
     hero?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       backgroundImage?:
         | {
             url?: string
@@ -58,10 +58,6 @@ export default async function CareersPage() {
     draft: false,
   })
 
-  const heroTitle = careersPageContent?.hero?.title || 'Careers'
-  const heroDescription =
-    careersPageContent?.hero?.description ||
-    'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia'
   const heroBackgroundImage = careersPageContent?.hero?.backgroundImage
 
   // Use URL from API (S3 in production) or filename fallback for local storage
@@ -102,139 +98,34 @@ export default async function CareersPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
         )}
         <div className="relative z-10 container mx-auto px-4 py-20">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <Badge variant="outline" className="mb-4 text-sm">
-              Join Our Team
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-              {heroTitle}
-            </h1>
-            {heroDescription && (
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                {heroDescription}
-              </p>
-            )}
-          </div>
+          <CareersPageHero
+            badge={careersPageContent?.hero?.badge}
+            badgeAr={careersPageContent?.hero?.badgeAr}
+            title={careersPageContent?.hero?.title}
+            titleAr={careersPageContent?.hero?.titleAr}
+            description={careersPageContent?.hero?.description}
+            descriptionAr={careersPageContent?.hero?.descriptionAr}
+          />
         </div>
       </section>
 
-      {/* Careers List */}
+      {/* Careers List + CTA */}
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
-          {careers.docs.length === 0 ? (
-            <Card className="max-w-2xl mx-auto">
-              <CardHeader className="text-center">
-                <CardTitle>No Open Positions</CardTitle>
-                <CardDescription>
-                  We currently don&apos;t have any open positions, but we&apos;re always interested in hearing from talented individuals. Please check back later or contact us directly.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <Button asChild>
-                  <Link href="/contact">Contact Us</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {careers.docs.map((career) => (
-                <Card
-                  key={career.id}
-                  className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/50 overflow-hidden flex flex-col"
-                >
-                  <Link href={`/careers/${career.slug}`} className="block flex flex-col flex-1">
-                    {career.featuredImage &&
-                      typeof career.featuredImage === 'object' &&
-                      'url' in career.featuredImage && (
-                        <div className="relative h-48 overflow-hidden">
-                          <Image
-                            src={career.featuredImage.url as string}
-                            alt={career.title || 'Career image'}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                        </div>
-                      )}
-                    <CardHeader className="flex-1">
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {career.department && (
-                          <Badge variant="secondary" className="text-xs">
-                            {career.department}
-                          </Badge>
-                        )}
-                        {career.employmentType && (
-                          <Badge variant="outline" className="text-xs">
-                            {career.employmentType}
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
-                        {career.title}
-                      </CardTitle>
-                      <div className="flex flex-col gap-2 mt-4 text-sm text-muted-foreground">
-                        {career.location && (
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            <span>{career.location}</span>
-                          </div>
-                        )}
-                        {career.applicationDeadline && (
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>
-                              Deadline:{' '}
-                              {new Date(career.applicationDeadline as string).toLocaleDateString(
-                                'en-US',
-                                {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                }
-                              )}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center text-primary text-sm font-medium">
-                        View Details
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </CardContent>
-                  </Link>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-4xl mx-auto border-2">
-            <CardHeader className="text-center space-y-4">
-              <Badge variant="default" className="w-fit mx-auto">
-                Join Us
-              </Badge>
-              <CardTitle className="text-4xl md:text-5xl">
-                Don&apos;t See a Role That Fits?
-              </CardTitle>
-              <CardDescription className="text-lg max-w-2xl mx-auto">
-                We&apos;re always looking for talented individuals. Send us your resume and we&apos;ll keep you in mind for future opportunities.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Button asChild size="lg" className="text-base px-8">
-                <Link href="/contact">
-                  Contact Us
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <CareersPageContent
+            careers={careers.docs.map((c) => ({
+              id: String(c.id),
+              title: c.title,
+              titleAr: (c as { titleAr?: string }).titleAr,
+              slug: c.slug,
+              department: c.department,
+              employmentType: c.employmentType,
+              location: c.location,
+              locationAr: (c as { locationAr?: string }).locationAr,
+              applicationDeadline: c.applicationDeadline,
+              featuredImage: c.featuredImage,
+            }))}
+          />
         </div>
       </section>
 

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import configPromise from '../../../payload.config'
 import { getPayload } from 'payload'
 import Image from 'next/image'
-import { Badge } from '../../../components/ui/badge'
+import { ProductsPageHero } from '../../../components/sections/ProductsPageHero.client'
 import { ProductsClient } from './ProductsClient'
 import { ScrollSection } from '../../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../../components/sections/ParallaxElement'
@@ -38,8 +38,12 @@ export default async function ProductsPage() {
   // Fetch products page content from global
   const productsPageContent = (await getCachedGlobal('products-page-content', 3)()) as {
     hero?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       subtitle?: string
+      subtitleAr?: string
       backgroundImage?: {
         id?: string
         url?: string
@@ -75,9 +79,6 @@ export default async function ProductsPage() {
     other: products.docs.filter((p) => p.category === 'other'),
   }
 
-  // Get hero content from CMS or use defaults
-  const heroTitle = productsPageContent?.hero?.title || 'Our Products'
-  const heroSubtitle = productsPageContent?.hero?.subtitle || 'Professional-grade drone equipment, sensors, and geospatial technology products for sale or lease'
   const heroBackgroundImage = productsPageContent?.hero?.backgroundImage
 
   return (
@@ -110,24 +111,14 @@ export default async function ProductsPage() {
         )}
         <ParallaxElement speed={0.2} direction="up">
           <CinematicReveal delay={0.1} duration={1.2}>
-            <div className="container mx-auto px-4 w-full relative z-10">
-              <div className="max-w-4xl mx-auto text-center space-y-8">
-                <Badge
-                  variant="outline"
-                  className="mb-6 border-white/30 text-white bg-white/10 backdrop-blur-sm px-4 py-1.5 text-sm font-semibold"
-                >
-                  Products
-                </Badge>
-                <h1 className="text-hero font-display font-bold tracking-tight text-white drop-shadow-2xl">
-                  {heroTitle}
-                </h1>
-                {heroSubtitle && (
-                  <p className="text-body-large text-white/95 max-w-3xl mx-auto font-medium drop-shadow-lg">
-                    {heroSubtitle}
-                </p>
-                )}
-              </div>
-            </div>
+            <ProductsPageHero
+              badge={productsPageContent?.hero?.badge}
+              badgeAr={productsPageContent?.hero?.badgeAr}
+              title={productsPageContent?.hero?.title}
+              titleAr={productsPageContent?.hero?.titleAr}
+              subtitle={productsPageContent?.hero?.subtitle}
+              subtitleAr={productsPageContent?.hero?.subtitleAr}
+            />
           </CinematicReveal>
         </ParallaxElement>
       </ScrollSection>

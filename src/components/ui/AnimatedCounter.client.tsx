@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface AnimatedCounterProps {
   value: number
@@ -23,27 +29,37 @@ export function AnimatedCounter({
   const ref = useRef<HTMLDivElement>(null)
   const hasAnimated = useRef(false)
 
+  // Ensure value is always a valid number (CMS may return string or undefined)
+  const targetValue = typeof value === 'number' && !Number.isNaN(value) ? value : 0
+
   useEffect(() => {
-    if (!ref.current || hasAnimated.current) return
+    const element = ref.current
+    if (!element || hasAnimated.current || typeof window === 'undefined') return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated.current) {
-            hasAnimated.current = true
-            animateCounter(value, duration, decimals, setCount)
-          }
-        })
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: element,
+      start: 'top 90%',
+      onEnter: () => {
+        if (!hasAnimated.current) {
+          hasAnimated.current = true
+          animateCounter(targetValue, duration, decimals, setCount)
+        }
       },
-      { threshold: 0.3 }
-    )
+    })
 
-    observer.observe(ref.current)
+    // Also trigger immediately if already in view (e.g. stats section visible on load)
+    const rect = element.getBoundingClientRect()
+    const isInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0
+    if (isInView && !hasAnimated.current) {
+      hasAnimated.current = true
+      animateCounter(targetValue, duration, decimals, setCount)
+      scrollTrigger.kill()
+    }
 
     return () => {
-      observer.disconnect()
+      scrollTrigger.kill()
     }
-  }, [value, duration, decimals])
+  }, [targetValue, duration, decimals])
 
   const formatNumber = (num: number) => {
     if (decimals > 0) {

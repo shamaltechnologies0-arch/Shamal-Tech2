@@ -19,10 +19,29 @@ export const ServicesPageContent: GlobalConfig = {
       label: 'Hero Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge Text',
+          defaultValue: 'Our Services',
+          admin: {
+            description: 'Small label above the title (e.g. "Our Services")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge Text (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           required: true,
           defaultValue: 'Our Services',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
         },
         {
           name: 'subtitle',
@@ -31,6 +50,11 @@ export const ServicesPageContent: GlobalConfig = {
           admin: {
             description: 'Subtitle or description for the services page',
           },
+        },
+        {
+          name: 'subtitleAr',
+          type: 'textarea',
+          label: 'Subtitle (Arabic)',
         },
         {
           name: 'backgroundImage',

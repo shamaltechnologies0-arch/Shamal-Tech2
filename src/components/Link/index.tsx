@@ -1,15 +1,20 @@
+'use client'
+
 import { Button, type ButtonProps } from '../ui/button'
 import { cn } from '../../utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
 import type { Page, Post } from '../../payload-types'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
   children?: React.ReactNode
   className?: string
   label?: string | null
+  labelAr?: string | null
   newTab?: boolean | null
   reference?: {
     relationTo: 'pages' | 'posts'
@@ -27,11 +32,16 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     children,
     className,
     label,
+    labelAr,
     newTab,
     reference,
     size: sizeFromProps,
     url,
   } = props
+
+  const { language } = useLanguage()
+  const localizedLabel = getLocalizedValue(label ?? '', labelAr ?? '', language)
+  const displayLabel = localizedLabel === 'Posts' ? 'Blogs' : localizedLabel
 
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
@@ -39,9 +49,6 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
           reference.value.slug
         }`
       : url
-  
-  // Transform label: "Posts" -> "Blogs"
-  const displayLabel = label === 'Posts' ? 'Blogs' : label
 
   if (!href) return null
 

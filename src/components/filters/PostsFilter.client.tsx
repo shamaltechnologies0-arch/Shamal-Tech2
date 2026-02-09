@@ -4,11 +4,14 @@ import React, { useState, useMemo } from 'react'
 import { Button } from '../ui/button'
 import { X } from 'lucide-react'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../lib/translations/common'
+import { getLocalizedValue } from '../../lib/localization'
 
 type Post = {
   id: string
   title: string
-  categories?: Array<{ id?: string; title?: string; slug?: string } | string> | null
+  categories?: Array<{ id?: string; title?: string; titleAr?: string; slug?: string } | string> | null
   [key: string]: any
 }
 
@@ -18,17 +21,20 @@ interface PostsFilterProps {
 }
 
 export function PostsFilter({ posts, onFilterChange }: PostsFilterProps) {
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
   // Extract unique categories from posts
   const categories = useMemo(() => {
-    const categoryMap = new Map<string, { id: string; title: string; slug?: string }>()
+    const categoryMap = new Map<string, { id: string; title: string; titleAr?: string; slug?: string }>()
     posts.forEach((post) => {
       if (post.categories && Array.isArray(post.categories)) {
         post.categories.forEach((cat) => {
-          if (typeof cat === 'object' && cat.id && cat.title) {
+          if (typeof cat === 'object' && cat.id && (cat.title || cat.titleAr)) {
             if (!categoryMap.has(cat.id)) {
               categoryMap.set(cat.id, {
                 id: cat.id,
-                title: cat.title,
+                title: cat.title ?? '',
+                titleAr: cat.titleAr,
                 slug: cat.slug,
               })
             }
@@ -77,7 +83,7 @@ export function PostsFilter({ posts, onFilterChange }: PostsFilterProps) {
   return (
     <div className="flex flex-wrap items-center gap-3 mb-8 p-4 rounded-xl border-2 border-logo-blue/20 bg-background/95 backdrop-blur-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold text-logo-navy mr-2">Category:</span>
+        <span className="text-sm font-semibold text-logo-navy mr-2">{t.category}</span>
         <Button
           variant={selectedCategory === null ? 'default' : 'outline'}
           size="sm"
@@ -89,7 +95,7 @@ export function PostsFilter({ posts, onFilterChange }: PostsFilterProps) {
               : 'border-logo-blue/30 text-logo-navy hover:bg-logo-blue/10'
           )}
         >
-          All
+          {t.all}
         </Button>
         {categories.map((category) => (
           <Button
@@ -104,7 +110,7 @@ export function PostsFilter({ posts, onFilterChange }: PostsFilterProps) {
                 : 'border-logo-blue/30 text-logo-navy hover:bg-logo-blue/10'
             )}
           >
-            {category.title}
+            {getLocalizedValue(category.title, category.titleAr, language)}
           </Button>
         ))}
       </div>
@@ -116,8 +122,8 @@ export function PostsFilter({ posts, onFilterChange }: PostsFilterProps) {
           onClick={clearFilters}
           className="ml-auto text-sm text-logo-blue hover:text-logo-navy hover:bg-logo-blue/10"
         >
-          <X className="h-4 w-4 mr-1" />
-          Clear
+          <X className={language === 'ar' ? 'h-4 w-4 ml-1' : 'h-4 w-4 mr-1'} />
+          {t.clear}
         </Button>
       )}
     </div>

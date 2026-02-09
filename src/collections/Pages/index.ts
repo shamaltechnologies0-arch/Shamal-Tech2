@@ -61,6 +61,14 @@ export const Pages: CollectionConfig<'pages'> = {
       required: true,
     },
     {
+      name: 'titleAr',
+      type: 'text',
+      label: 'Title (Arabic)',
+      admin: {
+        description: 'Arabic title for the page when Arabic language is selected',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {

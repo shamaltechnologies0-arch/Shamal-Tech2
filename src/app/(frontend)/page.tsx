@@ -25,6 +25,11 @@ import { ScrollIndicator } from '../../components/sections/ScrollIndicator'
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter.client'
 import { LogoSlider } from '../../components/sections/LogoSlider.client'
 import { SlidingServicesSection } from '../../components/sections/SlidingServicesSection.client'
+import { HomeHeroSection } from '../../components/sections/HomeHeroSection.client'
+import { ImpactStatsSection } from '../../components/sections/ImpactStatsSection.client'
+import { ContactCTASection } from '../../components/sections/ContactCTASection.client'
+import { AboutPreviewSection } from '../../components/sections/AboutPreviewSection.client'
+import { BlogPreviewSection } from '../../components/sections/BlogPreviewSection.client'
 
 export const metadata: Metadata = {
   title: 'Shamal Technologies | Drone Survey & Geospatial Solutions in Saudi Arabia',
@@ -43,8 +48,23 @@ export default async function HomePage() {
   const homepageContent = (await getCachedGlobal('homepage-content', 3)()) as {
     hero?: {
       title?: string
+      titleAr?: string
       subtitle?: string
+      subtitleAr?: string
       backgroundImage?: any
+    }
+    impactStats?: {
+      badge?: string
+      badgeAr?: string
+      heading?: string
+      headingAr?: string
+      stats?: Array<{
+        value?: number
+        suffix?: string
+        prefix?: string
+        label?: string
+        labelAr?: string
+      }>
     }
     servicesOverview?: {
       title?: string
@@ -55,8 +75,12 @@ export default async function HomePage() {
       } | null
     }
     sectors?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       backgroundImage?: {
         url?: string
         alt?: string
@@ -67,8 +91,14 @@ export default async function HomePage() {
       }>
     }
     aboutPreview?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
+      textColumn?: any
+      textColumnAr?: any
       imageColumn?: {
         id?: string
         url?: string
@@ -78,7 +108,6 @@ export default async function HomePage() {
         updatedAt?: string
         createdAt?: string
       } | string | null
-      textColumn?: any
       enableTwoColumn?: boolean
       leftColumnMedia?: {
         id?: string
@@ -96,6 +125,7 @@ export default async function HomePage() {
         }>
       }>
       ctaText?: string
+      ctaTextAr?: string
       backgroundImage?: {
         url?: string
         alt?: string
@@ -103,8 +133,11 @@ export default async function HomePage() {
     }
     blogPreview?: {
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       ctaText?: string
+      ctaTextAr?: string
       backgroundImage?: {
         url?: string
         alt?: string
@@ -128,9 +161,16 @@ export default async function HomePage() {
       }>
     }
     contactCTA?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       ctaText?: string
+      ctaTextAr?: string
+      secondaryCtaText?: string
+      secondaryCtaTextAr?: string
       backgroundImage?: {
         url?: string
         alt?: string
@@ -198,8 +238,10 @@ export default async function HomePage() {
   const sectorsContent = (await getCachedGlobal('sectors-content', 3)()) as {
     sectors?: Array<{
       name?: string
+      nameAr?: string
       slug?: string
       description?: string
+      descriptionAr?: string
       image?: {
         id?: string
         url?: string
@@ -211,12 +253,16 @@ export default async function HomePage() {
       ctaContact?: string
       useCases?: Array<{
         title?: string
+        titleAr?: string
         description?: string
+        descriptionAr?: string
         id?: string
       }>
       solutionsDelivered?: Array<{
         title?: string
+        titleAr?: string
         description?: string
+        descriptionAr?: string
         id?: string
       }>
     }>
@@ -356,25 +402,14 @@ export default async function HomePage() {
         </div>
         
         {/* Motion Overlays - Subtle abstract shapes */}
-        <HeroEnhanced>
-          {/* Hero Text with Enhanced Typography */}
-          <div className="relative z-10 container mx-auto px-4 py-20 w-full">
-            <div className="max-w-5xl mx-auto text-center space-y-8">
-              <CinematicReveal delay={0.2} duration={1.5}>
-                <h1 className="text-hero font-display font-bold tracking-tight text-white drop-shadow-2xl">
-                  {homepageContent?.hero?.title?.replace(/^Heading Text - /i, '') || 'Shamal Technologies'}
-                </h1>
-              </CinematicReveal>
-              {homepageContent?.hero?.subtitle && (
-                <CinematicReveal delay={0.4} duration={1.2}>
-                  <p className="text-body-large text-white/95 max-w-3xl mx-auto leading-relaxed drop-shadow-lg font-medium">
-                    {homepageContent.hero.subtitle}
-                  </p>
-                </CinematicReveal>
-              )}
-            </div>
-          </div>
-        </HeroEnhanced>
+        <HomeHeroSection
+          hero={{
+            title: homepageContent?.hero?.title,
+            titleAr: homepageContent?.hero?.titleAr,
+            subtitle: homepageContent?.hero?.subtitle,
+            subtitleAr: homepageContent?.hero?.subtitleAr,
+          }}
+        />
       </section>
 
       {/* Dynamic Sliding Services Section */}
@@ -383,6 +418,7 @@ export default async function HomePage() {
           services={services.docs.map((service) => ({
             id: String(service.id),
             title: service.title || null,
+            titleAr: (service as { titleAr?: string }).titleAr ?? null,
             slug: service.slug || null,
           }))}
         />
@@ -412,59 +448,24 @@ export default async function HomePage() {
         />
       )}
 
-      {/* Stats Section - Full Viewport Immersive */}
-      <ScrollSection id="stats" fullViewport bgVariant="2" className="border-y border-logo-blue/20 surface-neutral">
-        <div className="container mx-auto px-4 w-full">
-          <ParallaxElement speed={0.2} direction="up">
-            <CinematicReveal delay={0.1} duration={1.2} scale>
-              <div className="text-center mb-16 space-y-6">
-                <Badge variant="outline" className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold">
-                  Our Impact
-                </Badge>
-                <h2 className="text-display-large font-display font-bold text-foreground">
-                  Delivering Excellence Across Industries
-                </h2>
-              </div>
-            </CinematicReveal>
-          </ParallaxElement>
-          <StaggerReveal direction="up" delay={0.3} stagger={0.2} duration={1}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-16">
-              <div className="text-center space-y-4 group">
-                <div className="text-6xl md:text-7xl lg:text-8xl font-geometric font-bold text-gradient group-hover:scale-110 transition-transform duration-300">
-                  <AnimatedCounter value={500} duration={2000} suffix="+" />
-                </div>
-                <div className="text-base md:text-lg text-logo-navy font-semibold">
-                  Projects Completed
-                </div>
-              </div>
-              <div className="text-center space-y-4 group">
-                <div className="text-6xl md:text-7xl lg:text-8xl font-geometric font-bold text-logo-navy group-hover:scale-110 transition-transform duration-300">
-                  <AnimatedCounter value={80} duration={2000} suffix="+" />
-                </div>
-                <div className="text-base md:text-lg text-logo-blue font-semibold">
-                  Expert Team
-                </div>
-              </div>
-              <div className="text-center space-y-4 group">
-                <div className="text-6xl md:text-7xl lg:text-8xl font-geometric font-bold text-gradient group-hover:scale-110 transition-transform duration-300">
-                  <AnimatedCounter value={11} duration={2000} />
-                </div>
-                <div className="text-base md:text-lg text-logo-navy font-semibold">
-                  Sectors Served
-                </div>
-              </div>
-              <div className="text-center space-y-4 group">
-                <div className="text-6xl md:text-7xl lg:text-8xl font-geometric font-bold text-logo-navy group-hover:scale-110 transition-transform duration-300">
-                  <AnimatedCounter value={100} duration={2000} suffix="%" />
-                </div>
-                <div className="text-base md:text-lg text-logo-blue font-semibold">
-                  Client Satisfaction
-                </div>
-              </div>
-            </div>
-          </StaggerReveal>
-        </div>
-      </ScrollSection>
+      {/* Stats Section - Full Viewport Immersive (CMS-driven, bilingual) */}
+      <ImpactStatsSection
+        badge={homepageContent?.impactStats?.badge}
+        badgeAr={homepageContent?.impactStats?.badgeAr}
+        heading={homepageContent?.impactStats?.heading}
+        headingAr={homepageContent?.impactStats?.headingAr}
+        stats={
+          homepageContent?.impactStats?.stats && homepageContent.impactStats.stats.length > 0
+            ? homepageContent.impactStats.stats.map((s) => ({
+                value: typeof s.value === 'number' ? s.value : Number(s.value) || 0,
+                suffix: s.suffix ?? '',
+                prefix: s.prefix ?? '',
+                label: s.label ?? '',
+                labelAr: s.labelAr ?? '',
+              }))
+            : undefined
+        }
+      />
 
       {/* Services Overview Section - Scrollable Carousel with Parallax */}
       <ScrollSection id="services" flexible bgVariant="1" parallax>
@@ -531,8 +532,12 @@ export default async function HomePage() {
       {/* Sectors We Serve Section - Pinned/Sticky Layout */}
       <div id="sectors">
         <SectorsPinnedSection
+        badge={homepageContent?.sectors?.badge}
+        badgeAr={homepageContent?.sectors?.badgeAr}
         title={homepageContent?.sectors?.title || 'SECTORS WE SERVE'}
+        titleAr={homepageContent?.sectors?.titleAr}
         description={homepageContent?.sectors?.description}
+        descriptionAr={homepageContent?.sectors?.descriptionAr}
         sectors={orderedSectors}
         backgroundImage={
           homepageContent?.sectors?.backgroundImage &&
@@ -554,276 +559,77 @@ export default async function HomePage() {
         />
       </div>
 
-      {/* About Preview Section - Full Viewport with Parallax */}
-      <ScrollSection id="about" fullViewport bgVariant="3" parallax>
-        {/* Background Image */}
-        {homepageContent?.aboutPreview?.backgroundImage &&
+      {/* About Preview Section - Full Viewport with Parallax (CMS-driven, bilingual) */}
+      <AboutPreviewSection
+        badge={homepageContent?.aboutPreview?.badge}
+        badgeAr={homepageContent?.aboutPreview?.badgeAr}
+        title={homepageContent?.aboutPreview?.title}
+        titleAr={homepageContent?.aboutPreview?.titleAr}
+        description={homepageContent?.aboutPreview?.description}
+        descriptionAr={homepageContent?.aboutPreview?.descriptionAr}
+        textColumn={homepageContent?.aboutPreview?.textColumn}
+        textColumnAr={homepageContent?.aboutPreview?.textColumnAr}
+        imageColumn={homepageContent?.aboutPreview?.imageColumn as any}
+        ctaText={homepageContent?.aboutPreview?.ctaText}
+        ctaTextAr={homepageContent?.aboutPreview?.ctaTextAr}
+        backgroundImage={
+          homepageContent?.aboutPreview?.backgroundImage &&
           typeof homepageContent.aboutPreview.backgroundImage === 'object' &&
-          'url' in homepageContent.aboutPreview.backgroundImage && (
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={homepageContent.aboutPreview.backgroundImage.url as string}
-                alt={
-                  (homepageContent.aboutPreview.backgroundImage as any).alt ||
-                  'About preview background'
-                }
-                fill
-                className="object-cover opacity-20"
-                priority={false}
-                quality={85}
-              />
-              <div className="absolute inset-0 bg-background/80" />
-            </div>
-          )}
-        <div className="container mx-auto px-4 relative z-10">
-          <ParallaxElement speed={0.2} direction="up">
-            <CinematicReveal delay={0.2} duration={1.2}>
-              <div className="max-w-7xl mx-auto space-y-12">
-                {/* Heading */}
-                <div className="text-center space-y-6">
-                  <Badge variant="outline" className="w-fit mx-auto border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 mt-20 text-sm font-semibold">
-                    Who We Are?
-                  </Badge>
-                  <h2 className="text-display-large font-display font-bold tracking-tight text-foreground">
-                    <span className="text-gradient">
-                      {homepageContent?.aboutPreview?.title || 'About Shamal Technologies'}
-                    </span>
-                  </h2>
-                  {homepageContent?.aboutPreview?.description && (
-                    <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                      {homepageContent.aboutPreview.description}
-                    </p>
-                  )}
-                </div>
+          'url' in homepageContent.aboutPreview.backgroundImage
+            ? {
+                url: homepageContent.aboutPreview.backgroundImage.url as string,
+                alt: (homepageContent.aboutPreview.backgroundImage as any).alt,
+              }
+            : undefined
+        }
+      />
 
-              {/* Image and Text Columns (below description) */}
-              {(homepageContent?.aboutPreview?.imageColumn ||
-                homepageContent?.aboutPreview?.textColumn) && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start mt-12">
-                  {/* Image Column */}
-                  {homepageContent.aboutPreview.imageColumn && (
-                    <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted shadow-lg">
-                      {typeof homepageContent.aboutPreview.imageColumn === 'object' &&
-                      homepageContent.aboutPreview.imageColumn !== null &&
-                      (homepageContent.aboutPreview.imageColumn.url ||
-                        homepageContent.aboutPreview.imageColumn.filename ||
-                        homepageContent.aboutPreview.imageColumn.id) ? (
-                        <Media
-                          resource={homepageContent.aboutPreview.imageColumn as any}
-                          className="w-full h-full"
-                          imgClassName="w-full h-full object-cover"
-                          videoClassName="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          No media selected
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Text Column */}
-                  {homepageContent.aboutPreview.textColumn && (
-                    <div className="prose prose-lg dark:prose-invert max-w-none">
-                      <RichText
-                        data={homepageContent.aboutPreview.textColumn}
-                        enableGutter={false}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* CTA Button */}
-              <div className="text-center pt-8">
-                <Button asChild size="lg" className="bg-logo-blue hover:bg-logo-blue/90">
-                  <Link href="/about">
-                    {homepageContent?.aboutPreview?.ctaText || 'Learn More About Us'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </CinematicReveal>
-          </ParallaxElement>
-        </div>
-      </ScrollSection>
-
-      {/* Blog Preview Section - Full Viewport Insights */}
+      {/* Blog Preview Section - Full Viewport Insights (bilingual) */}
       <ScrollSection id="blog" fullViewport bgVariant="1" parallax>
-        {/* Background Image */}
-        {homepageContent?.blogPreview?.backgroundImage &&
-          typeof homepageContent.blogPreview.backgroundImage === 'object' &&
-          'url' in homepageContent.blogPreview.backgroundImage && (
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={homepageContent.blogPreview.backgroundImage.url as string}
-                alt={
-                  (homepageContent.blogPreview.backgroundImage as any).alt ||
-                  'Blog preview background'
+        <BlogPreviewSection
+          title={homepageContent?.blogPreview?.title}
+          titleAr={homepageContent?.blogPreview?.titleAr}
+          description={homepageContent?.blogPreview?.description}
+          descriptionAr={homepageContent?.blogPreview?.descriptionAr}
+          ctaText={homepageContent?.blogPreview?.ctaText}
+          ctaTextAr={homepageContent?.blogPreview?.ctaTextAr}
+          blogPosts={blogPostsToDisplay}
+          backgroundImage={
+            homepageContent?.blogPreview?.backgroundImage &&
+            typeof homepageContent.blogPreview.backgroundImage === 'object' &&
+            'url' in homepageContent.blogPreview.backgroundImage
+              ? {
+                  url: homepageContent.blogPreview.backgroundImage.url as string,
+                  alt: (homepageContent.blogPreview.backgroundImage as any).alt,
                 }
-                fill
-                className="object-cover opacity-20"
-                priority={false}
-                quality={85}
-              />
-              <div className="absolute inset-0 bg-background/80" />
-            </div>
-          )}
-        <div className="container mx-auto px-4 relative z-10">
-          <ParallaxElement speed={0.3} direction="up">
-            <CinematicReveal delay={0.2} duration={1.2}>
-              <div className="text-center mb-16 space-y-6">
-                <Badge variant="outline" className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold">
-                  Insights
-                </Badge>
-                <h2 className="text-display-large font-display font-bold tracking-tight text-foreground">
-                  <span className="text-gradient">
-                    {homepageContent?.blogPreview?.title || 'Latest Insights'}
-                  </span>
-                </h2>
-                {homepageContent?.blogPreview?.description && (
-                  <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    {homepageContent.blogPreview.description}
-                  </p>
-                )}
-              </div>
-            </CinematicReveal>
-          </ParallaxElement>
-          <StaggerReveal direction="up" delay={0.3} stagger={0.1} duration={0.8}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {blogPostsToDisplay.map((post: any, index: number) => {
-                // Determine which image to use: customImage from CMS or post's featuredImage
-                const displayImage =
-                  post.customImage &&
-                  typeof post.customImage === 'object' &&
-                  'url' in post.customImage
-                    ? post.customImage
-                    : post.featuredImage &&
-                      typeof post.featuredImage === 'object' &&
-                      'url' in post.featuredImage
-                    ? post.featuredImage
-                    : null
-
-                return (
-                  <Card key={post.id || index} className="group hover:shadow-lg transition-shadow overflow-hidden">
-                <Link href={`/posts/${post.slug}`} className="block">
-                      {displayImage && (
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                            src={displayImage.url as string}
-                            alt={post.title || 'Blog post'}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                      </div>
-                    )}
-                  <CardHeader>
-                    {post.date && (
-                      <CardDescription>
-                        {new Date(post.date as string).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </CardDescription>
-                    )}
-                    <CardTitle className="text-xl group-hover:text-logo-blue transition-colors line-clamp-2">
-                      {post.title}
-                    </CardTitle>
-                  </CardHeader>
-                  {post.description && (
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground line-clamp-3">{post.description}</p>
-                    </CardContent>
-                  )}
-                </Link>
-              </Card>
-                )
-              })}
-          </div>
-          </StaggerReveal>
-          <ScrollReveal direction="up" delay={0.4} duration={1}>
-          <div className="text-center mt-12">
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-2 border-logo-navy text-logo-navy hover:bg-logo-navy hover:text-white"
-            >
-              <Link href="/posts">
-                {homepageContent?.blogPreview?.ctaText || 'Read All Posts'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-          </ScrollReveal>
-        </div>
+              : undefined
+          }
+        />
       </ScrollSection>
 
-      {/* Contact CTA Section - Full Viewport Final CTA */}
-      <ScrollSection id="contact" fullViewport bgVariant="gradient" parallax>
-        {/* Background Image */}
-        {homepageContent?.contactCTA?.backgroundImage &&
+      {/* Contact CTA Section - Full Viewport Final CTA (CMS-driven, bilingual) */}
+      <ContactCTASection
+        badge={homepageContent?.contactCTA?.badge}
+        badgeAr={homepageContent?.contactCTA?.badgeAr}
+        title={homepageContent?.contactCTA?.title}
+        titleAr={homepageContent?.contactCTA?.titleAr}
+        description={homepageContent?.contactCTA?.description}
+        descriptionAr={homepageContent?.contactCTA?.descriptionAr}
+        primaryCtaText={homepageContent?.contactCTA?.ctaText}
+        primaryCtaTextAr={homepageContent?.contactCTA?.ctaTextAr}
+        secondaryCtaText={homepageContent?.contactCTA?.secondaryCtaText}
+        secondaryCtaTextAr={homepageContent?.contactCTA?.secondaryCtaTextAr}
+        backgroundImage={
+          homepageContent?.contactCTA?.backgroundImage &&
           typeof homepageContent.contactCTA.backgroundImage === 'object' &&
-          'url' in homepageContent.contactCTA.backgroundImage && (
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={homepageContent.contactCTA.backgroundImage.url as string}
-                alt={
-                  (homepageContent.contactCTA.backgroundImage as any).alt ||
-                  'Contact CTA background'
-                }
-                fill
-                className="object-cover opacity-20"
-                priority={false}
-                quality={85}
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-logo-blue/20 via-logo-navy/10 to-background/80" />
-            </div>
-          )}
-        <div className="container mx-auto px-4 relative z-10 w-full">
-          <ParallaxElement speed={0.2} direction="up">
-            <CinematicReveal delay={0.2} duration={1.2} scale>
-              <Card className="max-w-4xl mx-auto border-2 border-logo-blue/30 shadow-2xl bg-background/95 backdrop-blur-sm">
-                <CardHeader className="text-center space-y-6">
-                  <Badge variant="outline" className="w-fit mx-auto border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold">
-                    Get In Touch
-                  </Badge>
-                  <CardTitle className="text-display-large font-display font-bold text-foreground">
-                    <span className="text-gradient">
-                      {homepageContent?.contactCTA?.title || 'Ready to Get Started?'}
-                    </span>
-                  </CardTitle>
-                  {homepageContent?.contactCTA?.description && (
-                    <CardDescription className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                      {homepageContent.contactCTA.description}
-                    </CardDescription>
-                  )}
-                </CardHeader>
-              <CardContent className="text-center space-y-6">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild size="lg" className="text-base px-8 h-14 bg-logo-blue hover:bg-logo-blue/90">
-                    <Link href="/contact">
-                      Contact Us Today
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="text-base px-8 h-14 border-2 border-logo-navy text-logo-navy hover:bg-logo-navy hover:text-white"
-                  >
-                    <Link href="/services">Explore Services</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </CinematicReveal>
-          </ParallaxElement>
-        </div>
-      </ScrollSection>
+          'url' in homepageContent.contactCTA.backgroundImage
+            ? {
+                url: homepageContent.contactCTA.backgroundImage.url as string,
+                alt: (homepageContent.contactCTA.backgroundImage as any).alt,
+              }
+            : undefined
+        }
+      />
 
       {/* JSON-LD Structured Data */}
       <script

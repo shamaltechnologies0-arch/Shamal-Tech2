@@ -191,6 +191,10 @@ export interface UserAuthOperations {
 export interface Page {
   id: string;
   title: string;
+  /**
+   * Arabic title for the page when Arabic language is selected
+   */
+  titleAr?: string | null;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
     richText?: {
@@ -224,6 +228,10 @@ export interface Page {
                 } | null);
             url?: string | null;
             label: string;
+            /**
+             * Arabic label for the link when Arabic language is selected
+             */
+            labelAr?: string | null;
             /**
              * Choose how the link should be rendered.
              */
@@ -260,11 +268,16 @@ export interface Page {
 export interface Post {
   id: string;
   title: string;
+  /**
+   * Arabic title displayed when Arabic language is selected
+   */
+  titleAr?: string | null;
   date: string;
   author?: string | null;
   featuredImage?: (string | null) | Media;
   media?: (string | Media)[] | null;
   description?: string | null;
+  descriptionAr?: string | null;
   heroImage?: (string | null) | Media;
   content: {
     root: {
@@ -281,6 +294,24 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  /**
+   * Arabic content displayed when Arabic language is selected
+   */
+  contentAr?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   category?: ('news' | 'technology' | 'industry-insights' | 'case-studies' | 'updates') | null;
   tags?: string[] | null;
   relatedPosts?: (string | Post)[] | null;
@@ -410,6 +441,10 @@ export interface Category {
   id: string;
   title: string;
   /**
+   * Arabic title displayed when Arabic language is selected
+   */
+  titleAr?: string | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
@@ -495,6 +530,10 @@ export interface CallToActionBlock {
           url?: string | null;
           label: string;
           /**
+           * Arabic label for the link when Arabic language is selected
+           */
+          labelAr?: string | null;
+          /**
            * Choose how the link should be rendered.
            */
           appearance?: ('default' | 'outline') | null;
@@ -544,6 +583,10 @@ export interface ContentBlock {
               } | null);
           url?: string | null;
           label: string;
+          /**
+           * Arabic label for the link when Arabic language is selected
+           */
+          labelAr?: string | null;
           /**
            * Choose how the link should be rendered.
            */
@@ -808,16 +851,24 @@ export interface Service {
   id: string;
   title: string;
   /**
+   * Arabic title displayed when Arabic language is selected
+   */
+  titleAr?: string | null;
+  /**
    * Controls the order/position of this service on the homepage carousel and services page. Lower numbers appear first. If not set, services are sorted by creation date.
    */
   order?: number | null;
   heroImage?: (string | null) | Media;
   heroTitle: string;
+  heroTitleAr?: string | null;
   heroDescription?: string | null;
+  heroDescriptionAr?: string | null;
   benefits?:
     | {
         title: string;
+        titleAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         icon?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -825,7 +876,9 @@ export interface Service {
   applications?:
     | {
         title: string;
+        titleAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         image?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -833,7 +886,9 @@ export interface Service {
   technologies?:
     | {
         name: string;
+        nameAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         icon?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -841,6 +896,7 @@ export interface Service {
   faqs?:
     | {
         question: string;
+        questionAr?: string | null;
         answer: {
           root: {
             type: string;
@@ -856,12 +912,30 @@ export interface Service {
           };
           [k: string]: unknown;
         };
+        answerAr?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         id?: string | null;
       }[]
     | null;
   ctaTitle?: string | null;
+  ctaTitleAr?: string | null;
   ctaDescription?: string | null;
+  ctaDescriptionAr?: string | null;
   ctaButtonText?: string | null;
+  ctaButtonTextAr?: string | null;
   seo?: {
     title?: string | null;
     /**
@@ -887,8 +961,27 @@ export interface Service {
 export interface Product {
   id: string;
   name: string;
+  /**
+   * Arabic product name displayed when Arabic language is selected
+   */
+  nameAr?: string | null;
   images: (string | Media)[];
   description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  descriptionAr?: {
     root: {
       type: string;
       children: {
@@ -917,17 +1010,20 @@ export interface Product {
    * Display tag like "Autonomous Docking", "Enterprise Drones", etc.
    */
   categoryTag?: string | null;
+  categoryTagAr?: string | null;
   /**
    * List of key features to display on the product card
    */
   keyFeatures?:
     | {
         feature: string;
+        featureAr?: string | null;
         id?: string | null;
       }[]
     | null;
   featured?: boolean | null;
   ctaText?: string | null;
+  ctaTextAr?: string | null;
   seo?: {
     title?: string | null;
     /**
@@ -953,8 +1049,13 @@ export interface Product {
 export interface Career {
   id: string;
   title: string;
+  /**
+   * Arabic job title displayed when Arabic language is selected
+   */
+  titleAr?: string | null;
   department: 'engineering' | 'sales' | 'marketing' | 'operations' | 'hr' | 'finance' | 'other';
   location: string;
+  locationAr?: string | null;
   employmentType: 'full-time' | 'part-time' | 'contract' | 'internship';
   /**
    * Select the preferred gender for this position (optional)
@@ -977,21 +1078,39 @@ export interface Career {
     };
     [k: string]: unknown;
   };
+  descriptionAr?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   requirements?:
     | {
         requirement: string;
+        requirementAr?: string | null;
         id?: string | null;
       }[]
     | null;
   responsibilities?:
     | {
         responsibility: string;
+        responsibilityAr?: string | null;
         id?: string | null;
       }[]
     | null;
   qualifications?:
     | {
         qualification: string;
+        qualificationAr?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1617,6 +1736,7 @@ export interface PayloadMigration {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  titleAr?: T;
   hero?:
     | T
     | {
@@ -1633,6 +1753,7 @@ export interface PagesSelect<T extends boolean = true> {
                     reference?: T;
                     url?: T;
                     label?: T;
+                    labelAr?: T;
                     appearance?: T;
                   };
               id?: T;
@@ -1679,6 +1800,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              labelAr?: T;
               appearance?: T;
             };
         id?: T;
@@ -1705,6 +1827,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              labelAr?: T;
               appearance?: T;
             };
         id?: T;
@@ -1752,13 +1875,16 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  titleAr?: T;
   date?: T;
   author?: T;
   featuredImage?: T;
   media?: T;
   description?: T;
+  descriptionAr?: T;
   heroImage?: T;
   content?: T;
+  contentAr?: T;
   category?: T;
   tags?: T;
   relatedPosts?: T;
@@ -1883,6 +2009,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  titleAr?: T;
   generateSlug?: T;
   slug?: T;
   parent?: T;
@@ -1928,15 +2055,20 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ServicesSelect<T extends boolean = true> {
   title?: T;
+  titleAr?: T;
   order?: T;
   heroImage?: T;
   heroTitle?: T;
+  heroTitleAr?: T;
   heroDescription?: T;
+  heroDescriptionAr?: T;
   benefits?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         icon?: T;
         id?: T;
       };
@@ -1944,7 +2076,9 @@ export interface ServicesSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         image?: T;
         id?: T;
       };
@@ -1952,7 +2086,9 @@ export interface ServicesSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        nameAr?: T;
         description?: T;
+        descriptionAr?: T;
         icon?: T;
         id?: T;
       };
@@ -1960,12 +2096,17 @@ export interface ServicesSelect<T extends boolean = true> {
     | T
     | {
         question?: T;
+        questionAr?: T;
         answer?: T;
+        answerAr?: T;
         id?: T;
       };
   ctaTitle?: T;
+  ctaTitleAr?: T;
   ctaDescription?: T;
+  ctaDescriptionAr?: T;
   ctaButtonText?: T;
+  ctaButtonTextAr?: T;
   seo?:
     | T
     | {
@@ -1986,19 +2127,24 @@ export interface ServicesSelect<T extends boolean = true> {
  */
 export interface ProductsSelect<T extends boolean = true> {
   name?: T;
+  nameAr?: T;
   images?: T;
   description?: T;
+  descriptionAr?: T;
   specifications?: T;
   category?: T;
   categoryTag?: T;
+  categoryTagAr?: T;
   keyFeatures?:
     | T
     | {
         feature?: T;
+        featureAr?: T;
         id?: T;
       };
   featured?: T;
   ctaText?: T;
+  ctaTextAr?: T;
   seo?:
     | T
     | {
@@ -2019,29 +2165,35 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface CareerSelect<T extends boolean = true> {
   title?: T;
+  titleAr?: T;
   department?: T;
   location?: T;
+  locationAr?: T;
   employmentType?: T;
   gender?: T;
   status?: T;
   featuredImage?: T;
   description?: T;
+  descriptionAr?: T;
   requirements?:
     | T
     | {
         requirement?: T;
+        requirementAr?: T;
         id?: T;
       };
   responsibilities?:
     | T
     | {
         responsibility?: T;
+        responsibilityAr?: T;
         id?: T;
       };
   qualifications?:
     | T
     | {
         qualification?: T;
+        qualificationAr?: T;
         id?: T;
       };
   salaryRange?: T;
@@ -2498,6 +2650,10 @@ export interface Header {
               } | null);
           url?: string | null;
           label: string;
+          /**
+           * Arabic label for the link when Arabic language is selected
+           */
+          labelAr?: string | null;
         };
         id?: string | null;
       }[]
@@ -2527,6 +2683,10 @@ export interface Footer {
               } | null);
           url?: string | null;
           label: string;
+          /**
+           * Arabic label for the link when Arabic language is selected
+           */
+          labelAr?: string | null;
         };
         id?: string | null;
       }[]
@@ -2541,13 +2701,16 @@ export interface Footer {
 export interface SiteSetting {
   id: string;
   siteName: string;
+  siteNameAr?: string | null;
   siteDescription?: string | null;
+  siteDescriptionAr?: string | null;
   logo?: (string | null) | Media;
   favicon?: (string | null) | Media;
   contactInfo?: {
     phone?: string | null;
     email?: string | null;
     address?: string | null;
+    addressAr?: string | null;
     mapEmbedUrl?: string | null;
     mapLink?: string | null;
   };
@@ -2575,6 +2738,21 @@ export interface SiteSetting {
     };
     [k: string]: unknown;
   } | null;
+  footerContentAr?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2586,18 +2764,68 @@ export interface HomepageContent {
   id: string;
   hero: {
     title: string;
+    titleAr?: string | null;
     subtitle?: string | null;
+    subtitleAr?: string | null;
     ctaText?: string | null;
+    ctaTextAr?: string | null;
     backgroundImage?: (string | null) | Media;
+  };
+  /**
+   * KPI statistics displayed in the "Our Impact" section (e.g. Projects Completed, Client Satisfaction). Drag to reorder.
+   */
+  impactStats: {
+    /**
+     * Small label above the heading (e.g. "Our Impact")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
+    /**
+     * Main heading for the stats section
+     */
+    heading?: string | null;
+    headingAr?: string | null;
+    /**
+     * Add statistics. Each has a numeric value, optional suffix (%, +), and label. Drag to reorder.
+     */
+    stats: {
+      /**
+       * The numeric value to display (e.g. 100, 80, 11)
+       */
+      value: number;
+      /**
+       * Optional suffix after the number (e.g. % for percentage, + for "more than")
+       */
+      suffix?: ('' | '%' | '+') | null;
+      /**
+       * Optional prefix before the number (e.g. + for "+80")
+       */
+      prefix?: ('' | '+') | null;
+      /**
+       * Description below the number (e.g. "Projects Completed", "Client Satisfaction")
+       */
+      label: string;
+      labelAr?: string | null;
+      id?: string | null;
+    }[];
   };
   servicesOverview?: {
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   sectors?: {
+    /**
+     * Small label above the section title (e.g. "Industries")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     backgroundImage?: (string | null) | Media;
     /**
      * Select and reorder sectors to display on the homepage. Drag items to change the sequence. If empty, all sectors will be displayed in their default order.
@@ -2627,11 +2855,15 @@ export interface HomepageContent {
       | null;
   };
   aboutPreview: {
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Description text displayed below the heading
      */
     description?: string | null;
+    descriptionAr?: string | null;
     /**
      * Image or video to display in the left column below the description
      */
@@ -2640,6 +2872,21 @@ export interface HomepageContent {
      * Rich text content to display in the right column below the description. Use headings, paragraphs, and bullet lists.
      */
     textColumn?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textColumnAr?: {
       root: {
         type: string;
         children: {
@@ -2669,11 +2916,14 @@ export interface HomepageContent {
       | {
           textType: 'heading' | 'paragraph' | 'bullets';
           heading?: string | null;
+          headingAr?: string | null;
           headingLevel?: ('h2' | 'h3' | 'h4') | null;
           paragraph?: string | null;
+          paragraphAr?: string | null;
           bullets?:
             | {
                 text: string;
+                textAr?: string | null;
                 id?: string | null;
               }[]
             | null;
@@ -2681,12 +2931,16 @@ export interface HomepageContent {
         }[]
       | null;
     ctaText?: string | null;
+    ctaTextAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   blogPreview?: {
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     ctaText?: string | null;
+    ctaTextAr?: string | null;
     backgroundImage?: (string | null) | Media;
     /**
      * Select specific blog posts to display on homepage. If empty, latest posts will be shown.
@@ -2703,9 +2957,22 @@ export interface HomepageContent {
       | null;
   };
   contactCTA?: {
+    /**
+     * Small label above the heading
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
+    /**
+     * Main CTA button (e.g. "Contact Us Today")
+     */
     ctaText?: string | null;
+    ctaTextAr?: string | null;
+    secondaryCtaText?: string | null;
+    secondaryCtaTextAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
@@ -2718,8 +2985,15 @@ export interface HomepageContent {
 export interface AboutPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title (e.g. "Our Story")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     /**
      * Upload an image for the hero background. If no image is uploaded, the video will be used as fallback.
      */
@@ -2731,27 +3005,38 @@ export interface AboutPageContent {
   };
   vision?: {
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     content?: string | null;
+    contentAr?: string | null;
     image?: (string | null) | Media;
   };
   mission?: {
     title?: string | null;
+    titleAr?: string | null;
     description?: string | null;
+    descriptionAr?: string | null;
     content?: string | null;
+    contentAr?: string | null;
     image?: (string | null) | Media;
   };
   whyChooseUs?: {
     title?: string | null;
+    titleAr?: string | null;
     subtitle?: string | null;
+    subtitleAr?: string | null;
     items?:
       | {
           title: string;
+          titleAr?: string | null;
           description?: string | null;
+          descriptionAr?: string | null;
           /**
            * Alternative to description field
            */
           content?: string | null;
+          contentAr?: string | null;
           /**
            * Image displayed in the sticky right column (desktop)
            */
@@ -2763,15 +3048,19 @@ export interface AboutPageContent {
   certifications?:
     | {
         name: string;
+        nameAr?: string | null;
         image?: (string | null) | Media;
         description?: string | null;
+        descriptionAr?: string | null;
         id?: string | null;
       }[]
     | null;
   achievements?:
     | {
         title: string;
+        titleAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         icon?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -2780,22 +3069,73 @@ export interface AboutPageContent {
     | {
         year: number;
         title: string;
+        titleAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Badge, title, and description for the Leadership/Meet the Team section.
+   */
+  leadershipSection?: {
+    /**
+     * Small label above the section title (e.g. "OUR PEOPLE")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
+    /**
+     * Main heading for the leadership section
+     */
+    title?: string | null;
+    titleAr?: string | null;
+    /**
+     * Introductory text below the title
+     */
+    description?: string | null;
+    descriptionAr?: string | null;
+  };
+  /**
+   * Team members displayed in the carousel. Each member has name, position, bio, and optional image.
+   */
   leadership?:
     | {
         name: string;
+        nameAr?: string | null;
         position: string;
+        positionAr?: string | null;
         /**
          * Bio content should not exceed 700 characters. Characters remaining will be shown as you type.
          */
         bio?: string | null;
+        /**
+         * Bio content should not exceed 700 characters for Arabic.
+         */
+        bioAr?: string | null;
         image?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Badge, title, and description for the Clients/Partners section.
+   */
+  clientsSection?: {
+    /**
+     * Small label above the section title (e.g. "Partners")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
+    /**
+     * Main heading for the clients section
+     */
+    title?: string | null;
+    titleAr?: string | null;
+    /**
+     * Introductory text below the title
+     */
+    description?: string | null;
+    descriptionAr?: string | null;
+  };
   /**
    * Client logos displayed in the infinite logo section on the homepage and about page. Only images are needed. You can add unlimited client logos.
    */
@@ -2811,15 +3151,19 @@ export interface AboutPageContent {
   testimonials?:
     | {
         name: string;
+        nameAr?: string | null;
         image: string | Media;
         review: string;
+        reviewAr?: string | null;
         id?: string | null;
       }[]
     | null;
   strengths?:
     | {
         title: string;
+        titleAr?: string | null;
         description?: string | null;
+        descriptionAr?: string | null;
         icon?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -2834,11 +3178,18 @@ export interface AboutPageContent {
 export interface PostsPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Subtitle or description for the blog posts page
      */
     description?: string | null;
+    descriptionAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   seo?: {
@@ -2865,11 +3216,18 @@ export interface PostsPageContent {
 export interface CareersPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Subtitle or description for the careers page
      */
     description?: string | null;
+    descriptionAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   seo?: {
@@ -2896,11 +3254,18 @@ export interface CareersPageContent {
 export interface ContactPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Subtitle or description for the contact page
      */
     subtitle?: string | null;
+    subtitleAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   seo?: {
@@ -2927,11 +3292,18 @@ export interface ContactPageContent {
 export interface ProductsPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Subtitle or description for the products page
      */
     subtitle?: string | null;
+    subtitleAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   seo?: {
@@ -2958,11 +3330,18 @@ export interface ProductsPageContent {
 export interface ServicesPageContent {
   id: string;
   hero: {
+    /**
+     * Small label above the title (e.g. "Our Services")
+     */
+    badge?: string | null;
+    badgeAr?: string | null;
     title: string;
+    titleAr?: string | null;
     /**
      * Subtitle or description for the services page
      */
     subtitle?: string | null;
+    subtitleAr?: string | null;
     backgroundImage?: (string | null) | Media;
   };
   seo?: {
@@ -2991,8 +3370,10 @@ export interface SectorsContent {
   sectors?:
     | {
         name: string;
+        nameAr?: string | null;
         slug: string;
         description?: string | null;
+        descriptionAr?: string | null;
         image?: (string | null) | Media;
         /**
          * Link to blog page or section
@@ -3005,14 +3386,18 @@ export interface SectorsContent {
         useCases?:
           | {
               title: string;
+              titleAr?: string | null;
               description?: string | null;
+              descriptionAr?: string | null;
               id?: string | null;
             }[]
           | null;
         solutionsDelivered?:
           | {
               title: string;
+              titleAr?: string | null;
               description?: string | null;
+              descriptionAr?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -3071,6 +3456,7 @@ export interface HeaderSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              labelAr?: T;
             };
         id?: T;
       };
@@ -3094,6 +3480,7 @@ export interface FooterSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              labelAr?: T;
             };
         id?: T;
       };
@@ -3107,7 +3494,9 @@ export interface FooterSelect<T extends boolean = true> {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
+  siteNameAr?: T;
   siteDescription?: T;
+  siteDescriptionAr?: T;
   logo?: T;
   favicon?: T;
   contactInfo?:
@@ -3116,6 +3505,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         phone?: T;
         email?: T;
         address?: T;
+        addressAr?: T;
         mapEmbedUrl?: T;
         mapLink?: T;
       };
@@ -3131,6 +3521,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         snapchat?: T;
       };
   footerContent?: T;
+  footerContentAr?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -3144,22 +3535,49 @@ export interface HomepageContentSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleAr?: T;
         subtitle?: T;
+        subtitleAr?: T;
         ctaText?: T;
+        ctaTextAr?: T;
         backgroundImage?: T;
+      };
+  impactStats?:
+    | T
+    | {
+        badge?: T;
+        badgeAr?: T;
+        heading?: T;
+        headingAr?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              suffix?: T;
+              prefix?: T;
+              label?: T;
+              labelAr?: T;
+              id?: T;
+            };
       };
   servicesOverview?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         backgroundImage?: T;
       };
   sectors?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         backgroundImage?: T;
         selectedSectors?:
           | T
@@ -3171,10 +3589,15 @@ export interface HomepageContentSelect<T extends boolean = true> {
   aboutPreview?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         imageColumn?: T;
         textColumn?: T;
+        textColumnAr?: T;
         enableTwoColumn?: T;
         leftColumnMedia?: T;
         rightColumnTextBlocks?:
@@ -3182,25 +3605,32 @@ export interface HomepageContentSelect<T extends boolean = true> {
           | {
               textType?: T;
               heading?: T;
+              headingAr?: T;
               headingLevel?: T;
               paragraph?: T;
+              paragraphAr?: T;
               bullets?:
                 | T
                 | {
                     text?: T;
+                    textAr?: T;
                     id?: T;
                   };
               id?: T;
             };
         ctaText?: T;
+        ctaTextAr?: T;
         backgroundImage?: T;
       };
   blogPreview?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         ctaText?: T;
+        ctaTextAr?: T;
         backgroundImage?: T;
         featuredPosts?:
           | T
@@ -3213,9 +3643,16 @@ export interface HomepageContentSelect<T extends boolean = true> {
   contactCTA?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         ctaText?: T;
+        ctaTextAr?: T;
+        secondaryCtaText?: T;
+        secondaryCtaTextAr?: T;
         backgroundImage?: T;
       };
   updatedAt?: T;
@@ -3230,8 +3667,12 @@ export interface AboutPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         image?: T;
         video?: T;
       };
@@ -3239,29 +3680,40 @@ export interface AboutPageContentSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         content?: T;
+        contentAr?: T;
         image?: T;
       };
   mission?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         content?: T;
+        contentAr?: T;
         image?: T;
       };
   whyChooseUs?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         subtitle?: T;
+        subtitleAr?: T;
         items?:
           | T
           | {
               title?: T;
+              titleAr?: T;
               description?: T;
+              descriptionAr?: T;
               content?: T;
+              contentAr?: T;
               image?: T;
               id?: T;
             };
@@ -3270,15 +3722,19 @@ export interface AboutPageContentSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        nameAr?: T;
         image?: T;
         description?: T;
+        descriptionAr?: T;
         id?: T;
       };
   achievements?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         icon?: T;
         id?: T;
       };
@@ -3287,17 +3743,42 @@ export interface AboutPageContentSelect<T extends boolean = true> {
     | {
         year?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         id?: T;
+      };
+  leadershipSection?:
+    | T
+    | {
+        badge?: T;
+        badgeAr?: T;
+        title?: T;
+        titleAr?: T;
+        description?: T;
+        descriptionAr?: T;
       };
   leadership?:
     | T
     | {
         name?: T;
+        nameAr?: T;
         position?: T;
+        positionAr?: T;
         bio?: T;
+        bioAr?: T;
         image?: T;
         id?: T;
+      };
+  clientsSection?:
+    | T
+    | {
+        badge?: T;
+        badgeAr?: T;
+        title?: T;
+        titleAr?: T;
+        description?: T;
+        descriptionAr?: T;
       };
   clients?:
     | T
@@ -3309,15 +3790,19 @@ export interface AboutPageContentSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        nameAr?: T;
         image?: T;
         review?: T;
+        reviewAr?: T;
         id?: T;
       };
   strengths?:
     | T
     | {
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         icon?: T;
         id?: T;
       };
@@ -3333,8 +3818,12 @@ export interface PostsPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         backgroundImage?: T;
       };
   seo?:
@@ -3356,8 +3845,12 @@ export interface CareersPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         description?: T;
+        descriptionAr?: T;
         backgroundImage?: T;
       };
   seo?:
@@ -3379,8 +3872,12 @@ export interface ContactPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         subtitle?: T;
+        subtitleAr?: T;
         backgroundImage?: T;
       };
   seo?:
@@ -3402,8 +3899,12 @@ export interface ProductsPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         subtitle?: T;
+        subtitleAr?: T;
         backgroundImage?: T;
       };
   seo?:
@@ -3425,8 +3926,12 @@ export interface ServicesPageContentSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
+        titleAr?: T;
         subtitle?: T;
+        subtitleAr?: T;
         backgroundImage?: T;
       };
   seo?:
@@ -3449,8 +3954,10 @@ export interface SectorsContentSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        nameAr?: T;
         slug?: T;
         description?: T;
+        descriptionAr?: T;
         image?: T;
         ctaBlog?: T;
         ctaContact?: T;
@@ -3458,14 +3965,18 @@ export interface SectorsContentSelect<T extends boolean = true> {
           | T
           | {
               title?: T;
+              titleAr?: T;
               description?: T;
+              descriptionAr?: T;
               id?: T;
             };
         solutionsDelivered?:
           | T
           | {
               title?: T;
+              titleAr?: T;
               description?: T;
+              descriptionAr?: T;
               id?: T;
             };
         id?: T;

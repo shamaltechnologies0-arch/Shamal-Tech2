@@ -31,6 +31,14 @@ export const Career: CollectionConfig = {
       label: 'Job Title',
     },
     {
+      name: 'titleAr',
+      type: 'text',
+      label: 'Job Title (Arabic)',
+      admin: {
+        description: 'Arabic job title displayed when Arabic language is selected',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {
@@ -77,6 +85,11 @@ export const Career: CollectionConfig = {
               required: true,
               label: 'Job Location',
               defaultValue: 'Saudi Arabia',
+            },
+            {
+              name: 'locationAr',
+              type: 'text',
+              label: 'Job Location (Arabic)',
             },
             {
               name: 'employmentType',
@@ -157,6 +170,11 @@ export const Career: CollectionConfig = {
               label: 'Job Description',
             },
             {
+              name: 'descriptionAr',
+              type: 'richText',
+              label: 'Job Description (Arabic)',
+            },
+            {
               name: 'requirements',
               type: 'array',
               label: 'Job Requirements',
@@ -165,6 +183,11 @@ export const Career: CollectionConfig = {
                   name: 'requirement',
                   type: 'text',
                   required: true,
+                },
+                {
+                  name: 'requirementAr',
+                  type: 'text',
+                  label: 'Requirement (Arabic)',
                 },
               ],
             },
@@ -178,6 +201,11 @@ export const Career: CollectionConfig = {
                   type: 'text',
                   required: true,
                 },
+                {
+                  name: 'responsibilityAr',
+                  type: 'text',
+                  label: 'Responsibility (Arabic)',
+                },
               ],
             },
             {
@@ -189,6 +217,11 @@ export const Career: CollectionConfig = {
                   name: 'qualification',
                   type: 'text',
                   required: true,
+                },
+                {
+                  name: 'qualificationAr',
+                  type: 'text',
+                  label: 'Qualification (Arabic)',
                 },
               ],
             },

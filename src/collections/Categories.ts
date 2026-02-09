@@ -20,6 +20,14 @@ export const Categories: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'titleAr',
+      type: 'text',
+      label: 'Title (Arabic)',
+      admin: {
+        description: 'Arabic title displayed when Arabic language is selected',
+      },
+    },
     slugField({
       position: undefined,
     }),

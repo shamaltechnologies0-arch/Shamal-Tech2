@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { gsap } from 'gsap'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -13,6 +15,7 @@ if (typeof window !== 'undefined') {
 interface Service {
   id: string
   title: string | null
+  titleAr?: string | null
   slug: string | null
 }
 
@@ -34,9 +37,16 @@ export function SlidingServicesSection({ services, className }: SlidingServicesS
   const trackRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<gsap.core.Tween | null>(null)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const { language } = useLanguage()
 
-  // Filter out services without titles
-  const validServices = services.filter((service) => service.title)
+  // Filter out services without titles (localized)
+  const validServices = services.filter((service) => {
+    const title = getLocalizedValue(service.title, service.titleAr, language)
+    return title
+  }).map((service) => ({
+    ...service,
+    displayTitle: getLocalizedValue(service.title, service.titleAr, language),
+  }))
 
   useEffect(() => {
     if (!trackRef.current || !containerRef.current || validServices.length === 0) return
@@ -129,9 +139,12 @@ export function SlidingServicesSection({ services, className }: SlidingServicesS
   // Duplicate services for seamless infinite scroll (3 sets for smooth looping)
   const servicesToRender = [...validServices, ...validServices, ...validServices]
 
+  // Force LTR for carousel: sliding animation and layout work correctly only in LTR.
+  // In RTL pages, isolate this section so it always behaves as left-to-right.
   return (
     <section
       ref={containerRef}
+      dir="ltr"
       className={cn(
         'relative w-full overflow-hidden bg-background/50 border-y border-logo-blue/10',
         className
@@ -148,7 +161,6 @@ export function SlidingServicesSection({ services, className }: SlidingServicesS
         <div
           ref={trackRef}
           className="flex items-center gap-6 md:gap-12 will-change-transform"
-          dir="ltr"
           role="group"
         >
           {servicesToRender.map((service, index) => {
@@ -178,7 +190,7 @@ export function SlidingServicesSection({ services, className }: SlidingServicesS
                       isHovered && 'border-logo-blue bg-logo-blue/15 scale-105 shadow-lg text-logo-blue'
                     )}
                   >
-                    {service.title}
+                    {service.displayTitle}
                   </Link>
                 ) : (
                   <span
@@ -191,7 +203,7 @@ export function SlidingServicesSection({ services, className }: SlidingServicesS
                       isHovered && 'border-logo-blue/40 bg-logo-blue/10 scale-105'
                     )}
                   >
-                    {service.title}
+                    {service.displayTitle}
                   </span>
                 )}
               </div>

@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { Button } from '../ui/button'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../lib/translations/common'
+import { getLocalizedValue } from '../../lib/localization'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
@@ -9,10 +12,12 @@ import { Label } from '../ui/label'
 import { Alert, AlertDescription } from '../ui/alert'
 
 interface ContactFormProps {
-  services?: Array<{ id: string; title: string; slug: string }>
+  services?: Array<{ id: string; title?: string | null; titleAr?: string | null; slug?: string }>
 }
 
 export function ContactForm({ services = [] }: ContactFormProps) {
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -82,7 +87,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label htmlFor="name">Name *</Label>
+        <Label htmlFor="name">{t.name} *</Label>
         <Input
           id="name"
           name="name"
@@ -94,7 +99,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="email">Email *</Label>
+        <Label htmlFor="email">{t.email} *</Label>
         <Input
           id="email"
           name="email"
@@ -106,7 +111,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="phone">Phone</Label>
+        <Label htmlFor="phone">{t.phone}</Label>
         <Input
           id="phone"
           name="phone"
@@ -117,7 +122,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="company">Company</Label>
+        <Label htmlFor="company">{t.company}</Label>
         <Input
           id="company"
           name="company"
@@ -128,7 +133,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="subject">Subject</Label>
+        <Label htmlFor="subject">{t.subject}</Label>
         <Input
           id="subject"
           name="subject"
@@ -140,7 +145,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
 
       {services.length > 0 && (
         <div>
-          <Label>Services (Select all that apply)</Label>
+          <Label>{t.servicesSelectAll}</Label>
           <div className="mt-2 space-y-2">
             {services.map((service) => (
               <div key={service.id} className="flex items-center space-x-2">
@@ -153,7 +158,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
                   htmlFor={`service-${service.id}`}
                   className="font-normal cursor-pointer"
                 >
-                  {service.title}
+                  {getLocalizedValue(service.title, service.titleAr, language)}
                 </Label>
               </div>
             ))}
@@ -162,7 +167,7 @@ export function ContactForm({ services = [] }: ContactFormProps) {
       )}
 
       <div>
-        <Label htmlFor="message">Message *</Label>
+        <Label htmlFor="message">{t.message} *</Label>
         <Textarea
           id="message"
           name="message"
@@ -175,22 +180,20 @@ export function ContactForm({ services = [] }: ContactFormProps) {
 
       {submitStatus === 'success' && (
         <Alert className="bg-green-50 border-green-200 text-green-800">
-          <AlertDescription>
-          Thank you! Your message has been sent successfully.
-          </AlertDescription>
+          <AlertDescription>{t.thankYouSent}</AlertDescription>
         </Alert>
       )}
 
       {submitStatus === 'error' && (
         <Alert variant="destructive">
           <AlertDescription>
-          {errorMessage || 'Failed to send message. Please try again.'}
+            {errorMessage || t.failedToSend}
           </AlertDescription>
         </Alert>
       )}
 
       <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? 'Sending...' : 'Send Message'}
+        {isSubmitting ? t.sending : t.sendMessage}
       </Button>
     </form>
   )

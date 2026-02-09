@@ -13,8 +13,11 @@ import { ScrollSection } from '../../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../../components/sections/ParallaxElement'
 import { ScrollReveal, StaggerReveal, CinematicReveal } from '../../../utilities/animations'
 import RichText from '../../../components/RichText'
-import { LeadershipCarousel } from '../../../components/sections/LeadershipCarousel.client'
+import { LeadershipSection } from '../../../components/sections/LeadershipSection.client'
+import { ClientsSection } from '../../../components/sections/ClientsSection.client'
 import { WhyChooseShamalPinnedSection } from '../../../components/sections/WhyChooseShamalPinnedSection.client'
+import { AboutHeroSection } from '../../../components/sections/AboutHeroSection.client'
+import { VisionMissionCard } from '../../../components/sections/VisionMissionCard.client'
 
 export const metadata: Metadata = {
   title: 'About Us | Shamal Technologies',
@@ -29,8 +32,12 @@ export default async function AboutPage() {
   // Type assertions for about page content - depth 3 to ensure media relationships are fully populated
   const aboutContent = (await getCachedGlobal('about-page-content', 3)()) as {
     hero?: {
+      badge?: string
+      badgeAr?: string
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       image?: {
         id?: string
         url?: string
@@ -48,8 +55,11 @@ export default async function AboutPage() {
     }
     vision?: {
       title?: string
+      titleAr?: string
       description?: string
-      content?: string | any // Can be string or Lexical JSON (for backward compatibility)
+      descriptionAr?: string
+      content?: string | any
+      contentAr?: string | any
       image?: {
         id?: string
         url?: string
@@ -60,8 +70,11 @@ export default async function AboutPage() {
     }
     mission?: {
       title?: string
+      titleAr?: string
       description?: string
-      content?: string | any // Can be string or Lexical JSON (for backward compatibility)
+      descriptionAr?: string
+      content?: string | any
+      contentAr?: string | any
       image?: {
         id?: string
         url?: string
@@ -88,11 +101,22 @@ export default async function AboutPage() {
       title?: string
       description?: string
     }>
+    leadershipSection?: {
+      badge?: string
+      badgeAr?: string
+      title?: string
+      titleAr?: string
+      description?: string
+      descriptionAr?: string
+    }
     leadership?: Array<{
       name?: string
+      nameAr?: string
       position?: string
+      positionAr?: string
       role?: string
       bio?: string
+      bioAr?: string
       image?: {
         id?: string
         url?: string
@@ -100,6 +124,14 @@ export default async function AboutPage() {
         alt?: string
       } | string | null
     }>
+    clientsSection?: {
+      badge?: string
+      badgeAr?: string
+      title?: string
+      titleAr?: string
+      description?: string
+      descriptionAr?: string
+    }
     clients?: Array<{
       logo?: {
         id?: string
@@ -125,11 +157,16 @@ export default async function AboutPage() {
     }>
     whyChooseUs?: {
       title?: string
+      titleAr?: string
       subtitle?: string
+      subtitleAr?: string
       items?: Array<{
         title?: string
+        titleAr?: string
         description?: string
+        descriptionAr?: string
         content?: string
+        contentAr?: string
         image?: {
           id?: string
           url?: string
@@ -262,21 +299,14 @@ export default async function AboutPage() {
         </div>
         
         {/* Hero Text */}
-        <div className="relative z-10 container mx-auto px-4 py-20 w-full">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <Badge variant="outline" className="mb-4 text-sm border-white/40 text-white bg-white/20 backdrop-blur-sm">
-              Our Story
-            </Badge>
-            <h1 className="text-hero font-display font-bold tracking-tight text-white drop-shadow-2xl">
-              {aboutContent?.hero?.title || 'About Shamal Technologies'}
-            </h1>
-            {aboutContent?.hero?.description && (
-              <p className="text-body-large text-white/95 max-w-3xl mx-auto drop-shadow-lg font-medium">
-                {aboutContent.hero.description}
-              </p>
-            )}
-          </div>
-        </div>
+        <AboutHeroSection
+          title={aboutContent?.hero?.title}
+          titleAr={aboutContent?.hero?.titleAr}
+          description={aboutContent?.hero?.description}
+          descriptionAr={aboutContent?.hero?.descriptionAr}
+          badge={aboutContent?.hero?.badge}
+          badgeAr={aboutContent?.hero?.badgeAr}
+        />
       </section>
 
       {/* Why Choose Shamal - Pinned Section */}
@@ -284,7 +314,9 @@ export default async function AboutPage() {
         <div id="why-choose-shamal">
           <WhyChooseShamalPinnedSection
             title={aboutContent.whyChooseUs.title || 'Why Choose Shamal'}
+            titleAr={aboutContent.whyChooseUs.titleAr}
             subtitle={aboutContent.whyChooseUs.subtitle}
+            subtitleAr={aboutContent.whyChooseUs.subtitleAr}
             items={aboutContent.whyChooseUs.items}
           />
         </div>
@@ -301,136 +333,50 @@ export default async function AboutPage() {
                     {/* Vision */}
                     {aboutContent?.vision && (
                       <ScrollReveal direction="left" delay={0.3} duration={1}>
-                        <Card className="border-2 border-logo-blue/30 shadow-xl h-full bg-background/95 backdrop-blur-sm">
-                          <CardHeader>
-                            <div className="flex items-center gap-4 mb-6">
-                              <div className="p-3 rounded-xl bg-logo-blue/10">
-                                <Target className="h-8 w-8 text-logo-blue" />
-                              </div>
-                              <CardTitle className="text-3xl md:text-4xl font-display font-bold">
-                                <span className="text-gradient">
-                                  {aboutContent.vision.title || 'Our Vision'}
-                                </span>
-                              </CardTitle>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            {/* Vision Image */}
-                            {aboutContent.vision.image &&
-                            typeof aboutContent.vision.image === 'object' &&
-                            aboutContent.vision.image !== null &&
-                            (aboutContent.vision.image.url || aboutContent.vision.image.filename) && (
-                              <div className="relative w-full h-64 mb-6 rounded-lg overflow-hidden">
-                                <Image
-                                  src={
-                                    aboutContent.vision.image.url
-                                      ? aboutContent.vision.image.url.startsWith('http')
-                                        ? aboutContent.vision.image.url
-                                        : aboutContent.vision.image.url.startsWith('/')
-                                          ? aboutContent.vision.image.url
-                                          : `/${aboutContent.vision.image.url}`
-                                      : aboutContent.vision.image.filename
-                                        ? `/media/${aboutContent.vision.image.filename}`
-                                        : ''
-                                  }
-                                  alt={aboutContent.vision.image.alt || aboutContent.vision.title || 'Vision image'}
-                                  fill
-                                  className="object-cover"
-                                  priority={false}
-                                  quality={90}
-                                />
-                              </div>
-                            )}
-                            <div className="prose prose-lg md:prose-xl max-w-none text-logo-navy">
-                              {/* Display description if available, otherwise content */}
-                              {aboutContent.vision.description ? (
-                                typeof aboutContent.vision.description === 'string' ? (
-                                  <p className="whitespace-pre-wrap leading-relaxed font-medium">
-                                    {aboutContent.vision.description}
-                                  </p>
-                                ) : (
-                                  <RichText data={aboutContent.vision.description} enableGutter={false} />
-                                )
-                              ) : aboutContent.vision.content ? (
-                                typeof aboutContent.vision.content === 'string' ? (
-                                  <p className="whitespace-pre-wrap leading-relaxed font-medium">
-                                    {aboutContent.vision.content}
-                                  </p>
-                                ) : (
-                                  <RichText data={aboutContent.vision.content} enableGutter={false} />
-                                )
-                              ) : null}
-                            </div>
-                          </CardContent>
-                        </Card>
+                        <VisionMissionCard
+                          title={aboutContent.vision.title}
+                          titleAr={aboutContent.vision.titleAr}
+                          description={aboutContent.vision.description}
+                          descriptionAr={aboutContent.vision.descriptionAr}
+                          content={aboutContent.vision.content}
+                          contentAr={aboutContent.vision.contentAr}
+                          image={
+                            aboutContent.vision.image &&
+                            typeof aboutContent.vision.image === 'object'
+                              ? aboutContent.vision.image
+                              : null
+                          }
+                          defaultTitle="Our Vision"
+                          icon={<Target className="h-8 w-8 text-logo-blue" />}
+                          gradientClass="text-gradient"
+                          borderClass="border-logo-blue/30"
+                          iconBgClass="bg-logo-blue/10"
+                        />
                       </ScrollReveal>
                     )}
 
                     {/* Mission */}
                     {aboutContent?.mission && (
                       <ScrollReveal direction="right" delay={0.4} duration={1}>
-                        <Card className="border-2 border-logo-navy/30 shadow-xl h-full bg-background/95 backdrop-blur-sm">
-                          <CardHeader>
-                            <div className="flex items-center gap-4 mb-6">
-                              <div className="p-3 rounded-xl bg-logo-navy/10">
-                                <TrendingUp className="h-8 w-8 text-logo-navy" />
-                              </div>
-                              <CardTitle className="text-3xl md:text-4xl font-display font-bold">
-                                <span className="text-gradient">
-                                  {aboutContent.mission.title || 'Our Mission'}
-                                </span>
-                              </CardTitle>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            {/* Mission Image */}
-                            {aboutContent.mission.image &&
-                            typeof aboutContent.mission.image === 'object' &&
-                            aboutContent.mission.image !== null &&
-                            (aboutContent.mission.image.url || aboutContent.mission.image.filename) && (
-                              <div className="relative w-full h-64 mb-6 rounded-lg overflow-hidden">
-                                <Image
-                                  src={
-                                    aboutContent.mission.image.url
-                                      ? aboutContent.mission.image.url.startsWith('http')
-                                        ? aboutContent.mission.image.url
-                                        : aboutContent.mission.image.url.startsWith('/')
-                                          ? aboutContent.mission.image.url
-                                          : `/${aboutContent.mission.image.url}`
-                                      : aboutContent.mission.image.filename
-                                        ? `/media/${aboutContent.mission.image.filename}`
-                                        : ''
-                                  }
-                                  alt={aboutContent.mission.image.alt || aboutContent.mission.title || 'Mission image'}
-                                  fill
-                                  className="object-cover"
-                                  priority={false}
-                                  quality={90}
-                                />
-                              </div>
-                            )}
-                            <div className="prose prose-lg md:prose-xl max-w-none text-logo-navy">
-                              {/* Display description if available, otherwise content */}
-                              {aboutContent.mission.description ? (
-                                typeof aboutContent.mission.description === 'string' ? (
-                                  <p className="whitespace-pre-wrap leading-relaxed font-medium">
-                                    {aboutContent.mission.description}
-                                  </p>
-                                ) : (
-                                  <RichText data={aboutContent.mission.description} enableGutter={false} />
-                                )
-                              ) : aboutContent.mission.content ? (
-                                typeof aboutContent.mission.content === 'string' ? (
-                                  <p className="whitespace-pre-wrap leading-relaxed font-medium">
-                                    {aboutContent.mission.content}
-                                  </p>
-                                ) : (
-                                  <RichText data={aboutContent.mission.content} enableGutter={false} />
-                                )
-                              ) : null}
-                            </div>
-                          </CardContent>
-                        </Card>
+                        <VisionMissionCard
+                          title={aboutContent.mission.title}
+                          titleAr={aboutContent.mission.titleAr}
+                          description={aboutContent.mission.description}
+                          descriptionAr={aboutContent.mission.descriptionAr}
+                          content={aboutContent.mission.content}
+                          contentAr={aboutContent.mission.contentAr}
+                          image={
+                            aboutContent.mission.image &&
+                            typeof aboutContent.mission.image === 'object'
+                              ? aboutContent.mission.image
+                              : null
+                          }
+                          defaultTitle="Our Mission"
+                          icon={<TrendingUp className="h-8 w-8 text-logo-navy" />}
+                          gradientClass="text-gradient"
+                          borderClass="border-logo-navy/30"
+                          iconBgClass="bg-logo-navy/10"
+                        />
                       </ScrollReveal>
                     )}
                   </div>
@@ -646,26 +592,15 @@ export default async function AboutPage() {
       {aboutContent?.leadership && aboutContent.leadership.length > 0 && (
         <ScrollSection id="leadership" fullViewport bgVariant="2" parallax>
           <div className="container mx-auto px-4 w-full">
-            <ParallaxElement speed={0.3} direction="up">
-              <CinematicReveal delay={0.2} duration={1.2}>
-                <div className="top-section flex flex-col lg:gap-[10px] gap-[5px] md:items-center items-start mb-16">
-                  <h6 className="top-head md:text-center text-start text-sm font-semibold uppercase tracking-wider text-logo-blue mb-2">
-                    OUR PEOPLE
-                  </h6>
-                  <h2 className="main-head md:text-center text-start text-display-large font-display font-bold tracking-tight text-logo-navy">
-                    Meet the Team Driving the Vision
-                  </h2>
-                  <div className="sub-para md:text-center text-start lg:w-[75%] md:w-[80%] w-full">
-                    <p className="text-body-large text-logo-blue max-w-3xl mx-auto md:mx-0 font-medium">
-                      Built upon over 25 years of industry experience, our team actively forms trusted partnerships, fosters a culture of innovation, and relentlessly pursues excellence
-                    </p>
-                  </div>
-                </div>
-              </CinematicReveal>
-            </ParallaxElement>
-            <div className="people-carousel-section md:pt-5 pt-0">
-              <LeadershipCarousel members={aboutContent.leadership} />
-            </div>
+            <LeadershipSection
+              badge={aboutContent?.leadershipSection?.badge}
+              badgeAr={aboutContent?.leadershipSection?.badgeAr}
+              title={aboutContent?.leadershipSection?.title}
+              titleAr={aboutContent?.leadershipSection?.titleAr}
+              description={aboutContent?.leadershipSection?.description}
+              descriptionAr={aboutContent?.leadershipSection?.descriptionAr}
+              members={aboutContent.leadership}
+            />
           </div>
         </ScrollSection>
       )}
@@ -674,51 +609,15 @@ export default async function AboutPage() {
       {aboutContent?.clients && aboutContent.clients.length > 0 && (
         <ScrollSection id="clients" flexible bgVariant="3" parallax>
           <div className="container mx-auto px-4 w-full">
-            <ParallaxElement speed={0.3} direction="up">
-              <CinematicReveal delay={0.2} duration={1.2}>
-                <div className="text-center mb-16 space-y-6">
-                  <Badge
-                    variant="outline"
-                    className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold"
-                  >
-                    Partners
-                  </Badge>
-                  <h2 className="text-display-large font-display font-bold tracking-tight">
-                    <span className="text-gradient">Our Clients</span>
-                  </h2>
-                  <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    Trusted by leading organizations
-                  </p>
-                </div>
-              </CinematicReveal>
-            </ParallaxElement>
-            <StaggerReveal direction="up" delay={0.3} stagger={0.1} duration={0.6}>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 max-w-7xl mx-auto">
-                {aboutContent.clients.map((client: any, index: number) => (
-                  <Card
-                    key={index}
-                    className="text-center p-6 hover:shadow-xl transition-all duration-300 border-2 border-logo-blue/10 bg-background/95 backdrop-blur-sm group"
-                  >
-                    {client.logo &&
-                      typeof client.logo === 'object' &&
-                      client.logo !== null &&
-                      (client.logo.url || client.logo.filename || client.logo.id) && (
-                        <div className="relative h-28 group-hover:scale-110 transition-transform duration-300">
-                          <Image
-                            src={
-                              client.logo.url ||
-                              (client.logo.filename ? `/media/${client.logo.filename}` : '')
-                            }
-                            alt={client.logo.alt || 'Client logo'}
-                            fill
-                            className="object-contain opacity-70 group-hover:opacity-100 transition-opacity"
-                          />
-                        </div>
-                      )}
-                  </Card>
-                ))}
-              </div>
-            </StaggerReveal>
+            <ClientsSection
+              badge={aboutContent?.clientsSection?.badge}
+              badgeAr={aboutContent?.clientsSection?.badgeAr}
+              title={aboutContent?.clientsSection?.title}
+              titleAr={aboutContent?.clientsSection?.titleAr}
+              description={aboutContent?.clientsSection?.description}
+              descriptionAr={aboutContent?.clientsSection?.descriptionAr}
+              clients={aboutContent.clients as { logo?: { url?: string; filename?: string; alt?: string } | string | null }[]}
+            />
           </div>
         </ScrollSection>
       )}

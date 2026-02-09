@@ -111,6 +111,15 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
           label: 'Label',
           required: true,
         },
+        {
+          name: 'labelAr',
+          type: 'text',
+          admin: {
+            width: '50%',
+            description: 'Arabic label for the link when Arabic language is selected',
+          },
+          label: 'Label (Arabic)',
+        },
       ],
     })
   } else {

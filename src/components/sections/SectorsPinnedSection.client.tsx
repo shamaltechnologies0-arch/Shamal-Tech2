@@ -9,6 +9,9 @@ import { Button } from '../ui/button'
 import { CheckCircle2, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
+import { getCommonTranslations } from '../../lib/translations/common'
 
 // Register ScrollTrigger plugin
 if (typeof window !== 'undefined' && gsap && ScrollTrigger) {
@@ -21,8 +24,10 @@ if (typeof window !== 'undefined' && gsap && ScrollTrigger) {
 
 interface Sector {
   name?: string
+  nameAr?: string
   slug?: string
   description?: string
+  descriptionAr?: string
   image?: {
     id?: string
     url?: string
@@ -34,19 +39,27 @@ interface Sector {
   ctaContact?: string
   useCases?: Array<{
     title?: string
+    titleAr?: string
     description?: string
+    descriptionAr?: string
     id?: string
   }>
   solutionsDelivered?: Array<{
     title?: string
+    titleAr?: string
     description?: string
+    descriptionAr?: string
     id?: string
   }>
 }
 
 interface SectorsPinnedSectionProps {
+  badge?: string
+  badgeAr?: string
   title?: string
+  titleAr?: string
   description?: string
+  descriptionAr?: string
   sectors: Sector[]
   backgroundImage?: {
     url?: string
@@ -55,12 +68,21 @@ interface SectorsPinnedSectionProps {
 }
 
 export function SectorsPinnedSection({
+  badge = 'Industries',
+  badgeAr,
   title = 'SECTORS WE SERVE',
+  titleAr,
   description,
+  descriptionAr,
   sectors,
   backgroundImage,
 }: SectorsPinnedSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
+  const displayBadge = getLocalizedValue(badge, badgeAr, language)
+  const displayTitle = getLocalizedValue(title, titleAr, language)
+  const displayDescription = getLocalizedValue(description, descriptionAr, language)
   const leftColumnRef = useRef<HTMLDivElement>(null)
   const rightColumnWrapperRef = useRef<HTMLDivElement>(null)
   const rightColumnInnerRef = useRef<HTMLDivElement>(null)
@@ -286,14 +308,14 @@ export function SectorsPinnedSection({
           >
             <div className="space-y-6 w-full">
               <Badge variant="secondary" className="mb-4">
-                Industries
+                {displayBadge}
               </Badge>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                {title}
+                {displayTitle}
               </h2>
-              {description && (
+              {displayDescription && (
                 <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-                  {description}
+                  {displayDescription}
                 </p>
               )}
             </div>
@@ -339,24 +361,24 @@ export function SectorsPinnedSection({
                       <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                         <Image
                           src={sectorImage}
-                          alt={sector.name || 'Sector image'}
+                          alt={getLocalizedValue(sector.name, sector.nameAr, language) || 'Sector image'}
                           fill
                           className="object-cover"
                         />
                       </div>
                     )}
                     <CardHeader>
-                      <CardTitle className="text-xl">{sector.name}</CardTitle>
+                      <CardTitle className="text-xl">{getLocalizedValue(sector.name, sector.nameAr, language)}</CardTitle>
                     </CardHeader>
-                    {sector.description && (
+                    {(getLocalizedValue(sector.description, sector.descriptionAr, language)) && (
                       <CardContent>
                         <CardDescription className="mb-4">
-                          {sector.description}
+                          {getLocalizedValue(sector.description, sector.descriptionAr, language)}
                         </CardDescription>
                         {sector.useCases && sector.useCases.length > 0 && (
                           <div className="space-y-2 mb-4">
                             <h4 className="text-sm font-semibold">
-                              Key Applications:
+                              {t.keyApplications}
                             </h4>
                             <ul className="space-y-1">
                               {sector.useCases.slice(0, 3).map((useCase, idx) => (
@@ -366,10 +388,10 @@ export function SectorsPinnedSection({
                                 >
                                   <CheckCircle2 className="h-4 w-4 mr-2 mt-0.5 text-primary flex-shrink-0" />
                                   <div>
-                                    <div className="font-medium">{useCase.title}</div>
-                                    {useCase.description && (
+                                    <div className="font-medium">{getLocalizedValue(useCase.title, useCase.titleAr, language)}</div>
+                                    {(getLocalizedValue(useCase.description, useCase.descriptionAr, language)) && (
                                       <div className="text-xs text-muted-foreground/80 mt-0.5">
-                                        {useCase.description}
+                                        {getLocalizedValue(useCase.description, useCase.descriptionAr, language)}
                                       </div>
                                     )}
                                   </div>

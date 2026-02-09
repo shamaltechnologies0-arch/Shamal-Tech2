@@ -6,13 +6,17 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { getServiceImagePath } from '../../utilities/getServiceImage'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getLocalizedValue } from '../../lib/localization'
 
 // Simplified service type for client component (serialized)
 type SerializedService = {
   id: string
   title: string | null
+  titleAr?: string | null
   slug: string | null
   heroDescription: string | null
+  heroDescriptionAr?: string | null
   heroImage: {
     url?: string
     id?: string
@@ -30,6 +34,7 @@ interface ServicesCarouselProps {
 }
 
 export function ServicesCarousel({ services }: ServicesCarouselProps) {
+  const { language } = useLanguage()
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [isHovered, setIsHovered] = useState<number | null>(null)
@@ -80,13 +85,15 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
     return null
   }
 
+  // Force LTR: carousel scrolls left-to-right regardless of page RTL (Arabic)
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" dir="ltr">
       <Carousel
         setApi={setApi}
         opts={{
           align: 'center',
           loop: true,
+          direction: 'ltr', // Always LTR: carousel scrolls left-to-right regardless of page RTL
         }}
         plugins={[autoplayPlugin.current]}
         className="w-full"
@@ -173,7 +180,7 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                       <Image
                         key={`${service.id}-${imageUrl}`}
                         src={imageUrl}
-                        alt={service.title || 'Service'}
+                        alt={getLocalizedValue(service.title, service.titleAr, language) || 'Service'}
                         fill
                         className={`object-cover transition-transform duration-700 ease-out ${
                           isActive ? 'scale-110' : 'scale-100'
@@ -197,11 +204,11 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                           isActive ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-90'
                         }`}
                       >
-                        {service.title}
+                        {getLocalizedValue(service.title, service.titleAr, language)}
                       </h3>
 
                       {/* Description - Shows on hover or when centered */}
-                      {service.heroDescription && (
+                      {(service.heroDescription || service.heroDescriptionAr) && (
                         <div
                           className={`overflow-hidden transition-all duration-500 ease-in-out ${
                             isActive
@@ -210,7 +217,11 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                           }`}
                         >
                           <p className="text-white/95 text-sm md:text-base lg:text-lg leading-relaxed mb-4">
-                            {service.heroDescription}
+                            {getLocalizedValue(
+                              service.heroDescription,
+                              service.heroDescriptionAr,
+                              language
+                            )}
                           </p>
                           <div className="flex items-center text-white font-semibold text-sm md:text-base group-hover:gap-2 transition-all">
                             Learn More
@@ -220,11 +231,19 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                       )}
 
                       {/* Short preview for non-active items */}
-                      {!isActive && service.heroDescription && (
-                        <p className="text-white/85 text-sm md:text-base line-clamp-2 mt-2">
-                          {service.heroDescription.substring(0, 120)}...
-                        </p>
-                      )}
+                      {!isActive && (() => {
+                        const desc = getLocalizedValue(
+                          service.heroDescription,
+                          service.heroDescriptionAr,
+                          language
+                        )
+                        if (!desc) return null
+                        return (
+                          <p className="text-white/85 text-sm md:text-base line-clamp-2 mt-2">
+                            {desc.length > 120 ? `${desc.substring(0, 120)}...` : desc}
+                          </p>
+                        )
+                      })()}
                     </div>
 
                     {/* Center indicator - subtle glow effect */}

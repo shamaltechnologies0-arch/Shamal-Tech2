@@ -16,9 +16,19 @@ export const SiteSettings: GlobalConfig = {
       required: true,
     },
     {
+      name: 'siteNameAr',
+      type: 'text',
+      label: 'Site Name (Arabic)',
+    },
+    {
       name: 'siteDescription',
       type: 'textarea',
       label: 'Site Meta Description',
+    },
+    {
+      name: 'siteDescriptionAr',
+      type: 'textarea',
+      label: 'Site Meta Description (Arabic)',
     },
     {
       name: 'logo',
@@ -52,6 +62,11 @@ export const SiteSettings: GlobalConfig = {
           type: 'textarea',
           defaultValue:
             '11th floor, Office no:1109, The Headquarters Business Park, Jeddah 23511',
+        },
+        {
+          name: 'addressAr',
+          type: 'textarea',
+          label: 'Address (Arabic)',
         },
         {
           name: 'mapEmbedUrl',
@@ -114,6 +129,11 @@ export const SiteSettings: GlobalConfig = {
       name: 'footerContent',
       type: 'richText',
       label: 'Footer Content',
+    },
+    {
+      name: 'footerContentAr',
+      type: 'richText',
+      label: 'Footer Content (Arabic)',
     },
   ],
 }

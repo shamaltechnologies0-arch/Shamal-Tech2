@@ -19,10 +19,29 @@ export const CareersPageContent: GlobalConfig = {
       label: 'Hero Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge',
+          defaultValue: 'Join Our Team',
+          admin: {
+            description: 'Small label above the title',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           required: true,
           defaultValue: 'Careers',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
         },
         {
           name: 'description',
@@ -30,6 +49,11 @@ export const CareersPageContent: GlobalConfig = {
           admin: {
             description: 'Subtitle or description for the careers page',
           },
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
         },
         {
           name: 'backgroundImage',

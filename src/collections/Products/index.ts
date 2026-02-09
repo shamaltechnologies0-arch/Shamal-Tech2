@@ -31,6 +31,14 @@ export const Products: CollectionConfig = {
       required: true,
     },
     {
+      name: 'nameAr',
+      type: 'text',
+      label: 'Name (Arabic)',
+      admin: {
+        description: 'Arabic product name displayed when Arabic language is selected',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {
@@ -46,6 +54,11 @@ export const Products: CollectionConfig = {
             {
               name: 'description',
               type: 'richText',
+            },
+            {
+              name: 'descriptionAr',
+              type: 'richText',
+              label: 'Description (Arabic)',
             },
             {
               name: 'specifications',
@@ -80,6 +93,11 @@ export const Products: CollectionConfig = {
               },
             },
             {
+              name: 'categoryTagAr',
+              type: 'text',
+              label: 'Category Tag (Arabic)',
+            },
+            {
               name: 'keyFeatures',
               type: 'array',
               label: 'Key Features',
@@ -88,6 +106,11 @@ export const Products: CollectionConfig = {
                   name: 'feature',
                   type: 'text',
                   required: true,
+                },
+                {
+                  name: 'featureAr',
+                  type: 'text',
+                  label: 'Feature (Arabic)',
                 },
               ],
               admin: {
@@ -104,6 +127,11 @@ export const Products: CollectionConfig = {
               type: 'text',
               label: 'CTA Button Text',
               defaultValue: 'Request Quote',
+            },
+            {
+              name: 'ctaTextAr',
+              type: 'text',
+              label: 'CTA Button Text (Arabic)',
             },
           ],
         },

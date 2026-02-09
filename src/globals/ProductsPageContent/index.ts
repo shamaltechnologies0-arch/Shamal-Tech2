@@ -19,10 +19,29 @@ export const ProductsPageContent: GlobalConfig = {
       label: 'Hero Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge',
+          defaultValue: 'Products',
+          admin: {
+            description: 'Small label above the title',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge (Arabic)',
+        },
+        {
           name: 'title',
           type: 'text',
           required: true,
           defaultValue: 'Our Products',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
         },
         {
           name: 'subtitle',
@@ -31,6 +50,11 @@ export const ProductsPageContent: GlobalConfig = {
           admin: {
             description: 'Subtitle or description for the products page',
           },
+        },
+        {
+          name: 'subtitleAr',
+          type: 'textarea',
+          label: 'Subtitle (Arabic)',
         },
         {
           name: 'backgroundImage',

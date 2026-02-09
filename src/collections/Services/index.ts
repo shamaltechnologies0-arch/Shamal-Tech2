@@ -48,6 +48,14 @@ export const Services: CollectionConfig = {
       required: true,
     },
     {
+      name: 'titleAr',
+      type: 'text',
+      label: 'Title (Arabic)',
+      admin: {
+        description: 'Arabic title displayed when Arabic language is selected',
+      },
+    },
+    {
       name: 'order',
       type: 'number',
       label: 'Display Order',
@@ -75,8 +83,18 @@ export const Services: CollectionConfig = {
               required: true,
             },
             {
+              name: 'heroTitleAr',
+              type: 'text',
+              label: 'Hero Title (Arabic)',
+            },
+            {
               name: 'heroDescription',
               type: 'textarea',
+            },
+            {
+              name: 'heroDescriptionAr',
+              type: 'textarea',
+              label: 'Hero Description (Arabic)',
             },
             {
               name: 'benefits',
@@ -89,8 +107,18 @@ export const Services: CollectionConfig = {
                   required: true,
                 },
                 {
+                  name: 'titleAr',
+                  type: 'text',
+                  label: 'Title (Arabic)',
+                },
+                {
                   name: 'description',
                   type: 'textarea',
+                },
+                {
+                  name: 'descriptionAr',
+                  type: 'textarea',
+                  label: 'Description (Arabic)',
                 },
                 {
                   name: 'icon',
@@ -110,8 +138,18 @@ export const Services: CollectionConfig = {
                   required: true,
                 },
                 {
+                  name: 'titleAr',
+                  type: 'text',
+                  label: 'Title (Arabic)',
+                },
+                {
                   name: 'description',
                   type: 'textarea',
+                },
+                {
+                  name: 'descriptionAr',
+                  type: 'textarea',
+                  label: 'Description (Arabic)',
                 },
                 {
                   name: 'image',
@@ -131,8 +169,18 @@ export const Services: CollectionConfig = {
                   required: true,
                 },
                 {
+                  name: 'nameAr',
+                  type: 'text',
+                  label: 'Name (Arabic)',
+                },
+                {
                   name: 'description',
                   type: 'textarea',
+                },
+                {
+                  name: 'descriptionAr',
+                  type: 'textarea',
+                  label: 'Description (Arabic)',
                 },
                 {
                   name: 'icon',
@@ -152,9 +200,19 @@ export const Services: CollectionConfig = {
                   required: true,
                 },
                 {
+                  name: 'questionAr',
+                  type: 'text',
+                  label: 'Question (Arabic)',
+                },
+                {
                   name: 'answer',
                   type: 'richText',
                   required: true,
+                },
+                {
+                  name: 'answerAr',
+                  type: 'richText',
+                  label: 'Answer (Arabic)',
                 },
               ],
             },
@@ -164,15 +222,30 @@ export const Services: CollectionConfig = {
               label: 'CTA Section Title',
             },
             {
+              name: 'ctaTitleAr',
+              type: 'text',
+              label: 'CTA Section Title (Arabic)',
+            },
+            {
               name: 'ctaDescription',
               type: 'textarea',
               label: 'CTA Section Description',
+            },
+            {
+              name: 'ctaDescriptionAr',
+              type: 'textarea',
+              label: 'CTA Section Description (Arabic)',
             },
             {
               name: 'ctaButtonText',
               type: 'text',
               label: 'CTA Button Text',
               defaultValue: 'Contact Us',
+            },
+            {
+              name: 'ctaButtonTextAr',
+              type: 'text',
+              label: 'CTA Button Text (Arabic)',
             },
           ],
         },

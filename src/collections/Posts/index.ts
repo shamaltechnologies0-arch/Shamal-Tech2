@@ -16,6 +16,7 @@ import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
+import { ensureMetaExists, ensureMetaOnSave, sanitizeCategories } from './hooks/sanitizeForRead'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
 import {
@@ -72,6 +73,14 @@ export const Posts: CollectionConfig<'posts'> = {
       required: true,
     },
     {
+      name: 'titleAr',
+      type: 'text',
+      label: 'Title (Arabic)',
+      admin: {
+        description: 'Arabic title displayed when Arabic language is selected',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {
@@ -111,6 +120,12 @@ export const Posts: CollectionConfig<'posts'> = {
               maxLength: 5000,
             },
             {
+              name: 'descriptionAr',
+              type: 'textarea',
+              label: 'Description/Excerpt (Arabic)',
+              maxLength: 5000,
+            },
+            {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
@@ -132,6 +147,26 @@ export const Posts: CollectionConfig<'posts'> = {
               }),
               label: false,
               required: true,
+            },
+            {
+              name: 'contentAr',
+              type: 'richText',
+              label: 'Content (Arabic)',
+              admin: {
+                description: 'Arabic content displayed when Arabic language is selected',
+              },
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                    HorizontalRuleFeature(),
+                  ]
+                },
+              }),
             },
           ],
           label: 'Content',
@@ -280,8 +315,10 @@ export const Posts: CollectionConfig<'posts'> = {
     slugField(),
   ],
   hooks: {
+    beforeRead: [ensureMetaExists],
+    beforeChange: [ensureMetaOnSave],
     afterChange: [revalidatePost],
-    afterRead: [populateAuthors],
+    afterRead: [sanitizeCategories, populateAuthors],
     afterDelete: [revalidateDelete],
   },
   versions: {

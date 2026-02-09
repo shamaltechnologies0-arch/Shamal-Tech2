@@ -1,17 +1,22 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { cn } from '../../utilities/ui'
 import { useLanguage } from '../../providers/Language/LanguageContext'
 
 export const LanguageToggle: React.FC<{ className?: string }> = ({ className }) => {
   const { language, setLanguage } = useLanguage()
   const isArabic = language === 'ar'
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
     const newLanguage = isArabic ? 'en' : 'ar'
     setLanguage(newLanguage as 'en' | 'ar')
-  }
+    // Brief cooldown to prevent rapid toggles that can cause layout thrash
+    setTimeout(() => setIsTransitioning(false), 400)
+  }, [isArabic, isTransitioning, setLanguage])
 
   return (
     <button
@@ -24,11 +29,14 @@ export const LanguageToggle: React.FC<{ className?: string }> = ({ className }) 
         }
       }}
       aria-label="Switch language"
+      aria-disabled={isTransitioning}
+      disabled={isTransitioning}
       dir="ltr"
       className={cn(
         'relative inline-flex h-9 w-16 items-center rounded-full transition-all duration-250 ease-in-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'cursor-pointer hover:scale-105 active:scale-95',
+        isTransitioning && 'opacity-70 cursor-wait',
         // Light mode: subtle blue background with soft shadow
         'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06),0_2px_8px_rgba(99,102,241,0.15)]',
         // Dark mode: darker blue background

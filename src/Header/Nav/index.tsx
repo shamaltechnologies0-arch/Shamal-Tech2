@@ -13,19 +13,23 @@ import { cn } from '../../utilities/ui'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { LanguageToggle } from '../../components/LanguageToggle'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../lib/translations/common'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || []
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
 
   // Dynamic navigation items (excluding Posts and Contact as they're managed via CMS)
   const dynamicNavItems = [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
-    { label: 'Services', href: '/services' },
-    { label: 'Products', href: '/products' },
-    { label: 'Careers', href: '/careers' },
+    { label: t.nav.home, href: '/' },
+    { label: t.nav.about, href: '/about' },
+    { label: t.nav.services, href: '/services' },
+    { label: t.nav.products, href: '/products' },
+    { label: t.nav.careers, href: '/careers' },
   ]
 
   const isActive = (href: string) => {
@@ -89,11 +93,11 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-6 w-6" />
-            <span className="sr-only">Toggle menu</span>
+            <span className="sr-only">{t.toggleMenu}</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SheetTitle className="sr-only">{t.navigationMenu}</SheetTitle>
           <nav className="flex flex-col gap-6 mt-8">
             {dynamicNavItems.map((item) => (
               <Link
@@ -127,7 +131,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             {/* Theme Toggle - Mobile */}
             <div className="pt-4 border-t">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-lg font-medium">Theme</span>
+                <span className="text-lg font-medium">{t.theme}</span>
                 <ThemeToggle />
               </div>
             </div>
@@ -135,7 +139,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             {/* Language Toggle - Mobile */}
             <div className="pt-2 border-t">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-medium">Language</span>
+                <span className="text-lg font-medium">{t.language}</span>
                 <LanguageToggle />
               </div>
             </div>

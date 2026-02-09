@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '../../utilities/ui'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../lib/translations/common'
 
 interface Section {
   id: string
@@ -13,6 +15,16 @@ interface ScrollIndicatorProps {
   sections: Section[]
 }
 
+const sectionLabelKeys: Record<string, keyof ReturnType<typeof getCommonTranslations>> = {
+  hero: 'hero',
+  stats: 'impact',
+  services: 'ourServices',
+  sectors: 'sectors',
+  about: 'about',
+  blog: 'insights',
+  contact: 'contactUs',
+}
+
 /**
  * ScrollIndicator - Visual navigation dots for scroll sections
  * Shows active section and allows smooth navigation
@@ -20,6 +32,8 @@ interface ScrollIndicatorProps {
 export const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({ sections }) => {
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || '')
   const pathname = usePathname()
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
 
   useEffect(() => {
     if (typeof window === 'undefined' || sections.length === 0) return
@@ -68,19 +82,23 @@ export const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({ sections }) =>
 
   return (
     <nav className="scroll-indicator" aria-label="Section navigation">
-      {sections.map((section) => (
-        <button
-          key={section.id}
-          onClick={() => scrollToSection(section.id)}
-          className={cn(
-            'scroll-dot',
-            activeSection === section.id && 'active',
-            'hover:scale-150 transition-transform',
-          )}
-          aria-label={`Go to ${section.label}`}
-          title={section.label}
-        />
-      ))}
+      {sections.map((section) => {
+        const labelKey = sectionLabelKeys[section.id]
+        const label = labelKey ? t[labelKey] : section.label
+        return (
+          <button
+            key={section.id}
+            onClick={() => scrollToSection(section.id)}
+            className={cn(
+              'scroll-dot',
+              activeSection === section.id && 'active',
+              'hover:scale-150 transition-transform',
+            )}
+            aria-label={`Go to ${label}`}
+            title={label}
+          />
+        )
+      })}
     </nav>
   )
 }
