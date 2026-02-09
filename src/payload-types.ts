@@ -3022,6 +3022,14 @@ export interface AboutPageContent {
     image?: (string | null) | Media;
   };
   whyChooseUs?: {
+    /**
+     * Small label above the main heading (e.g. "Advantages")
+     */
+    badge?: string | null;
+    /**
+     * Arabic text for the badge when Arabic language is selected
+     */
+    badgeAr?: string | null;
     title?: string | null;
     titleAr?: string | null;
     subtitle?: string | null;
@@ -3701,6 +3709,8 @@ export interface AboutPageContentSelect<T extends boolean = true> {
   whyChooseUs?:
     | T
     | {
+        badge?: T;
+        badgeAr?: T;
         title?: T;
         titleAr?: T;
         subtitle?: T;

@@ -3,9 +3,12 @@
 import { useState } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { Label } from '../ui/label'
+import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getCommonTranslations } from '../../lib/translations/common'
 
 export function NewsletterForm() {
+  const { language } = useLanguage()
+  const t = getCommonTranslations(language)
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -29,14 +32,14 @@ export function NewsletterForm() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe')
+        throw new Error(data.error || t.failedToSubscribe)
       }
 
       setSubmitStatus('success')
       setEmail('')
     } catch (error) {
       setSubmitStatus('error')
-      setErrorMessage(error instanceof Error ? error.message : 'An error occurred')
+      setErrorMessage(error instanceof Error ? error.message : t.failedToSubscribe)
     } finally {
       setIsSubmitting(false)
     }
@@ -45,29 +48,29 @@ export function NewsletterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex flex-col gap-2">
-          <Input
-            id="newsletter-email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+        <Input
+          id="newsletter-email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t.enterYourEmail}
           className="w-full"
-          />
+        />
         <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Subscribing...' : 'Subscribe'}
-          </Button>
+          {isSubmitting ? t.subscribing : t.subscribe}
+        </Button>
       </div>
 
       {submitStatus === 'success' && (
         <div className="p-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded text-xs">
-          Successfully subscribed! Thank you.
+          {t.successSubscribed}
         </div>
       )}
 
       {submitStatus === 'error' && (
         <div className="p-2 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded text-xs">
-          {errorMessage || 'Failed to subscribe. Please try again.'}
+          {errorMessage || t.failedToSubscribe}
         </div>
       )}
     </form>

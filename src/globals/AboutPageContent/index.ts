@@ -154,6 +154,23 @@ export const AboutPageContent: GlobalConfig = {
       label: 'Why Choose Us Section',
       fields: [
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge',
+          defaultValue: 'Advantages',
+          admin: {
+            description: 'Small label above the main heading (e.g. "Advantages")',
+          },
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge (Arabic)',
+          admin: {
+            description: 'Arabic text for the badge when Arabic language is selected',
+          },
+        },
+        {
           name: 'title',
           type: 'text',
           defaultValue: 'Why Choose Us',

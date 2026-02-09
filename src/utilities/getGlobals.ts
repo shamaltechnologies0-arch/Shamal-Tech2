@@ -18,9 +18,16 @@ async function getGlobal(slug: Global, depth = 0) {
 }
 
 /**
+ * Site settings slug - used for shorter cache on frequently-edited config
+ */
+const SITE_SETTINGS_SLUG = 'site-settings'
+
+/**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
 export const getCachedGlobal = (slug: Global, depth = 0) =>
   unstable_cache(async () => getGlobal(slug, depth), [slug, String(depth)], {
     tags: [`global_${slug}`],
+    // Site settings changes frequently (contact info, social links) - revalidate every 60s as fallback
+    ...(slug === SITE_SETTINGS_SLUG && { revalidate: 60 }),
   })

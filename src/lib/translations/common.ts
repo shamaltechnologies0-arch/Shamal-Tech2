@@ -141,6 +141,12 @@ export const commonTranslations = {
     loading: 'Loading...',
     error: 'Error',
     back: 'Back',
+    // Newsletter
+    enterYourEmail: 'Enter your email',
+    subscribe: 'Subscribe',
+    subscribing: 'Subscribing...',
+    successSubscribed: 'Successfully subscribed! Thank you.',
+    failedToSubscribe: 'Failed to subscribe. Please try again.',
   },
   ar: {
     // Navigation
@@ -279,6 +285,12 @@ export const commonTranslations = {
     loading: 'جاري التحميل...',
     error: 'خطأ',
     back: 'رجوع',
+    // Newsletter
+    enterYourEmail: 'أدخل بريدك الإلكتروني',
+    subscribe: 'اشترك',
+    subscribing: 'جاري الاشتراك...',
+    successSubscribed: 'تم الاشتراك بنجاح! شكراً لك.',
+    failedToSubscribe: 'فشل الاشتراك. يرجى المحاولة مرة أخرى.',
   },
 } as const
 

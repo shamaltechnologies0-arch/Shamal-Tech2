@@ -30,6 +30,8 @@ import { ImpactStatsSection } from '../../components/sections/ImpactStatsSection
 import { ContactCTASection } from '../../components/sections/ContactCTASection.client'
 import { AboutPreviewSection } from '../../components/sections/AboutPreviewSection.client'
 import { BlogPreviewSection } from '../../components/sections/BlogPreviewSection.client'
+import { HomeServicesOverviewSection } from '../../components/sections/HomeServicesOverviewSection.client'
+import { ViewAllServicesButton } from '../../components/sections/ViewAllServicesButton.client'
 
 export const metadata: Metadata = {
   title: 'Shamal Technologies | Drone Survey & Geospatial Solutions in Saudi Arabia',
@@ -68,7 +70,9 @@ export default async function HomePage() {
     }
     servicesOverview?: {
       title?: string
+      titleAr?: string
       description?: string
+      descriptionAr?: string
       backgroundImage?: {
         url?: string
         alt?: string
@@ -491,21 +495,12 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <ParallaxElement speed={0.3} direction="up">
             <CinematicReveal delay={0.2} duration={1.2}>
-              <div className="text-center mb-16 space-y-6">
-                <Badge variant="outline" className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold">
-                  Our Services
-                </Badge>
-                <h2 className="text-display-large font-display font-bold tracking-tight text-foreground">
-                  <span className="text-gradient">
-                    {homepageContent?.servicesOverview?.title || 'Comprehensive Solutions'}
-                  </span>
-                </h2>
-                {homepageContent?.servicesOverview?.description && (
-                  <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    {homepageContent.servicesOverview.description}
-                  </p>
-                )}
-              </div>
+              <HomeServicesOverviewSection
+                title={homepageContent?.servicesOverview?.title}
+                titleAr={homepageContent?.servicesOverview?.titleAr}
+                description={homepageContent?.servicesOverview?.description}
+                descriptionAr={homepageContent?.servicesOverview?.descriptionAr}
+              />
             </CinematicReveal>
           </ParallaxElement>
           <ScrollReveal direction="up" delay={0.3} duration={1}>
@@ -513,17 +508,7 @@ export default async function HomePage() {
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.4} duration={1}>
           <div className="text-center mt-12">
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-2 border-logo-navy text-logo-navy hover:bg-logo-navy hover:text-white"
-            >
-              <Link href="/services">
-                View All Services
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <ViewAllServicesButton />
           </div>
           </ScrollReveal>
         </div>

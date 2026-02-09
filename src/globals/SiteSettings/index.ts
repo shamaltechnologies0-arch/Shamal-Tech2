@@ -2,6 +2,8 @@ import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 
+import { revalidateSiteSettings } from './hooks/revalidateSiteSettings'
+
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   access: {
@@ -136,5 +138,8 @@ export const SiteSettings: GlobalConfig = {
       label: 'Footer Content (Arabic)',
     },
   ],
+  hooks: {
+    afterChange: [revalidateSiteSettings],
+  },
 }
 

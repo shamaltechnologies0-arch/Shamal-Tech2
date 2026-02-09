@@ -270,6 +270,13 @@ export const shamalSeed = async ({
             'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3709.576529544237!2d39.10571367472985!3d21.60244686782873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c3db0078a8628d%3A0x76e949674d3f8aa4!2sShamal%20Technologies!5e0!3m2!1sen!2ssa!4v1765110005511!5m2!1sen!2ssa',
           mapLink: 'https://maps.app.goo.gl/19WL7fCtwww1KBRz6',
         },
+        socialMedia: {
+          linkedin: 'https://www.linkedin.com/company/shamal-technologies',
+          facebook: 'https://www.facebook.com/shamaltechnologies',
+          youtube: 'https://www.youtube.com/@shamaltechnologies',
+          instagram: 'https://www.instagram.com/shamaltechnologies',
+          twitter: 'https://x.com/shamaltechnologies',
+        },
       },
       context: {
         disableRevalidate: true,
@@ -279,6 +286,25 @@ export const shamalSeed = async ({
     payload.logger.info('✓ Seeded Site Settings')
   } else {
     payload.logger.info('✓ Site Settings already exists')
+    // Add social media URLs if missing (enables footer icons)
+    const hasSocialUrls = existingSiteSettings.socialMedia && Object.values(existingSiteSettings.socialMedia || {}).some(Boolean)
+    if (!hasSocialUrls) {
+      await payload.updateGlobal({
+        slug: 'site-settings',
+        data: {
+          socialMedia: {
+            linkedin: 'https://www.linkedin.com/company/shamal-technologies',
+            facebook: 'https://www.facebook.com/shamaltechnologies',
+            youtube: 'https://www.youtube.com/@shamaltechnologies',
+            instagram: 'https://www.instagram.com/shamaltechnologies',
+            twitter: 'https://x.com/shamaltechnologies',
+          },
+        },
+        context: { disableRevalidate: true },
+        req,
+      })
+      payload.logger.info('✓ Added social media URLs to Site Settings')
+    }
   }
 
   // Seed Homepage Content

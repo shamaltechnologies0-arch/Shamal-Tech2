@@ -313,6 +313,8 @@ export default async function AboutPage() {
       {aboutContent?.whyChooseUs?.items && aboutContent.whyChooseUs.items.length > 0 && (
         <div id="why-choose-shamal">
           <WhyChooseShamalPinnedSection
+            badge={aboutContent.whyChooseUs.badge}
+            badgeAr={aboutContent.whyChooseUs.badgeAr}
             title={aboutContent.whyChooseUs.title || 'Why Choose Shamal'}
             titleAr={aboutContent.whyChooseUs.titleAr}
             subtitle={aboutContent.whyChooseUs.subtitle}

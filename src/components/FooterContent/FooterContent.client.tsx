@@ -63,14 +63,25 @@ export function FooterContent({
     language
   )
 
+  // Default social URLs when not configured in CMS (user can update in Site Settings)
+  const defaultSocialUrls = {
+    linkedin: 'https://www.linkedin.com/company/shamal-technologies',
+    facebook: 'https://www.facebook.com/shamaltechnologies',
+    youtube: 'https://www.youtube.com/@shamaltechnologies',
+    instagram: 'https://www.instagram.com/shamaltechnologies',
+    twitter: 'https://x.com/shamaltechnologies',
+    tiktok: 'https://www.tiktok.com/@shamaltechnologies',
+    snapchat: 'https://www.snapchat.com/add/shamaldrones',
+  }
+
   const socialIcons = [
-    { key: 'linkedin', icon: Linkedin, url: socialMedia?.linkedin },
-    { key: 'facebook', icon: Facebook, url: socialMedia?.facebook },
-    { key: 'youtube', icon: Youtube, url: socialMedia?.youtube },
-    { key: 'tiktok', icon: null, url: socialMedia?.tiktok },
-    { key: 'instagram', icon: Instagram, url: socialMedia?.instagram },
-    { key: 'twitter', icon: null, url: socialMedia?.twitter },
-    { key: 'snapchat', icon: null, url: socialMedia?.snapchat },
+    { key: 'linkedin', icon: Linkedin, url: socialMedia?.linkedin || defaultSocialUrls.linkedin },
+    { key: 'facebook', icon: Facebook, url: socialMedia?.facebook || defaultSocialUrls.facebook },
+    { key: 'youtube', icon: Youtube, url: socialMedia?.youtube || defaultSocialUrls.youtube },
+    { key: 'tiktok', icon: null, url: socialMedia?.tiktok || defaultSocialUrls.tiktok },
+    { key: 'instagram', icon: Instagram, url: socialMedia?.instagram || defaultSocialUrls.instagram },
+    { key: 'twitter', icon: null, url: socialMedia?.twitter || defaultSocialUrls.twitter },
+    { key: 'snapchat', icon: null, url: socialMedia?.snapchat || defaultSocialUrls.snapchat },
   ]
 
   const copyrightText = t.footer.copyright.replace(
@@ -79,7 +90,7 @@ export function FooterContent({
   )
 
   return (
-    <footer className="mt-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-gray-800">
+    <footer className="relative z-[10000] isolate mt-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-gray-800">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-8">
           <div className="space-y-4">
@@ -207,18 +218,18 @@ export function FooterContent({
           </div>
         </div>
 
-        <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
+        <div className="pt-8 border-t border-gray-200 dark:border-gray-800 pr-24 md:pr-28">
           <div className="flex flex-row flex-wrap justify-between items-center gap-x-4 gap-y-3 min-h-[2.5rem]">
             <p className="text-xs text-gray-500 dark:text-gray-500 flex-shrink-0">
               {copyrightText}
             </p>
-            <div className="flex items-center justify-center gap-1 sm:gap-2 flex-shrink-0">
+            <div className="flex items-center justify-center gap-1 sm:gap-2 flex-shrink-0 relative z-[10001] [&_a]:pointer-events-auto">
               {socialIcons.map((social) => {
                 const hasUrl = Boolean(social.url)
                 const isDisabled = !hasUrl
                 const baseClasses = isDisabled
                   ? 'text-gray-300 dark:text-gray-600 opacity-50 cursor-not-allowed'
-                  : 'text-gray-400 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer inline-flex items-center justify-center p-2 rounded-md -m-1 relative z-10'
+                  : 'text-gray-400 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer inline-flex items-center justify-center p-2 rounded-md -m-1 relative z-[10001] pointer-events-auto'
                 const linkClasses = isDisabled
                   ? baseClasses
                   : `${baseClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2`

@@ -36,6 +36,8 @@ interface WhyChooseItem {
 }
 
 interface WhyChooseShamalPinnedSectionProps {
+  badge?: string
+  badgeAr?: string
   title?: string
   titleAr?: string
   subtitle?: string
@@ -49,6 +51,8 @@ interface WhyChooseShamalPinnedSectionProps {
 }
 
 export function WhyChooseShamalPinnedSection({
+  badge = 'Advantages',
+  badgeAr,
   title = 'Why Choose Shamal',
   titleAr,
   subtitle,
@@ -59,6 +63,7 @@ export function WhyChooseShamalPinnedSection({
 }: WhyChooseShamalPinnedSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const { language } = useLanguage()
+  const displayBadge = getLocalizedValue(badge, badgeAr, language)
   const displayTitle = getLocalizedValue(title, titleAr, language)
   const displaySubtitle = getLocalizedValue(subtitle, subtitleAr, language)
   const leftColumnRef = useRef<HTMLDivElement>(null)
@@ -288,7 +293,7 @@ export function WhyChooseShamalPinnedSection({
           >
             <div className="space-y-6 w-full">
               <Badge variant="secondary" className="mb-4">
-                Advantages
+                {displayBadge}
               </Badge>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-foreground">
                 {displayTitle}
