@@ -6,6 +6,7 @@ import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getCommonTranslations } from '../../lib/translations/common'
 import { getLocalizedValue } from '../../lib/localization'
 import { Media } from '../Media'
+import { getClientSideURL } from '../../utilities/getURL'
 
 type Certification = {
   id?: string | null
@@ -15,7 +16,7 @@ type Certification = {
   descriptionAr?: string | null
   image?: {
     id?: string
-    url?: string
+    url?: string | null
     filename?: string
     alt?: string
     width?: number
@@ -26,6 +27,15 @@ type Certification = {
 
 type CertificationsSectionProps = {
   certifications: Certification[]
+}
+
+/** Build a displayable media resource from certification image (handles unpopulated or missing url) */
+function getCertImageResource(cert: Certification): Certification['image'] {
+  const img = cert.image
+  if (!img || typeof img !== 'object') return null
+  const url = img.url ?? (img.filename ? `${getClientSideURL()}/media/${img.filename}` : null)
+  if (!url) return null
+  return { ...img, url }
 }
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
@@ -54,10 +64,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
         {certifications.map((cert, index) => {
           const displayName = getLocalizedValue(cert.name, cert.nameAr, language)
           const displayDescription = getLocalizedValue(cert.description, cert.descriptionAr, language)
-          const imageResource =
-            cert.image && typeof cert.image === 'object' && (cert.image.url || cert.image.filename)
-              ? cert.image
-              : null
+          const imageResource = getCertImageResource(cert)
 
           return (
             <Card

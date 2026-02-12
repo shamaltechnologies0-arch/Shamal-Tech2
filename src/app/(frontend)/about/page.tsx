@@ -30,8 +30,8 @@ export default async function AboutPage() {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
   
-  // Type assertions for about page content - depth 3 to ensure media relationships are fully populated
-  const aboutContent = (await getCachedGlobal('about-page-content', 3)()) as {
+  // Depth 4 ensures nested array uploads (e.g. certifications[].image) are fully populated
+  const aboutContent = (await getCachedGlobal('about-page-content', 4)()) as {
     hero?: {
       badge?: string
       badgeAr?: string
