@@ -1,12 +1,21 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextRequest } from 'next/server'
 
+const REVALIDATE_SECRET =
+  process.env.REVALIDATE_SECRET || process.env.CRON_SECRET
+
 /**
  * Manual revalidation API - call after saving Site Settings in admin if changes don't appear.
- * Usage: POST /api/revalidate with body { "tag": "global_site-settings" } or { "path": "/" }
- * Or GET /api/revalidate?tag=global_site-settings (for quick testing)
+ * Requires: Authorization: Bearer <REVALIDATE_SECRET> or Bearer <CRON_SECRET> (if REVALIDATE_SECRET not set).
+ * Usage: GET /api/revalidate?tag=global_site-settings (or path=/) with header Authorization: Bearer <secret>
  */
 export async function GET(request: NextRequest) {
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!REVALIDATE_SECRET || token !== REVALIDATE_SECRET) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const tag = request.nextUrl.searchParams.get('tag')
   const path = request.nextUrl.searchParams.get('path')
 

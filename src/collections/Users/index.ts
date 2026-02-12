@@ -1,16 +1,17 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone } from '../../access/anyone'
+import { adminOnly } from '../../access/adminOnly'
+import { authenticated } from '../../access/authenticated'
 import { setInvitationToken, sendUserInvitation } from '../../hooks/sendUserInvitation'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: anyone,
-    create: anyone,
-    delete: anyone,
-    read: anyone,
-    update: anyone,
+    admin: authenticated,
+    create: adminOnly,
+    delete: adminOnly,
+    read: authenticated,
+    update: authenticated,
   },
   admin: {
     defaultColumns: ['name', 'email', 'passwordSet'],

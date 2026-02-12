@@ -1,14 +1,15 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone } from '../../access/anyone'
+import { adminOnly } from '../../access/adminOnly'
 
 export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
   access: {
-    create: anyone,
-    read: anyone,
-    update: anyone,
-    delete: anyone,
+    // Create: adminOnly at API level. Public submissions go through /api/contact which uses server-side payload.create() (bypasses access).
+    create: adminOnly,
+    read: adminOnly,
+    update: adminOnly,
+    delete: adminOnly,
   },
   admin: {
     defaultColumns: ['name', 'email', 'status', 'submittedAt'],

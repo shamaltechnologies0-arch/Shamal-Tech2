@@ -88,6 +88,19 @@ const nextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  // Security headers for Vercel/production
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ]
+  },
   typescript: {
     // Disable type checking during build to avoid issues with devDependencies
     // Types are still checked in development and by IDE
