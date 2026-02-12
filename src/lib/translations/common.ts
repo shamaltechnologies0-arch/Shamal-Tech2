@@ -53,6 +53,9 @@ export const commonTranslations = {
     posts: 'Posts',
     keyApplications: 'Key Applications:',
     faq: 'FAQ',
+    recognition: 'Recognition',
+    certifications: 'Certifications',
+    certificationsSubtitle: 'Our credentials and industry certifications',
     // Buttons
     viewAll: 'View All',
     readMore: 'Read More',
@@ -197,6 +200,9 @@ export const commonTranslations = {
     posts: 'منشورات',
     keyApplications: 'أهم التطبيقات:',
     faq: 'الأسئلة الشائعة',
+    recognition: 'التقدير',
+    certifications: 'الشهادات',
+    certificationsSubtitle: 'اعتمادنا وشهاداتنا الصناعية',
     // Buttons
     viewAll: 'عرض الكل',
     readMore: 'اقرأ المزيد',

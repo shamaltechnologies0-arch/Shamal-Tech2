@@ -18,6 +18,7 @@ import { ClientsSection } from '../../../components/sections/ClientsSection.clie
 import { WhyChooseShamalPinnedSection } from '../../../components/sections/WhyChooseShamalPinnedSection.client'
 import { AboutHeroSection } from '../../../components/sections/AboutHeroSection.client'
 import { VisionMissionCard } from '../../../components/sections/VisionMissionCard.client'
+import { CertificationsSection } from '../../../components/sections/CertificationsSection.client'
 
 export const metadata: Metadata = {
   title: 'About Us | Shamal Technologies',
@@ -84,11 +85,20 @@ export default async function AboutPage() {
       } | string | null
     }
     certifications?: Array<{
+      id?: string
       name?: string
+      nameAr?: string
       description?: string
+      descriptionAr?: string
       image?: {
+        id?: string
         url?: string
-      }
+        filename?: string
+        alt?: string
+        width?: number
+        height?: number
+        updatedAt?: string
+      } | null
     }>
     achievements?: Array<{
       title?: string
@@ -395,61 +405,11 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 w-full">
             <ParallaxElement speed={0.3} direction="up">
               <CinematicReveal delay={0.2} duration={1.2}>
-                <div className="text-center mb-16 space-y-6">
-                  <Badge
-                    variant="outline"
-                    className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold"
-                  >
-                    Recognition
-                  </Badge>
-                  <h2 className="text-display-large font-display font-bold tracking-tight">
-                    <span className="text-gradient">Certifications</span>
-                  </h2>
-                  <p className="text-body-large text-logo-navy max-w-3xl mx-auto font-medium">
-                    Our credentials and industry certifications
-                  </p>
-                </div>
+                <StaggerReveal direction="up" delay={0.3} stagger={0.15} duration={0.8}>
+                  <CertificationsSection certifications={aboutContent.certifications} />
+                </StaggerReveal>
               </CinematicReveal>
             </ParallaxElement>
-            <StaggerReveal direction="up" delay={0.3} stagger={0.15} duration={0.8}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                {aboutContent.certifications.map((cert: any, index: number) => (
-                  <Card
-                    key={index}
-                    className="text-center hover:shadow-2xl transition-all duration-300 border-2 border-logo-blue/20 bg-background/95 backdrop-blur-sm group"
-                  >
-                    <CardHeader>
-                      {cert.image &&
-                        typeof cert.image === 'object' &&
-                        cert.image !== null &&
-                        (cert.image.url || cert.image.filename || cert.image.id) && (
-                          <div className="relative h-40 mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-                            <Image
-                              src={
-                                cert.image.url ||
-                                (cert.image.filename ? `/media/${cert.image.filename}` : '')
-                              }
-                              alt={cert.image.alt || cert.name || 'Certification'}
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        )}
-                      <CardTitle className="text-2xl font-display font-bold text-logo-navy">
-                        {cert.name}
-                      </CardTitle>
-                    </CardHeader>
-                    {cert.description && (
-                      <CardContent>
-                        <CardDescription className="text-base text-logo-blue font-medium">
-                          {cert.description}
-                        </CardDescription>
-                      </CardContent>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </StaggerReveal>
           </div>
         </ScrollSection>
       )}
