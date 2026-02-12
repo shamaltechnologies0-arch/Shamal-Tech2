@@ -1,0 +1,4 @@
+// Hide default Payload logo on login page so custom Shamal logo (in beforeLogin) is shown
+.template-minimal .login__brand {
+  display: none !important;
+}

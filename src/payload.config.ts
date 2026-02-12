@@ -93,7 +93,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    // ❌ Removed custom admin components to prevent broken importMap generation
+    components: {
+      beforeLogin: ['/components/BeforeLogin'],
+      graphics: {
+        Logo: '/components/AdminLogo#default',
+      },
+    },
     livePreview: {
       url: ({ data, collectionConfig, globalConfig }) => {
         const baseURL = getServerSideURL()

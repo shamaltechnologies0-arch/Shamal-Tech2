@@ -26,6 +26,8 @@ import { RowLabel as RowLabel_99ace43f5a41891c30907eecb39f5a40 } from '../../../
 import { RowLabel as RowLabel_171c0026ca59039ca5a2e3adab674541 } from '../../../globals/HomepageContent/RowLabel'
 import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_48bd4f5ed20a278ca9298ebbc521db88 } from '../../../components/AdminLogo'
+import { default as default_01d809f8b80f9b2f728eaaa8a4fcc420 } from '../../../components/BeforeLogin'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { CollectionCards as CollectionCards_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 
@@ -58,6 +60,8 @@ export const importMap = {
   "/globals/HomepageContent/RowLabel#RowLabel": RowLabel_171c0026ca59039ca5a2e3adab674541,
   "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/AdminLogo#default": default_48bd4f5ed20a278ca9298ebbc521db88,
+  "/components/BeforeLogin#default": default_01d809f8b80f9b2f728eaaa8a4fcc420,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@payloadcms/ui/rsc#CollectionCards": CollectionCards_ab83ff7e88da8d3530831f296ec4756a
 }
