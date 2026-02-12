@@ -1314,7 +1314,7 @@ export interface Lead {
    */
   emailSentAt?: string | null;
   /**
-   * Whether this lead was synced to ClickUp Sales Pipeline
+   * Whether this lead was synced to ClickUp. Use the "Push to ClickUp" button below to sync this lead.
    */
   pushedToClickUp?: boolean | null;
   /**

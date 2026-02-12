@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
+import { APIError } from 'payload'
 
 import { anyone } from '../../access/anyone'
+import { pushLeadToClickUp } from '../../lib/clickup/pushLeadToClickUp'
 import { pushToClickUp } from './hooks/pushToClickUp'
 
 export const Leads: CollectionConfig = {
@@ -328,7 +330,7 @@ export const Leads: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Whether this lead was synced to ClickUp Sales Pipeline',
+        description: 'Whether this lead was synced to ClickUp. Use the "Push to ClickUp" button below to sync this lead.',
         readOnly: true,
       },
     },
@@ -346,6 +348,16 @@ export const Leads: CollectionConfig = {
       admin: {
         description: 'Link to the ClickUp task',
         readOnly: true,
+      },
+    },
+    {
+      name: 'pushToClickUpAction',
+      type: 'ui',
+      admin: {
+        description: 'Push this lead to ClickUp (creates a task in your BD list).',
+        components: {
+          Field: '/collections/Leads/PushToClickUpButton#default',
+        },
       },
     },
     {
@@ -374,5 +386,54 @@ export const Leads: CollectionConfig = {
   hooks: {
     afterChange: [pushToClickUp],
   },
+  endpoints: [
+    {
+      path: '/:id/push-to-clickup',
+      method: 'post',
+      handler: async (req) => {
+        if (!req.user) {
+          throw new APIError('You must be logged in to push a lead to ClickUp.', 401)
+        }
+        const id = req.routeParams?.id
+        if (!id) {
+          throw new APIError('Lead ID is required.', 400)
+        }
+        const lead = await req.payload.findByID({
+          collection: 'leads',
+          id,
+          depth: 1,
+        })
+        if (!lead) {
+          throw new APIError('Lead not found.', 404)
+        }
+        if (lead.pushedToClickUp) {
+          return Response.json({
+            ok: true,
+            alreadyPushed: true,
+            clickupTaskUrl: lead.clickupTaskUrl ?? undefined,
+          })
+        }
+        const result = await pushLeadToClickUp(req.payload, lead)
+        if (!result) {
+          throw new APIError('Failed to create task in ClickUp. Check server logs.', 502)
+        }
+        await req.payload.update({
+          collection: 'leads',
+          id: lead.id,
+          data: {
+            pushedToClickUp: true,
+            clickupTaskId: result.id,
+            clickupTaskUrl: result.url,
+          },
+          context: { disableRevalidate: true },
+        })
+        return Response.json({
+          ok: true,
+          taskId: result.id,
+          taskUrl: result.url,
+        })
+      },
+    },
+  ],
 }
 

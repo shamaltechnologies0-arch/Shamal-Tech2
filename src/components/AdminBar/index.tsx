@@ -75,7 +75,8 @@ export const AdminBar: React.FC<{
             onPreviewExit={() => {
               fetch('/next/exit-preview').then(() => {
                 router.push('/')
-                router.refresh()
+                // Defer refresh to avoid Next.js 15 "Rendered more hooks" error (router state must settle first)
+                setTimeout(() => router.refresh(), 0)
               })
             }}
             style={{

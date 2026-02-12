@@ -13,7 +13,7 @@
  */
 
 import type { CollectionAfterChangeHook } from 'payload'
-import { createClickUpTask } from '../../../lib/clickup/createTask'
+import { pushLeadToClickUp } from '../../../lib/clickup/pushLeadToClickUp'
 
 export const pushToClickUp: CollectionAfterChangeHook = async ({
   doc,
@@ -35,52 +35,12 @@ export const pushToClickUp: CollectionAfterChangeHook = async ({
     return doc
   }
 
-  // 4. Resolve service names for task title and description
-  let serviceNames: string[] = []
-  if (doc.services && Array.isArray(doc.services) && doc.services.length > 0) {
-    for (const s of doc.services) {
-      if (typeof s === 'object' && s !== null && 'title' in s) {
-        serviceNames.push((s as { title: string }).title)
-      } else if (typeof s === 'string') {
-        try {
-          const service = await req.payload.findByID({
-            collection: 'services',
-            id: s,
-            depth: 0,
-          })
-          serviceNames.push(service.title)
-        } catch {
-          serviceNames.push('Unknown')
-        }
-      }
-    }
-  }
-  const serviceLabel = serviceNames.length > 0 ? serviceNames.join(', ') : 'General'
-
-  // 5. Build task name: {Company} – {Full Name} – {Service}
-  const company = doc.company?.trim() || '—'
-  const name = doc.name?.trim() || 'Unknown'
-  const taskName = `${company} – ${name} – ${serviceLabel}`
-
-  // 6. Build task description
-  const description = [
-    `**Name:** ${doc.name || '—'}`,
-    `**Email:** ${doc.email || '—'}`,
-    `**Phone:** ${doc.phone || '—'}`,
-    `**Company:** ${doc.company || '—'}`,
-    `**Service:** ${serviceLabel}`,
-    `**Message:**\n${doc.message || '—'}`,
-  ].join('\n')
-
-  // 7. Create ClickUp task - never throws
-  const result = await createClickUpTask({ name: taskName, description })
+  const result = await pushLeadToClickUp(req.payload, doc)
 
   if (!result) {
-    // Logged in createClickUpTask - lead stays in Payload, no retry here
     return doc
   }
 
-  // 8. Persist ClickUp task ID and URL back to lead (triggers afterChange with operation='update' - we skip)
   try {
     await req.payload.update({
       collection: 'leads',
@@ -96,7 +56,6 @@ export const pushToClickUp: CollectionAfterChangeHook = async ({
     })
   } catch (err) {
     console.error('[Leads] Failed to update lead with ClickUp task ID:', err)
-    // Lead exists, task exists in ClickUp - manual reconciliation possible
   }
 
   return doc

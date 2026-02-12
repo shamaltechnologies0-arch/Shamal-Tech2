@@ -18,6 +18,7 @@ import { SlugField as SlugField_3817bf644402e67bfe6577f60ef982de } from '@payloa
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_9c467b6f5c23e1e374a04523f6169a31 } from '../../../collections/Employees/QRCodeField'
+import { default as default_f67448fc0eaf4c11314e59aa65472863 } from '../../../collections/Leads/PushToClickUpButton'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { RowLabel as RowLabel_35c4f07b94077a54ab0db31fba2fa85b } from '../../../Header/RowLabel'
@@ -49,6 +50,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/collections/Employees/QRCodeField#default": default_9c467b6f5c23e1e374a04523f6169a31,
+  "/collections/Leads/PushToClickUpButton#default": default_f67448fc0eaf4c11314e59aa65472863,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "/Header/RowLabel#RowLabel": RowLabel_35c4f07b94077a54ab0db31fba2fa85b,
