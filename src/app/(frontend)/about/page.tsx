@@ -26,11 +26,47 @@ export const metadata: Metadata = {
     'Shamal Technologies is a pioneering provider of drone and geospatial solutions in Saudi Arabia. Learn about our vision, mission, team, and achievements.',
 }
 
+type CertItem = {
+  id?: string
+  name?: string
+  nameAr?: string
+  description?: string
+  descriptionAr?: string
+  image?: { id?: string; url?: string | null; filename?: string; alt?: string; width?: number; height?: number; updatedAt?: string } | string | null
+}
+
+/** Resolve certification image IDs to full media objects so images always display on the about page. */
+async function resolveCertificationImages(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  certifications: CertItem[] | undefined,
+): Promise<CertItem[]> {
+  if (!certifications?.length) return []
+  const resolved = await Promise.all(
+    certifications.map(async (cert) => {
+      const image = cert.image
+      if (image == null) return cert
+      if (typeof image === 'object' && (image.url || image.filename)) return cert
+      const mediaId = typeof image === 'string' ? image : (image as { id?: string })?.id
+      if (!mediaId) return cert
+      try {
+        const media = await payload.findByID({
+          collection: 'media',
+          id: mediaId,
+          depth: 0,
+        })
+        return { ...cert, image: media ?? cert.image }
+      } catch {
+        return cert
+      }
+    }),
+  )
+  return resolved
+}
+
 export default async function AboutPage() {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
   
-  // Depth 4 ensures nested array uploads (e.g. certifications[].image) are fully populated
   const aboutContent = (await getCachedGlobal('about-page-content', 4)()) as {
     hero?: {
       badge?: string
@@ -399,14 +435,16 @@ export default async function AboutPage() {
       </section>
       )}
 
-      {/* Certifications */}
+      {/* Certifications - images resolved server-side so they always display */}
       {aboutContent?.certifications && aboutContent.certifications.length > 0 && (
         <ScrollSection id="certifications" flexible bgVariant="2" parallax>
           <div className="container mx-auto px-4 w-full">
             <ParallaxElement speed={0.3} direction="up">
               <CinematicReveal delay={0.2} duration={1.2}>
                 <StaggerReveal direction="up" delay={0.3} stagger={0.15} duration={0.8}>
-                  <CertificationsSection certifications={aboutContent.certifications} />
+                  <CertificationsSection
+                    certifications={await resolveCertificationImages(payload, aboutContent.certifications)}
+                  />
                 </StaggerReveal>
               </CinematicReveal>
             </ParallaxElement>
