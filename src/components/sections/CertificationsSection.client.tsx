@@ -5,37 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getCommonTranslations } from '../../lib/translations/common'
 import { getLocalizedValue } from '../../lib/localization'
-import { Media } from '../Media'
-import { getClientSideURL } from '../../utilities/getURL'
 
-type Certification = {
+/** Certifications with pre-resolved imageUrl from server (guarantees logos display). */
+type CertificationWithImageUrl = {
   id?: string | null
   name?: string | null
   nameAr?: string | null
   description?: string | null
   descriptionAr?: string | null
-  image?: {
-    id?: string
-    url?: string | null
-    filename?: string
-    alt?: string
-    width?: number
-    height?: number
-    updatedAt?: string
-  } | string | null
+  imageUrl: string | null
+  imageAlt: string
 }
 
 type CertificationsSectionProps = {
-  certifications: Certification[]
-}
-
-/** Build a displayable media resource from certification image (handles unpopulated or missing url) */
-function getCertImageResource(cert: Certification): Certification['image'] {
-  const img = cert.image
-  if (!img || typeof img !== 'object') return null
-  const url = img.url ?? (img.filename ? `${getClientSideURL()}/media/${img.filename}` : null)
-  if (!url) return null
-  return { ...img, url }
+  certifications: CertificationWithImageUrl[]
 }
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
@@ -64,7 +47,6 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
         {certifications.map((cert, index) => {
           const displayName = getLocalizedValue(cert.name, cert.nameAr, language)
           const displayDescription = getLocalizedValue(cert.description, cert.descriptionAr, language)
-          const imageResource = getCertImageResource(cert)
 
           return (
             <Card
@@ -72,14 +54,16 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
               className="text-center hover:shadow-2xl transition-all duration-300 border-2 border-logo-blue/20 bg-background/95 backdrop-blur-sm group"
             >
               <CardHeader>
-                {imageResource && (
-                  <div className="relative w-full h-40 mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-                    <Media
-                      resource={imageResource}
-                      alt={imageResource.alt ?? displayName ?? 'Certification'}
-                      imgClassName="object-contain"
-                      pictureClassName="relative block w-full h-full"
-                      fill
+                {cert.imageUrl && (
+                  <div className="relative w-full h-40 mb-6 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {/* Plain img so logos always display (avoids Next/Image optimization and serialization issues) */}
+                    <img
+                      src={cert.imageUrl}
+                      alt={cert.imageAlt || displayName || 'Certification'}
+                      className="max-h-full w-auto object-contain"
+                      width={350}
+                      height={140}
+                      loading="lazy"
                     />
                   </div>
                 )}

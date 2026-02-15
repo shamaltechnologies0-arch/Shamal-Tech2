@@ -4,6 +4,7 @@ import configPromise from '../../../payload.config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
+import { getServerSideURL } from '../../../utilities/getURL'
 import { LivePreviewListener } from '../../../components/LivePreviewListener'
 import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
     'Shamal Technologies is a pioneering provider of drone and geospatial solutions in Saudi Arabia. Learn about our vision, mission, team, and achievements.',
 }
 
+// Ensure certifications (and their resolved image URLs) are always fresh, not statically cached
+export const dynamic = 'force-dynamic'
+
 type CertItem = {
   id?: string
   name?: string
@@ -35,29 +39,66 @@ type CertItem = {
   image?: { id?: string; url?: string | null; filename?: string; alt?: string; width?: number; height?: number; updatedAt?: string } | string | null
 }
 
-/** Resolve certification image IDs to full media objects so images always display on the about page. */
+/** Certification with resolved image URL for reliable display (serializable from server to client). */
+export type CertificationWithImageUrl = Omit<CertItem, 'image'> & {
+  imageUrl: string | null
+  imageAlt: string
+}
+
+/** Build absolute image URL from media doc (works for S3 and local /media/). */
+function toAbsoluteImageUrl(media: { url?: string | null; filename?: string } | null): string | null {
+  if (!media) return null
+  const url = media.url ?? (media.filename ? `/media/${media.filename}` : null)
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const base = getServerSideURL()
+  return url.startsWith('/') ? `${base}${url}` : `${base}/${url}`
+}
+
+/** Resolve certification images to guaranteed displayable URLs (fixes GACA/ISO logos not showing). */
 async function resolveCertificationImages(
   payload: Awaited<ReturnType<typeof getPayload>>,
   certifications: CertItem[] | undefined,
-): Promise<CertItem[]> {
+): Promise<CertificationWithImageUrl[]> {
   if (!certifications?.length) return []
   const resolved = await Promise.all(
-    certifications.map(async (cert) => {
-      const image = cert.image
-      if (image == null) return cert
-      if (typeof image === 'object' && (image.url || image.filename)) return cert
-      const mediaId = typeof image === 'string' ? image : (image as { id?: string })?.id
-      if (!mediaId) return cert
-      try {
-        const media = await payload.findByID({
-          collection: 'media',
-          id: mediaId,
-          depth: 0,
-        })
-        return { ...cert, image: media ?? cert.image }
-      } catch {
-        return cert
+    certifications.map(async (cert): Promise<CertificationWithImageUrl> => {
+      const { image, ...rest } = cert
+      let imageUrl: string | null = null
+      let imageAlt = cert.name ?? 'Certification'
+
+      const getMediaId = (): string | null => {
+        if (image == null) return null
+        if (typeof image === 'string' || typeof image === 'number') return String(image)
+        if (typeof image === 'object' && image) return (image as { id?: string }).id ?? null
+        return null
       }
+
+      const mediaId = getMediaId()
+      if (mediaId) {
+        try {
+          const media = await payload.findByID({
+            collection: 'media',
+            id: mediaId,
+            depth: 0,
+          })
+          if (media && typeof media === 'object') {
+            imageUrl = toAbsoluteImageUrl(media as { url?: string | null; filename?: string })
+            imageAlt = (media as { alt?: string }).alt ?? cert.name ?? 'Certification'
+          }
+        } catch {
+          // leave imageUrl null
+        }
+      }
+
+      // If we had an object with url/filename but didn't fetch (e.g. no id), build URL from it
+      if (!imageUrl && image && typeof image === 'object') {
+        const obj = image as { url?: string | null; filename?: string; alt?: string }
+        imageUrl = toAbsoluteImageUrl(obj)
+        if (obj.alt) imageAlt = obj.alt
+      }
+
+      return { ...rest, imageUrl, imageAlt }
     }),
   )
   return resolved
