@@ -2,10 +2,8 @@ import type { Metadata } from 'next'
 
 import configPromise from '../../../payload.config'
 import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { getServerSideURL } from '../../../utilities/getURL'
-import { LivePreviewListener } from '../../../components/LivePreviewListener'
 import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
 import { Badge } from '../../../components/ui/badge'
@@ -27,8 +25,8 @@ export const metadata: Metadata = {
     'Shamal Technologies is a pioneering provider of drone and geospatial solutions in Saudi Arabia. Learn about our vision, mission, team, and achievements.',
 }
 
-// Ensure certifications (and their resolved image URLs) are always fresh, not statically cached
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
+export const revalidate = 600
 
 type CertItem = {
   id?: string
@@ -105,7 +103,6 @@ async function resolveCertificationImages(
 }
 
 export default async function AboutPage() {
-  const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
   
   const aboutContent = (await getCachedGlobal('about-page-content', 4)()) as {
@@ -309,8 +306,6 @@ export default async function AboutPage() {
 
   return (
     <main className="flex flex-col relative">
-      {draft && <LivePreviewListener />}
-      
       {/* Hero Section */}
       <section id="hero" className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-logo-blue via-logo-navy to-logo-navy py-12 md:py-16">
         {/* Background Image or Video */}

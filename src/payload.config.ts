@@ -44,6 +44,13 @@ const dirname = path.dirname(filename)
 
 /* ---------------- EMAIL CONFIG ---------------- */
 // Configure email adapter for Outlook SMTP
+const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10)
+// If SMTP_SECURE isn't explicitly set, infer from port (465 => true, otherwise false)
+const smtpSecure =
+  typeof process.env.SMTP_SECURE === 'string'
+    ? process.env.SMTP_SECURE === 'true'
+    : smtpPort === 465
+
 const emailAdapter =
   process.env.SMTP_HOST &&
   process.env.SMTP_USER &&
@@ -56,8 +63,8 @@ const emailAdapter =
         skipVerify: process.env.NODE_ENV === 'development', // Skip verification in development for faster startup
         transportOptions: {
           host: process.env.SMTP_HOST,
-          port: parseInt(process.env.SMTP_PORT || '587', 10),
-          secure: process.env.SMTP_SECURE === 'true', // false for port 587 (STARTTLS), true for port 465 (SSL)
+          port: smtpPort,
+          secure: smtpSecure, // 587 => false (STARTTLS), 465 => true (SSL/TLS)
           auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASSWORD,
@@ -65,7 +72,7 @@ const emailAdapter =
           tls: {
             rejectUnauthorized:
               process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
-            ciphers: 'TLSv1.2', // Outlook/Office 365 compatible cipher
+            minVersion: 'TLSv1.2',
           },
           requireTLS: true, // Office 365 requires TLS
         },

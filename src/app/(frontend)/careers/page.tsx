@@ -1,21 +1,15 @@
 import type { Metadata } from 'next'
 
-import configPromise from '../../../payload.config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
-import { LivePreviewListener } from '../../../components/LivePreviewListener'
 import { CareersPageHero } from '../../../components/sections/CareersPageHero.client'
 import { CareersPageContent } from '../../../components/sections/CareersPageContent.client'
+import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
 export default async function CareersPage() {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
-
   // Fetch careers page content from global
   const careersPageContent = (await getCachedGlobal('careers-page-content', 2)()) as {
     hero?: {
@@ -44,18 +38,23 @@ export default async function CareersPage() {
   } | null
 
   // Fetch published careers
-  const careers = await payload.find({
-    collection: 'career',
-    limit: 100,
-    where: {
-      status: {
-        equals: 'published',
+  const careers = await safePayloadFindCached({
+    cacheKeyParts: ['careers-page', 'career', 'published', 'limit:100', 'sort:-createdAt', 'depth:2'],
+    tags: ['collection_career'],
+    revalidate,
+    options: {
+      collection: 'career',
+      limit: 100,
+      where: {
+        status: {
+          equals: 'published',
+        },
       },
+      sort: '-createdAt',
+      depth: 2, // Populate relationships like featuredImage
+      overrideAccess: false,
+      draft: false,
     },
-    sort: '-createdAt',
-    depth: 2, // Populate relationships like featuredImage
-    overrideAccess: false,
-    draft: false,
   })
 
   const heroBackgroundImage = careersPageContent?.hero?.backgroundImage
@@ -77,8 +76,6 @@ export default async function CareersPage() {
 
   return (
     <main className="flex flex-col">
-      {draft && <LivePreviewListener />}
-      
       {/* Hero Section */}
       <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden py-12 md:py-16">
         {heroBackgroundImageSrc ? (

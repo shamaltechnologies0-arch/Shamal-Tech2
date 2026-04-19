@@ -3,11 +3,7 @@ import type { Metadata } from 'next/types'
 import { PageRangeClient } from '../../../components/PageRange/PageRangeClient'
 import { Pagination } from '../../../components/Pagination'
 import { PostsClient } from './PostsClient'
-import configPromise from '../../../payload.config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
-import { LivePreviewListener } from '../../../components/LivePreviewListener'
 import Image from 'next/image'
 import { PostsPageHero } from '../../../components/sections/PostsPageHero.client'
 import React from 'react'
@@ -15,14 +11,12 @@ import PageClient from './page.client'
 import { ScrollSection } from '../../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../../components/sections/ParallaxElement'
 import { CinematicReveal } from '../../../utilities/animations'
+import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
 export default async function Page() {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
-
   // Fetch posts page content from global
   const postsPageContent = (await getCachedGlobal('posts-page-content', 2)()) as {
     hero?: {
@@ -50,28 +44,31 @@ export default async function Page() {
     }
   } | null
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 2,
-    limit: 12,
-    overrideAccess: false,
-    select: {
-      title: true,
-      titleAr: true,
-      description: true,
-      descriptionAr: true,
-      slug: true,
-      categories: true,
-      meta: true,
-      featuredImage: true,
-      heroImage: true,
+  const posts = await safePayloadFindCached({
+    cacheKeyParts: ['posts-page', 'posts', 'limit:12', 'depth:2', 'select:card'],
+    tags: ['collection_posts'],
+    revalidate,
+    options: {
+      collection: 'posts',
+      depth: 2,
+      limit: 12,
+      overrideAccess: false,
+      select: {
+        title: true,
+        titleAr: true,
+        description: true,
+        descriptionAr: true,
+        slug: true,
+        categories: true,
+        meta: true,
+        featuredImage: true,
+        heroImage: true,
+      },
     },
   })
 
   return (
     <main className="flex flex-col relative">
-      {draft && <LivePreviewListener />}
-
       {/* Hero Section - Reduced Height */}
       <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
         {/* Background Image */}

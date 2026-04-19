@@ -65,6 +65,8 @@ interface SectorsPinnedSectionProps {
     url?: string
     alt?: string
   } | null
+  /** When false, sectors render as a normal two-column layout without scroll-pinned animation */
+  usePinnedScroll?: boolean
 }
 
 export function SectorsPinnedSection({
@@ -76,6 +78,7 @@ export function SectorsPinnedSection({
   descriptionAr,
   sectors,
   backgroundImage,
+  usePinnedScroll = true,
 }: SectorsPinnedSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const { language } = useLanguage()
@@ -89,6 +92,8 @@ export function SectorsPinnedSection({
   const isInitializedRef = useRef(false)
 
   useEffect(() => {
+    if (!usePinnedScroll) return
+
     if (
       !sectionRef.current ||
       !leftColumnRef.current ||
@@ -271,15 +276,19 @@ export function SectorsPinnedSection({
         }
       }
     }
-  }, [sectors])
+  }, [sectors, usePinnedScroll])
 
   const bgImageUrl = backgroundImage?.url
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden"
-      style={{ height: '80vh', minHeight: '600px' }}
+      className={
+        usePinnedScroll
+          ? 'relative w-full overflow-hidden'
+          : 'relative w-full overflow-hidden py-16 md:py-24'
+      }
+      style={usePinnedScroll ? { height: '80vh', minHeight: '600px' } : undefined}
     >
       {/* Background Image - Fixed, never stretches */}
       {bgImageUrl && (
@@ -299,12 +308,22 @@ export function SectorsPinnedSection({
       )}
 
       {/* Content Container */}
-      <div className="relative z-10 h-full container mx-auto px-4 py-12 md:py-16 lg:py-20">
-        <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16">
-          {/* Column 1: Sticky Title - Stays visible for entire section */}
+      <div
+        className={
+          usePinnedScroll
+            ? 'relative z-10 h-full container mx-auto px-4 py-12 md:py-16 lg:py-20'
+            : 'relative z-10 container mx-auto px-4'
+        }
+      >
+        <div className={usePinnedScroll ? 'h-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16' : 'grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16'}>
+          {/* Column 1: Sticky title when pinned; static intro when not */}
           <div
             ref={leftColumnRef}
-            className="flex items-center lg:sticky lg:top-1/2 lg:-translate-y-1/2 self-start lg:self-center"
+            className={
+              usePinnedScroll
+                ? 'flex items-center lg:sticky lg:top-1/2 lg:-translate-y-1/2 self-start lg:self-center'
+                : 'flex flex-col justify-center space-y-6'
+            }
           >
             <div className="space-y-6 w-full">
               <Badge variant="secondary" className="mb-4">
@@ -324,13 +343,12 @@ export function SectorsPinnedSection({
           {/* Column 2: Animated Scrollable Content */}
           <div
             ref={rightColumnWrapperRef}
-            className="relative h-full overflow-hidden"
+            className={usePinnedScroll ? 'relative h-full overflow-hidden' : 'relative'}
           >
-            {/* Inner wrapper that moves with scroll */}
             <div
               ref={rightColumnInnerRef}
               className="space-y-6"
-              style={{ willChange: 'transform' }}
+              style={usePinnedScroll ? { willChange: 'transform' } : undefined}
             >
               {sectors.map((sector, index) => {
                 // Handle different image formats

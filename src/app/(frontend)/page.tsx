@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 
-import { draftMode } from 'next/headers'
 import { getCachedGlobal } from '../../utilities/getGlobals'
 import { generateMeta } from '../../utilities/generateMeta'
-import { LivePreviewListener } from '../../components/LivePreviewListener'
-import { safePayloadFind } from '../../utilities/safePayloadQuery'
+import { safePayloadFindCached } from '../../utilities/safePayloadQuery'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '../../components/ui/button'
@@ -17,8 +15,6 @@ import { ScrollReveal, StaggerReveal, CinematicReveal } from '../../utilities/an
 import { SectorsPinnedSection } from '../../components/sections/SectorsPinnedSection.client'
 import { Media } from '../../components/Media'
 import RichText from '../../components/RichText'
-import { HeroSection } from '../../components/sections/HeroSection.client'
-import { HeroEnhanced } from '../../components/sections/HeroEnhanced.client'
 import { ScrollSection } from '../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../components/sections/ParallaxElement'
 import { ScrollIndicator } from '../../components/sections/ScrollIndicator'
@@ -44,8 +40,6 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const { isEnabled: draft } = await draftMode()
-
   // Fetch homepage content with type assertions - depth 3 to ensure media relationships are fully populated
   const homepageContent = (await getCachedGlobal('homepage-content', 3)()) as {
     hero?: {
@@ -197,18 +191,23 @@ export default async function HomePage() {
 
   // Fetch services for carousel - always use published, never drafts
   // Sort by order field (ascending), then by createdAt as fallback
-  const servicesResult = await safePayloadFind({
-    collection: 'services',
-    limit: 100, // Fetch all services to respect ordering
-    where: {
-      _status: {
-        equals: 'published',
+  const servicesResult = await safePayloadFindCached({
+    cacheKeyParts: ['home', 'services', 'published', 'limit:100', 'sort:order', 'depth:2'],
+    tags: ['collection_services'],
+    revalidate: 3600,
+    options: {
+      collection: 'services',
+      limit: 100, // Fetch all services to respect ordering
+      where: {
+        _status: {
+          equals: 'published',
+        },
       },
+      sort: 'order', // Sort by admin-controlled order field
+      depth: 2, // Ensure relationships (like heroImage) are populated
+      draft: false, // Explicitly exclude drafts
+      overrideAccess: false, // Respect access control
     },
-    sort: 'order', // Sort by admin-controlled order field
-    depth: 2, // Ensure relationships (like heroImage) are populated
-    draft: false, // Explicitly exclude drafts
-    overrideAccess: false, // Respect access control
   })
 
   // Ensure proper sorting: services with order field first (ascending), then by createdAt
@@ -318,16 +317,21 @@ export default async function HomePage() {
       .filter((id) => id !== null)
 
     if (postIds.length > 0) {
-      const fetchedPosts = await safePayloadFind({
-        collection: 'posts',
-        where: {
-          id: {
-            in: postIds as string[],
+      const fetchedPosts = await safePayloadFindCached({
+        cacheKeyParts: ['home', 'posts', 'featured', `ids:${postIds.join(',')}`, 'depth:2'],
+        tags: ['collection_posts'],
+        revalidate: 3600,
+        options: {
+          collection: 'posts',
+          where: {
+            id: {
+              in: postIds as string[],
+            },
           },
+          depth: 2,
+          draft: false,
+          overrideAccess: false,
         },
-        depth: 2,
-        draft: false,
-        overrideAccess: false,
       })
 
       // Map posts with their custom images
@@ -348,18 +352,23 @@ export default async function HomePage() {
 
   // Fallback to latest published posts if no featured posts
   if (blogPostsToDisplay.length === 0) {
-    const blogPosts = await safePayloadFind({
-      collection: 'posts',
-      limit: 3,
-      sort: '-publishedAt',
-      where: {
-        _status: {
-          equals: 'published',
+    const blogPosts = await safePayloadFindCached({
+      cacheKeyParts: ['home', 'posts', 'latest', 'published', 'limit:3', 'sort:-publishedAt', 'depth:2'],
+      tags: ['collection_posts'],
+      revalidate: 3600,
+      options: {
+        collection: 'posts',
+        limit: 3,
+        sort: '-publishedAt',
+        where: {
+          _status: {
+            equals: 'published',
+          },
         },
+        depth: 2,
+        draft: false,
+        overrideAccess: false,
       },
-      depth: 2,
-      draft: false,
-      overrideAccess: false,
     })
     blogPostsToDisplay = blogPosts.docs.map((post) => ({
       ...post,
@@ -380,8 +389,6 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-col relative">
-      {draft && <LivePreviewListener />}
-      
       {/* Scroll Indicator */}
       <ScrollIndicator sections={sections} />
 
@@ -514,9 +521,10 @@ export default async function HomePage() {
         </div>
       </ScrollSection>
 
-      {/* Sectors We Serve Section - Pinned/Sticky Layout */}
+      {/* Sectors — classic two-column grid (no scroll-pinned stack) */}
       <div id="sectors">
         <SectorsPinnedSection
+        usePinnedScroll={false}
         badge={homepageContent?.sectors?.badge}
         badgeAr={homepageContent?.sectors?.badgeAr}
         title={homepageContent?.sectors?.title || 'SECTORS WE SERVE'}

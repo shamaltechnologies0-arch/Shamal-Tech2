@@ -163,14 +163,7 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div
-                  className="relative transition-all duration-500 ease-out"
-                  style={{
-                    transform: isActive ? 'scale(1.05)' : 'scale(0.95)',
-                    opacity: isActive ? 1 : 0.75,
-                    zIndex: isActive ? 10 : 1,
-                  }}
-                >
+                <div className="relative transition-opacity duration-300 ease-out opacity-100">
                   <Link
                     href={`/services/${service.slug}`}
                     className="block relative h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-xl overflow-hidden group cursor-pointer"
@@ -182,9 +175,7 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                         src={imageUrl}
                         alt={getLocalizedValue(service.title, service.titleAr, language) || 'Service'}
                         fill
-                        className={`object-cover transition-transform duration-700 ease-out ${
-                          isActive ? 'scale-110' : 'scale-100'
-                        }`}
+                        className="object-cover"
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 30vw"
                         priority={index < 3}
                       />

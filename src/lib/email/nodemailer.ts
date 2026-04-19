@@ -16,7 +16,10 @@ export function getTransporter(): Transporter {
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10)
   const smtpUser = process.env.SMTP_USER
   const smtpPass = process.env.SMTP_PASSWORD
-  const smtpSecure = process.env.SMTP_SECURE === 'true'
+  const smtpSecure =
+    typeof process.env.SMTP_SECURE === 'string'
+      ? process.env.SMTP_SECURE === 'true'
+      : smtpPort === 465
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     throw new Error(
@@ -28,6 +31,7 @@ export function getTransporter(): Transporter {
     host: smtpHost,
     port: smtpPort,
     secure: smtpSecure, // true for 465, false for other ports
+    requireTLS: true,
     auth: {
       user: smtpUser,
       pass: smtpPass,
@@ -35,6 +39,7 @@ export function getTransporter(): Transporter {
     // Optional: Add TLS options for better security
     tls: {
       rejectUnauthorized: process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
+      minVersion: 'TLSv1.2',
     },
   })
 

@@ -4,8 +4,8 @@ import { RelatedPosts } from '../../../../blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '../../../../components/PayloadRedirects'
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
+import React from 'react'
+import { unstable_cache } from 'next/cache'
 
 import type { Post } from '../../../../payload-types'
 
@@ -13,7 +13,6 @@ import { PostContentClient } from './PostContentClient'
 import { PostHeroClient } from '../../../../heros/PostHero/PostHeroClient'
 import { generateMeta } from '../../../../utilities/generateMeta'
 import PageClient from './page.client'
-import { LivePreviewListener } from '../../../../components/LivePreviewListener'
 
 export async function generateStaticParams() {
   try {
@@ -53,6 +52,7 @@ export async function generateStaticParams() {
 // Allow dynamic generation for paths not in generateStaticParams
 // This ensures deleted posts return 404 instead of showing cached content
 export const dynamicParams = true
+export const revalidate = 3600
 
 type Args = {
   params: Promise<{
@@ -61,7 +61,6 @@ type Args = {
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
@@ -76,8 +75,6 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
-
-      {draft && <LivePreviewListener />}
 
       <PostHeroClient post={post} />
 
@@ -105,26 +102,28 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   return generateMeta({ doc: post })
 }
 
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+const queryPostBySlug = async ({ slug }: { slug: string }) =>
+  unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: configPromise })
+      const result = await payload.find({
+        collection: 'posts',
+        draft: false,
+        limit: 1,
+        overrideAccess: false,
+        pagination: false,
+        where: {
+          slug: {
+            equals: slug,
+          },
+          _status: {
+            equals: 'published',
+          },
+        },
+      })
 
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'posts',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
+      return result.docs?.[0] || null
     },
-  })
-
-  return result.docs?.[0] || null
-})
-
-// Revalidate this page when posts are updated/deleted
-export const revalidate = 0 // Use on-demand revalidation via revalidatePath
+    ['posts', 'bySlug', slug],
+    { tags: ['collection_posts'], revalidate }
+  )()

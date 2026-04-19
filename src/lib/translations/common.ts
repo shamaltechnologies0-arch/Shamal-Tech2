@@ -13,6 +13,7 @@ export const commonTranslations = {
       products: 'Products',
       careers: 'Careers',
       blog: 'Blog',
+      blogs: 'Blogs',
       contact: 'Contact',
     },
     // Footer
@@ -160,6 +161,7 @@ export const commonTranslations = {
       products: 'منتجاتنا',
       careers: 'وظائف',
       blog: 'المدونة',
+      blogs: 'المدونة',
       contact: 'اتصل بنا',
     },
     // Footer

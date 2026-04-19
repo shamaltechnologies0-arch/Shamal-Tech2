@@ -18,16 +18,31 @@ async function getGlobal(slug: Global, depth = 0) {
 }
 
 /**
- * Site settings slug - used for shorter cache on frequently-edited config
+ * unstable_cache persists entries via JSON.stringify. Clone through JSON so the payload is
+ * serializable (avoids rare stringify failures on background revalidation).
  */
-const SITE_SETTINGS_SLUG = 'site-settings'
+function toCacheableJson<T>(value: T): T {
+  return JSON.parse(
+    JSON.stringify(value, (_key, v) => (typeof v === 'bigint' ? v.toString() : v)),
+  ) as T
+}
 
 /**
- * Returns a unstable_cache function mapped with the cache tag for the slug
+ * Returns an unstable_cache wrapper tagged for `revalidateTag('global_<slug>')` from Payload hooks.
+ *
+ * Uses `revalidate: false` (infinite lifetime) so Next does **not** time-stale the entry and run
+ * background revalidations that log `revalidating cache with key: ...` when the DB hiccups.
+ * Updates still propagate via tags when globals change in the CMS.
  */
 export const getCachedGlobal = (slug: Global, depth = 0) =>
-  unstable_cache(async () => getGlobal(slug, depth), [slug, String(depth)], {
-    tags: [`global_${slug}`],
-    // Site settings changes frequently (contact info, social links) - revalidate every 60s as fallback
-    ...(slug === SITE_SETTINGS_SLUG && { revalidate: 60 }),
-  })
+  unstable_cache(
+    async () => {
+      const doc = await getGlobal(slug, depth)
+      return toCacheableJson(doc)
+    },
+    [slug, String(depth)],
+    {
+      tags: [`global_${slug}`],
+      revalidate: false,
+    },
+  )

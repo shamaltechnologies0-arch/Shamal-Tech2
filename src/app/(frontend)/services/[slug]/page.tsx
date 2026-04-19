@@ -2,16 +2,14 @@ import type { Metadata } from 'next'
 
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import { cache } from 'react'
-import { LivePreviewListener } from '../../../../components/LivePreviewListener'
+import { unstable_cache } from 'next/cache'
 import { ServiceHeroSection } from '../../../../components/sections/ServiceHeroSection.client'
 import { ServiceDetailContent } from '../../../../components/sections/ServiceDetailContent.client'
 import { ServiceBreadcrumb } from '../../../../components/sections/ServiceBreadcrumb.client'
 
-// Non-cached version for draft mode
-async function getServiceBySlugUncached(slug: string) {
-  const { isEnabled: draft } = await draftMode()
+export const revalidate = 3600
+
+async function getServiceBySlugPublished(slug: string) {
   const payload = await getPayload({ config: configPromise })
   
   const where: any = {
@@ -20,11 +18,8 @@ async function getServiceBySlugUncached(slug: string) {
     },
   }
   
-  // Only filter by published status if not in draft mode
-  if (!draft) {
-    where._status = {
-      equals: 'published',
-    }
+  where._status = {
+    equals: 'published',
   }
   
   const result = await payload.find({
@@ -32,14 +27,17 @@ async function getServiceBySlugUncached(slug: string) {
     where,
     limit: 1,
     depth: 2,
-    draft,
-    overrideAccess: draft,
+    draft: false,
+    overrideAccess: false,
   })
   return result.docs[0] || null
 }
 
-// Cached version for production (non-draft) mode
-const getServiceBySlugCached = cache(getServiceBySlugUncached)
+const getServiceBySlugCached = (slug: string) =>
+  unstable_cache(() => getServiceBySlugPublished(slug), ['services', 'bySlug', slug], {
+    tags: ['collection_services'],
+    revalidate,
+  })()
 
 export async function generateStaticParams() {
   try {
@@ -79,8 +77,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const { isEnabled: draft } = await draftMode()
-  const service = draft ? await getServiceBySlugUncached(slug) : await getServiceBySlugCached(slug)
+  const service = await getServiceBySlugCached(slug)
 
   if (!service) {
     return {
@@ -95,10 +92,8 @@ export async function generateMetadata({
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { isEnabled: draft } = await draftMode()
   const { slug } = await params
-  // Don't cache in draft mode to ensure fresh data when RefreshRouteOnSave triggers refresh
-  const service = draft ? await getServiceBySlugUncached(slug) : await getServiceBySlugCached(slug)
+  const service = await getServiceBySlugCached(slug)
 
   if (!service) {
     return <div>Service not found</div>
@@ -106,8 +101,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="flex flex-col relative">
-      {draft && <LivePreviewListener />}
-      
       {/* Hero Section - Full Viewport */}
       <ServiceHeroSection
         slug={slug}

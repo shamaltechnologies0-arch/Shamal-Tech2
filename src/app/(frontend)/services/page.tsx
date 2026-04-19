@@ -16,6 +16,7 @@ import { SlidingServicesSection } from '../../../components/sections/SlidingServ
 import { ServicesPageHero } from '../../../components/sections/ServicesPageHero.client'
 import { ServicesCTASection } from '../../../components/sections/ServicesCTASection.client'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
+import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
 
 export async function generateMetadata(): Promise<Metadata> {
   const servicesPageContent = (await getCachedGlobal('services-page-content', 2)()) as {
@@ -39,9 +40,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function ServicesPage() {
-  const payload = await getPayload({ config: configPromise })
+export const revalidate = 3600
 
+export default async function ServicesPage() {
   // Fetch services page content from global
   const servicesPageContent = (await getCachedGlobal('services-page-content', 3)()) as {
     hero?: {
@@ -70,18 +71,23 @@ export default async function ServicesPage() {
 
   // Fetch published services - use same sorting as homepage for consistency
   // Sort by order field (ascending), then by createdAt as fallback
-  let servicesResult = await payload.find({
-    collection: 'services',
-    limit: 100,
-    where: {
-      _status: {
-        equals: 'published',
+  let servicesResult = await safePayloadFindCached({
+    cacheKeyParts: ['services-page', 'services', 'published', 'limit:100', 'sort:order', 'depth:2'],
+    tags: ['collection_services'],
+    revalidate: 3600,
+    options: {
+      collection: 'services',
+      limit: 100,
+      where: {
+        _status: {
+          equals: 'published',
+        },
       },
+      sort: 'order', // Sort by admin-controlled order field (same as homepage)
+      depth: 2, // Ensure relationships (like heroImage) are populated (same as homepage)
+      draft: false, // Explicitly exclude drafts
+      overrideAccess: false, // Respect access control
     },
-    sort: 'order', // Sort by admin-controlled order field (same as homepage)
-    depth: 2, // Ensure relationships (like heroImage) are populated (same as homepage)
-    draft: false, // Explicitly exclude drafts
-    overrideAccess: false, // Respect access control
   })
 
   // Ensure proper sorting: services with order field first (ascending), then by createdAt
@@ -101,6 +107,7 @@ export default async function ServicesPage() {
 
   // If no published services, get all services (for development)
   if (services.docs.length === 0) {
+    const payload = await getPayload({ config: configPromise })
     services = await payload.find({
       collection: 'services',
       limit: 100,

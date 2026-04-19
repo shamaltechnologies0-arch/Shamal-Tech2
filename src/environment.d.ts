@@ -17,6 +17,14 @@ declare global {
       // Contact Information
       CONTACT_EMAIL?: string
       CONTACT_PHONE?: string
+      /** Site-wide 503 maintenance: no APIs, static HTML from middleware */
+      MAINTENANCE_MODE?: string
+      /** Same as MAINTENANCE_MODE; use if Edge middleware does not see non-public env */
+      NEXT_PUBLIC_MAINTENANCE_MODE?: string
+      /** Retry-After seconds (default 3600) */
+      MAINTENANCE_RETRY_AFTER?: string
+      /** WhatsApp wa.me digits (country code, no +); overrides phone derivation */
+      MAINTENANCE_WHATSAPP_NUMBER?: string
       // Newsletter
       NEWSLETTER_API_KEY?: string
       NEWSLETTER_AUDIENCE_ID?: string
@@ -32,6 +40,10 @@ declare global {
       // ClickUp Sales Pipeline
       CLICKUP_API_TOKEN?: string
       CLICKUP_LIST_ID?: string
+      // Training platform (lists + optional field label overrides)
+      TRAINING_CLICKUP_USERS_LIST_ID?: string
+      TRAINING_CLICKUP_PROGRESS_LIST_ID?: string
+      TRAINING_CLICKUP_PAYMENTS_LIST_ID?: string
     }
   }
 }

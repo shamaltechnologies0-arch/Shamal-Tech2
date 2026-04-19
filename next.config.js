@@ -32,6 +32,16 @@ const NEXT_PUBLIC_SERVER_URL = getServerURL()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Expose maintenance + contact vars so Edge middleware receives them (otherwise
+  // process.env.* can be undefined in the middleware bundle despite .env on disk).
+  env: {
+    MAINTENANCE_MODE: process.env.MAINTENANCE_MODE ?? '',
+    NEXT_PUBLIC_MAINTENANCE_MODE: process.env.NEXT_PUBLIC_MAINTENANCE_MODE ?? '',
+    MAINTENANCE_RETRY_AFTER: process.env.MAINTENANCE_RETRY_AFTER ?? '',
+    MAINTENANCE_WHATSAPP_NUMBER: process.env.MAINTENANCE_WHATSAPP_NUMBER ?? '',
+    CONTACT_EMAIL: process.env.CONTACT_EMAIL ?? '',
+    CONTACT_PHONE: process.env.CONTACT_PHONE ?? '',
+  },
   // Enable standalone output for AWS Amplify SSR support
   // This is required for Payload CMS to work properly in serverless environments
   output: 'standalone',

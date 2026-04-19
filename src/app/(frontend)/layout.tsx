@@ -28,16 +28,13 @@ import { Providers } from '../../providers'
 import { InitTheme } from '../../providers/Theme/InitTheme'
 import { InitLanguage } from '../../providers/Language/InitLanguage'
 import { mergeOpenGraph } from '../../utilities/mergeOpenGraph'
-import { draftMode } from 'next/headers'
 import { Chatbot } from '../../components/Chatbot'
 import { getCachedGlobal } from '../../utilities/getGlobals'
 
 import './globals.css'
 import { getServerSideURL } from '../../utilities/getURL'
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable, rajdhani.variable, inter.variable)} lang="en" suppressHydrationWarning>
       <head>
@@ -50,7 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers>
           <AdminBar
             adminBarProps={{
-              preview: isEnabled,
+              preview: false,
             }}
           />
 

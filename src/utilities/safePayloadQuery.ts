@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '../payload.config'
 import type { Payload } from 'payload'
+import { unstable_cache } from 'next/cache'
 
 /**
  * Get a Payload instance with proper error handling for MongoDB session expiration
@@ -73,4 +74,25 @@ export async function safePayloadFind<T = any>(options: {
     }
     throw error
   }
+}
+
+/**
+ * Cached wrapper around `safePayloadFind` for public pages.
+ *
+ * Notes:
+ * - The caller must provide a stable `cacheKeyParts` array (no random/Date).
+ * - Use `tags` to support on-demand revalidation when content updates.
+ * - Use `revalidate` as a safety net for eventual consistency.
+ */
+export async function safePayloadFindCached<T = any>(args: {
+  cacheKeyParts: string[]
+  tags: string[]
+  revalidate?: number
+  options: Parameters<typeof safePayloadFind<T>>[0]
+}): Promise<Awaited<ReturnType<typeof safePayloadFind<T>>>> {
+  const { cacheKeyParts, tags, revalidate, options } = args
+  return unstable_cache(() => safePayloadFind<T>(options), cacheKeyParts, {
+    tags,
+    ...(typeof revalidate === 'number' ? { revalidate } : {}),
+  })()
 }

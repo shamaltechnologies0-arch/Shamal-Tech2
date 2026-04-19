@@ -51,7 +51,7 @@ export function ImpactStatsSection({
     <ScrollSection id="stats" fullViewport bgVariant="2" className="border-y border-logo-blue/20 surface-neutral">
       <div className="container mx-auto px-4 w-full">
         <ParallaxElement speed={0.2} direction="up">
-          <CinematicReveal delay={0.1} duration={1.2} scale>
+          <CinematicReveal delay={0.1} duration={1.2}>
             <div className="text-center mb-16 space-y-6">
               <Badge
                 variant="outline"
