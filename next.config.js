@@ -2,11 +2,18 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 import redirects from './redirects.js'
 
+function normalizePublicServerUrl(url) {
+  const t = String(url).trim()
+  if (!t) return ''
+  return /^https?:\/\//i.test(t) ? t : `https://${t}`
+}
+
 // Get server URL with support for AWS Amplify, Vercel, and localhost
 function getServerURL() {
   // Priority: NEXT_PUBLIC_SERVER_URL > AWS Amplify > Vercel > localhost
   if (process.env.NEXT_PUBLIC_SERVER_URL) {
-    return process.env.NEXT_PUBLIC_SERVER_URL
+    const normalized = normalizePublicServerUrl(process.env.NEXT_PUBLIC_SERVER_URL)
+    if (normalized) return normalized
   }
 
   // AWS Amplify support

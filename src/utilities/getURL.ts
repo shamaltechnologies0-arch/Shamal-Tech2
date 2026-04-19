@@ -1,9 +1,17 @@
 import canUseDOM from './canUseDOM'
 
+/** Bare hostnames (e.g. shamal.sa) are invalid for `new URL()`; assume https. */
+function normalizePublicServerUrl(url: string): string {
+  const t = url.trim()
+  if (!t) return ''
+  return /^https?:\/\//i.test(t) ? t : `https://${t}`
+}
+
 export const getServerSideURL = () => {
   // Priority: NEXT_PUBLIC_SERVER_URL > AWS Amplify > Vercel > localhost
   if (process.env.NEXT_PUBLIC_SERVER_URL) {
-    return process.env.NEXT_PUBLIC_SERVER_URL
+    const normalized = normalizePublicServerUrl(process.env.NEXT_PUBLIC_SERVER_URL)
+    if (normalized) return normalized
   }
 
   // AWS Amplify support
