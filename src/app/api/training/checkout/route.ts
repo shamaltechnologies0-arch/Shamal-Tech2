@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
   const base =
     process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, '') ||
-    (typeof process.env.VERCEL_URL === 'string' ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    (typeof process.env.VERCEL_URL === 'string' ? `https://${process.env.VERCEL_URL}` : 'https://localhost:3000')
 
   const stripe = new Stripe(secretKey, {
     apiVersion: '2026-03-25.dahlia',

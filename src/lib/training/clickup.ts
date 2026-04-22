@@ -32,7 +32,14 @@ export type TrainingRecord<T extends Record<string, unknown> = Record<string, un
   fields: T
 }
 
-type CfMeta = { id: string; name: string; type: string }
+type CfMeta = {
+  id: string
+  name: string
+  type: string
+  type_config?: {
+    options?: Array<{ id: string; name: string; orderindex?: number }>
+  }
+}
 
 type ClickupTask = {
   id: string
@@ -118,6 +125,20 @@ function formatValueForClickUp(meta: CfMeta | undefined, value: unknown): unknow
   if (t === 'number' || t === 'currency') {
     return typeof value === 'number' ? value : Number(value)
   }
+  if (t === 'drop_down') {
+    if (typeof value === 'number') return value
+    const raw = String(value).trim()
+    const options = meta?.type_config?.options ?? []
+    const match = options.find((o) => {
+      const name = String(o.name ?? '').trim().toLowerCase()
+      const id = String(o.id ?? '').trim()
+      const order = String(o.orderindex ?? '')
+      return name === raw.toLowerCase() || id === raw || order === raw
+    })
+    if (match?.id) return match.id
+    const asNum = Number(raw)
+    return Number.isNaN(asNum) ? raw : asNum
+  }
   if (t === 'date') {
     if (typeof value === 'string') {
       const ms = Date.parse(value)
@@ -134,13 +155,18 @@ function formatValueForClickUp(meta: CfMeta | undefined, value: unknown): unknow
 async function buildCustomFieldsArray(
   listId: string,
   entries: Partial<Record<string, string | number | boolean | null>>,
+  options?: { optionalFieldNames?: Set<string> },
 ): Promise<Array<{ id: string; value: unknown }>> {
   const metaByName = await getFieldMetaByName(listId)
   const out: Array<{ id: string; value: unknown }> = []
+  const optionalFieldNames = options?.optionalFieldNames ?? new Set<string>()
   for (const [name, raw] of Object.entries(entries)) {
     if (raw === undefined) continue
     const meta = metaByName.get(name)
     if (!meta) {
+      if (optionalFieldNames.has(name)) {
+        continue
+      }
       throw new Error(
         `ClickUp list ${listId} has no custom field named "${name}". Add it in ClickUp or set TRAINING_CLICKUP_FIELD_* to match your field labels.`,
       )
@@ -212,7 +238,9 @@ export async function createUser(input: {
   }
   if (input.phone) entries[FIELD.phone] = input.phone
 
-  const custom_fields = await buildCustomFieldsArray(cfg.usersList, entries)
+  const custom_fields = await buildCustomFieldsArray(cfg.usersList, entries, {
+    optionalFieldNames: new Set([FIELD.phone, FIELD.warmLead]),
+  })
   const data = (await clickupFetch(`/list/${cfg.usersList}/task`, {
     method: 'POST',
     token: cfg.token,

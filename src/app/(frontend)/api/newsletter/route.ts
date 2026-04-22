@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
-import { subscribeToNewsletter } from '../../../../lib/newsletter'
 import { sendNewsletterNotification } from '../../../../lib/email'
 
 export async function POST(request: Request) {
@@ -34,15 +33,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Subscribe to external newsletter service (optional)
-    try {
-      await subscribeToNewsletter(email)
-    } catch (error) {
-      console.error('Newsletter service error:', error)
-      // Continue to save in PayloadCMS even if external service fails
-    }
-
-    // Save to PayloadCMS - This is the primary record
+    // Save to PayloadCMS (SQLite) as the only source of truth
     const subscription = await payload.create({
       collection: 'newsletter-subscriptions',
       data: {

@@ -22,11 +22,16 @@ function isTrainingProtectedPath(pathname: string): boolean {
   return TRAINING_PROTECTED_PREFIXES.some((prefix) => matchesRoute(pathname, prefix))
 }
 
+function isMaintenanceBypassPath(pathname: string): boolean {
+  // Keep admin operations available during public maintenance windows.
+  return matchesRoute(pathname, '/admin') || pathname.startsWith('/api/')
+}
+
 /**
  * Training JWT gate (when not in maintenance). Maintenance mode short-circuits first with 503.
  */
 export async function middleware(request: NextRequest) {
-  if (isMaintenanceMode()) {
+  if (isMaintenanceMode() && !isMaintenanceBypassPath(request.nextUrl.pathname)) {
     return maintenanceMiddlewareResponse(request)
   }
 

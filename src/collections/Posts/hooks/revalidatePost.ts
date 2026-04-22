@@ -20,6 +20,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       // Revalidate listing pages to show updated content
       revalidatePath('/posts')
       revalidatePath('/posts/page/1')
+      // Revalidate homepage insights section
+      revalidatePath('/')
+      revalidateTag('collection_posts')
       revalidateTag('posts-sitemap')
     }
 
@@ -30,6 +33,8 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      revalidatePath('/')
+      revalidateTag('collection_posts')
       revalidateTag('posts-sitemap')
     }
   }
@@ -50,6 +55,9 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({
     // Revalidate the posts listing page
     revalidatePath('/posts')
     revalidatePath('/posts/page/1')
+    // Revalidate homepage insights section
+    revalidatePath('/')
+    revalidateTag('collection_posts')
     // Revalidate sitemap
     revalidateTag('posts-sitemap')
   }

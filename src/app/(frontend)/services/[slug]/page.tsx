@@ -108,7 +108,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         titleAr={(service as { titleAr?: string }).titleAr}
         heroDescription={service.heroDescription}
         heroDescriptionAr={(service as { heroDescriptionAr?: string }).heroDescriptionAr}
-        heroImage={service.heroImage as { url?: string } | null}
       />
 
       <ServiceDetailContent service={service} />

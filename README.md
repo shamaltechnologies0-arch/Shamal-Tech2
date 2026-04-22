@@ -120,7 +120,7 @@ Use this section in the PDF to reflect any new pages or sections.
 | ----------------- | ------------------------------------------------------ |
 | **Frontend**      | Next.js 15 (App Router), React 19, TypeScript          |
 | **CMS / Backend** | Payload CMS 3.x                                        |
-| **Database**      | MongoDB (Mongoose adapter)                             |
+| **Database**      | SQLite (Payload SQL adapter)                           |
 | **Styling**       | Tailwind CSS, Radix UI, Geist + Rajdhani + Inter fonts |
 | **Rich text**     | Lexical (Payload)                                      |
 | **Media storage** | Local (dev) / AWS S3 (production)                      |
@@ -174,7 +174,7 @@ pnpm start
 
 **Environment variables:** See `.env.example`. Key variables:
 
-- `MONGODB_URI` — Database
+- `DATABASE_URL` — Database (for SQLite file path, e.g. `file:./data/payload.db`)
 - `PAYLOAD_SECRET` — Auth
 - `NEXT_PUBLIC_SERVER_URL` — Public site URL (no trailing slash)
 - `CRON_SECRET` — Cron/revalidation

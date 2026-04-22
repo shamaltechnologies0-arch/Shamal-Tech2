@@ -10,32 +10,13 @@ const AdminHeader: React.FC = () => {
 
   const handleSignOut = async () => {
     try {
-      // Use Payload's logout endpoint
-      const response = await fetch('/api/users/logout', {
+      await fetch('/api/users/logout', {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       })
-
-      if (response.ok || response.status === 401) {
-        // Clear any local storage
-        localStorage.clear()
-        sessionStorage.clear()
-        // Redirect to login page
-        window.location.href = '/admin/login'
-      } else {
-        // Fallback: clear local storage and redirect
-        localStorage.clear()
-        sessionStorage.clear()
-        window.location.href = '/admin/login'
-      }
+      window.location.href = '/admin/login'
     } catch (error) {
       console.error('Error signing out:', error)
-      // Fallback: clear local storage and redirect
-      localStorage.clear()
-      sessionStorage.clear()
       window.location.href = '/admin/login'
     }
   }

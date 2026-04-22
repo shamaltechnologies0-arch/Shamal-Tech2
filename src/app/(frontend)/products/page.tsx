@@ -109,6 +109,22 @@ export default async function ProductsPage() {
             <div className="absolute inset-0 bg-black/50" />
           </div>
         )}
+        {(!heroBackgroundImage ||
+          typeof heroBackgroundImage !== 'object' ||
+          heroBackgroundImage === null ||
+          !heroBackgroundImage.url) && (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/media/hero-banners/hero-products.webp"
+              alt="Products page hero background"
+              fill
+              className="object-cover"
+              priority
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+        )}
         <ParallaxElement speed={0.2} direction="up">
           <CinematicReveal delay={0.1} duration={1.2}>
             <ProductsPageHero

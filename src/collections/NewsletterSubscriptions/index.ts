@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { APIError } from 'payload'
+import * as XLSX from 'xlsx'
 
 import { anyone } from '../../access/anyone'
 
@@ -61,7 +63,64 @@ export const NewsletterSubscriptions: CollectionConfig = {
       type: 'text',
       label: 'Subscription Source',
     },
+    {
+      name: 'exportToExcel',
+      type: 'ui',
+      admin: {
+        description: 'Download all newsletter subscribers as an Excel file.',
+        components: {
+          Field: '/collections/NewsletterSubscriptions/ExportNewsletterButton#default',
+        },
+      },
+    },
   ],
   timestamps: true,
+  endpoints: [
+    {
+      path: '/export',
+      method: 'get',
+      handler: async (req) => {
+        if (!req.user) {
+          throw new APIError('You must be logged in to export newsletter subscriptions.', 401)
+        }
+
+        const result = await req.payload.find({
+          collection: 'newsletter-subscriptions',
+          limit: 10000,
+          sort: '-subscribedAt',
+        })
+
+        const rows = result.docs.map((doc) => ({
+          Email: doc.email,
+          Status: doc.status,
+          Source: doc.source ?? '',
+          SubscribedAt: doc.subscribedAt ?? '',
+          CreatedAt: doc.createdAt ?? '',
+          UpdatedAt: doc.updatedAt ?? '',
+        }))
+
+        const worksheet = XLSX.utils.json_to_sheet(rows)
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Subscribers')
+
+        const excelBuffer = XLSX.write(workbook, {
+          type: 'buffer',
+          bookType: 'xlsx',
+        }) as Buffer
+
+        const date = new Date().toISOString().slice(0, 10)
+        const fileName = `newsletter-subscribers-${date}.xlsx`
+
+        return new Response(excelBuffer, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': `attachment; filename="${fileName}"`,
+            'Cache-Control': 'no-store',
+          },
+        })
+      },
+    },
+  ],
 }
 

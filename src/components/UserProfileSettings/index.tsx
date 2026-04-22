@@ -147,27 +147,13 @@ const UserProfileSettings: UIFieldClientComponent = () => {
           <Button
             onClick={async () => {
               try {
-                const response = await fetch('/api/users/logout', {
+                await fetch('/api/users/logout', {
                   method: 'POST',
                   credentials: 'include',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
                 })
-
-                if (response.ok || response.status === 401) {
-                  localStorage.clear()
-                  sessionStorage.clear()
-                  window.location.href = '/admin/login'
-                } else {
-                  localStorage.clear()
-                  sessionStorage.clear()
-                  window.location.href = '/admin/login'
-                }
+                window.location.href = '/admin/login'
               } catch (error) {
                 console.error('Error signing out:', error)
-                localStorage.clear()
-                sessionStorage.clear()
                 window.location.href = '/admin/login'
               }
             }}

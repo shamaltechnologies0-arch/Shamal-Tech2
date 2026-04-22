@@ -25,10 +25,6 @@ declare global {
       MAINTENANCE_RETRY_AFTER?: string
       /** WhatsApp wa.me digits (country code, no +); overrides phone derivation */
       MAINTENANCE_WHATSAPP_NUMBER?: string
-      // Newsletter
-      NEWSLETTER_API_KEY?: string
-      NEWSLETTER_AUDIENCE_ID?: string
-      NEWSLETTER_PROVIDER?: string
       // Other
       CRON_SECRET?: string
       // AWS S3 Storage - Required for Vercel deployment

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { getCachedGlobal } from '../../utilities/getGlobals'
 import { generateMeta } from '../../utilities/generateMeta'
-import { safePayloadFindCached } from '../../utilities/safePayloadQuery'
+import { safePayloadFind, safePayloadFindCached } from '../../utilities/safePayloadQuery'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '../../components/ui/button'
@@ -191,7 +191,7 @@ export default async function HomePage() {
 
   // Fetch services for carousel - always use published, never drafts
   // Sort by order field (ascending), then by createdAt as fallback
-  const servicesResult = await safePayloadFindCached({
+  let servicesResult = await safePayloadFindCached({
     cacheKeyParts: ['home', 'services', 'published', 'limit:100', 'sort:order', 'depth:2'],
     tags: ['collection_services'],
     revalidate: 3600,
@@ -209,6 +209,39 @@ export default async function HomePage() {
       overrideAccess: false, // Respect access control
     },
   })
+
+  // Safety fallback: if cached query is stale/empty, bypass cache once.
+  if (servicesResult.docs.length === 0) {
+    servicesResult = await safePayloadFind({
+      collection: 'services',
+      limit: 100,
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+      sort: 'order',
+      depth: 2,
+      draft: false,
+      overrideAccess: false,
+    })
+  }
+
+  // If no published services, fallback to all services (dev-friendly behavior).
+  if (servicesResult.docs.length === 0) {
+    servicesResult = await safePayloadFindCached({
+      cacheKeyParts: ['home', 'services', 'all', 'limit:100', 'sort:title', 'depth:1'],
+      tags: ['collection_services'],
+      revalidate: 3600,
+      options: {
+        collection: 'services',
+        limit: 100,
+        sort: 'title',
+        depth: 1,
+        overrideAccess: false,
+      },
+    })
+  }
 
   // Ensure proper sorting: services with order field first (ascending), then by createdAt
   // This handles cases where order might be null/undefined
@@ -404,7 +437,7 @@ export default async function HomePage() {
             className="w-full h-full object-cover"
             style={{ minHeight: '100%', minWidth: '100%' }}
           >
-            <source src="/media/hero-video.mp4" type="video/mp4" />
+            <source src="/media/hero-banners/hero-video.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           {/* Enhanced gradient overlay for better text readability and cinematic depth */}
@@ -521,10 +554,10 @@ export default async function HomePage() {
         </div>
       </ScrollSection>
 
-      {/* Sectors — classic two-column grid (no scroll-pinned stack) */}
+      {/* Sectors — pinned scroll stack animation */}
       <div id="sectors">
         <SectorsPinnedSection
-        usePinnedScroll={false}
+        usePinnedScroll={true}
         badge={homepageContent?.sectors?.badge}
         badgeAr={homepageContent?.sectors?.badgeAr}
         title={homepageContent?.sectors?.title || 'SECTORS WE SERVE'}

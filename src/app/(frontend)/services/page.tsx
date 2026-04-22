@@ -16,7 +16,7 @@ import { SlidingServicesSection } from '../../../components/sections/SlidingServ
 import { ServicesPageHero } from '../../../components/sections/ServicesPageHero.client'
 import { ServicesCTASection } from '../../../components/sections/ServicesCTASection.client'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
-import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
+import { safePayloadFind, safePayloadFindCached } from '../../../utilities/safePayloadQuery'
 
 export async function generateMetadata(): Promise<Metadata> {
   const servicesPageContent = (await getCachedGlobal('services-page-content', 2)()) as {
@@ -90,6 +90,23 @@ export default async function ServicesPage() {
     },
   })
 
+  // Safety fallback: if cached query is stale/empty, bypass cache once.
+  if (servicesResult.docs.length === 0) {
+    servicesResult = await safePayloadFind({
+      collection: 'services',
+      limit: 100,
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+      sort: 'order',
+      depth: 2,
+      draft: false,
+      overrideAccess: false,
+    })
+  }
+
   // Ensure proper sorting: services with order field first (ascending), then by createdAt
   // This handles cases where order might be null/undefined and matches homepage sorting
   let services = {
@@ -139,6 +156,22 @@ export default async function ServicesPage() {
                     : `/${heroBackgroundImage.url}`
               }
               alt={heroBackgroundImage.alt || 'Services page hero background'}
+              fill
+              className="object-cover"
+              priority
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+        )}
+        {(!heroBackgroundImage ||
+          typeof heroBackgroundImage !== 'object' ||
+          heroBackgroundImage === null ||
+          !heroBackgroundImage.url) && (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/media/hero-banners/hero-services.png"
+              alt="Services page hero background"
               fill
               className="object-cover"
               priority

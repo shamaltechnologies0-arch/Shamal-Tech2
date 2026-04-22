@@ -5,53 +5,45 @@
  * Run: pnpm run fix:posts-meta
  */
 import 'dotenv/config'
-import mongoose from 'mongoose'
-
-const MONGODB_URI = process.env.MONGODB_URI
-if (!MONGODB_URI) {
-  console.error('Missing MONGODB_URI')
-  process.exit(1)
-}
+import { getPayload } from 'payload'
+import config from '@payload-config'
 
 async function fixPostsMeta() {
-  await mongoose.connect(MONGODB_URI!)
-  const db = mongoose.connection.db
-  if (!db) {
-    console.error('No database connection')
-    process.exit(1)
-  }
-
+  const payload = await getPayload({ config })
   let totalFixed = 0
 
-  // Fix payload_posts collection
-  const posts = db.collection('payload_posts')
-  const postsResult = await posts.updateMany(
-    { $or: [{ meta: { $exists: false } }, { meta: null }] },
-    { $set: { meta: {} } }
-  )
-  totalFixed += postsResult.modifiedCount
-  if (postsResult.modifiedCount > 0) {
-    console.log(`Fixed ${postsResult.modifiedCount} posts in payload_posts`)
+  // Iterate through all posts and patch missing/null meta.
+  let page = 1
+  let hasNext = true
+  while (hasNext) {
+    const result = await payload.find({
+      collection: 'posts',
+      depth: 0,
+      limit: 100,
+      page,
+      overrideAccess: true,
+    })
+
+    for (const post of result.docs) {
+      if (!post.meta) {
+        await payload.update({
+          collection: 'posts',
+          id: post.id,
+          data: { meta: {} },
+          depth: 0,
+          overrideAccess: true,
+        })
+        totalFixed += 1
+      }
+    }
+
+    hasNext = result.hasNextPage
+    page += 1
   }
 
-  // Fix payload_versions collection (drafts/versions for posts)
-  const versions = db.collection('payload_versions')
-  const versionsResult = await versions.updateMany(
-    {
-      $or: [
-        { 'version.meta': { $exists: false } },
-        { 'version.meta': null },
-      ],
-    },
-    { $set: { 'version.meta': {} } }
-  )
-  totalFixed += versionsResult.modifiedCount
-  if (versionsResult.modifiedCount > 0) {
-    console.log(`Fixed ${versionsResult.modifiedCount} versions in payload_versions`)
-  }
+  console.log(`Done. Total posts fixed: ${totalFixed}`)
 
-  console.log(`Done. Total documents fixed: ${totalFixed}`)
-  await mongoose.disconnect()
+  await payload.db.connection?.close()
 }
 
 fixPostsMeta().catch((err) => {

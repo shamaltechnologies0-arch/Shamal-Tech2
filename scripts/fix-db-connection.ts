@@ -1,11 +1,6 @@
 import 'dotenv/config'
 
-// URL encode a password for MongoDB connection string
-function encodePassword(password: string): string {
-  return encodeURIComponent(password)
-}
-
-// Test connection string format
+// Validate SQLite/libsql DATABASE_URL format
 function testConnectionString() {
   const dbUrl = process.env.DATABASE_URL
   
@@ -15,30 +10,19 @@ function testConnectionString() {
   }
   
   console.log('Current DATABASE_URL format:')
-  console.log(dbUrl.replace(/:[^:@]+@/, ':****@'))
+  console.log(dbUrl)
   
   // Check for common issues
   const issues: string[] = []
   
-  // Check if password contains unencoded special characters
-  const urlMatch = dbUrl.match(/mongodb:\/\/([^:]+):([^@]+)@/)
-  if (urlMatch) {
-    const username = urlMatch[1]
-    const password = urlMatch[2]
-    
-    // Check if password has special characters that might need encoding
-    const specialChars = /[\[\]?|!@#$%^&*(){}:;'",.<>\/\\]/
-    if (specialChars.test(password) && password === decodeURIComponent(password)) {
-      issues.push('Password contains special characters that may need URL encoding')
-      console.log('\n⚠️  Password appears to have special characters:')
-      console.log(`Original: ${password}`)
-      console.log(`Encoded:  ${encodePassword(password)}`)
-    }
-  }
-  
-  // Check connection string format
-  if (!dbUrl.startsWith('mongodb://') && !dbUrl.startsWith('mongodb+srv://')) {
-    issues.push('Connection string must start with mongodb:// or mongodb+srv://')
+  // Local SQLite path examples: file:./data/payload.db or file:/absolute/path/payload.db
+  // Remote libsql example: libsql://db-name.turso.io
+  if (dbUrl === ':memory:') {
+    console.log('ℹ️  Using in-memory SQLite DB')
+  } else if (dbUrl.startsWith('libsql://')) {
+    console.log('ℹ️  Using remote libsql database URL')
+  } else if (!(dbUrl.startsWith('file:') && dbUrl.endsWith('.db'))) {
+    issues.push('For local SQLite, DATABASE_URL should usually be file:... and end with .db')
   }
   
   if (issues.length > 0) {
@@ -53,13 +37,11 @@ function testConnectionString() {
 
 // Main
 try {
-  const connectionString = testConnectionString()
+  testConnectionString()
   console.log('\nTo fix authentication issues:')
-  console.log('1. Ensure username and password are correct')
-  console.log('2. URL-encode special characters in password')
-  console.log('3. For DocumentDB, ensure connection string includes:')
-  console.log('   ?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false')
-  console.log('4. For MongoDB Atlas, use mongodb+srv:// format')
+  console.log('1. For local SQLite, set DATABASE_URL=file:./data/payload.db')
+  console.log('2. Ensure the app has write permission to the folder')
+  console.log('3. For Turso/libsql, use libsql:// URL and auth token if required')
 } catch (error) {
   console.error('Error:', error)
   process.exit(1)

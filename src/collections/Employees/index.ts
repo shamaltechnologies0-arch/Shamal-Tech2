@@ -20,7 +20,7 @@ export const Employees: CollectionConfig = {
       'Employee digital profiles for QR code business cards. Each employee gets a unique public URL for their profile. Export to Excel: /api/employees/export (must be logged in).',
     livePreview: {
       url: ({ data }) => {
-        const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+        const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://localhost:3000'
         return data?.slug ? `${baseURL}/profile/${data.slug}` : baseURL
       },
     },

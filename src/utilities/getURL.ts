@@ -31,7 +31,7 @@ export const getServerSideURL = () => {
   }
 
   // Fallback to localhost for development
-  return 'http://localhost:3000'
+  return 'https://localhost:3000'
 }
 
 export const getClientSideURL = () => {

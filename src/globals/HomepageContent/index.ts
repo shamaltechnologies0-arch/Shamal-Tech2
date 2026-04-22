@@ -282,6 +282,7 @@ export const HomepageContent: GlobalConfig = {
     },
     {
       name: 'aboutPreview',
+      dbName: 'about_prev',
       type: 'group',
       label: 'About Preview Section',
       fields: [
@@ -383,6 +384,7 @@ export const HomepageContent: GlobalConfig = {
         },
         {
           name: 'rightColumnTextBlocks',
+          dbName: 'right_col_blocks',
           type: 'array',
           label: 'Right Column - Text Content Blocks',
           admin: {
@@ -392,6 +394,7 @@ export const HomepageContent: GlobalConfig = {
           fields: [
             {
               name: 'textType',
+              dbName: 'text_type',
               type: 'select',
               label: 'Text Type',
               required: true,
@@ -429,6 +432,7 @@ export const HomepageContent: GlobalConfig = {
             },
             {
               name: 'headingLevel',
+              dbName: 'heading_level',
               type: 'select',
               label: 'Heading Level',
               admin: {

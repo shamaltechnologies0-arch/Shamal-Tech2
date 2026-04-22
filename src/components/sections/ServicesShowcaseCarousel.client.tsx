@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
@@ -10,8 +9,7 @@ import { cn } from '../../utilities/ui'
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getLocalizedValue } from '../../lib/localization'
 import { getCommonTranslations } from '../../lib/translations/common'
-import { getServiceImagePath } from '../../utilities/getServiceImage'
-import type { Media } from '../../payload-types'
+import { getServiceImagePathBySlug } from '../../utilities/getServiceImage'
 
 type Service = {
   id: string
@@ -20,11 +18,6 @@ type Service = {
   slug: string
   heroDescription?: string | null
   heroDescriptionAr?: string | null
-  heroImage?: {
-    url?: string | null
-    filename?: string | null
-    alt?: string | null
-  } | string | Media | null
 }
 
 interface ServicesShowcaseCarouselProps {
@@ -72,21 +65,7 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
 
   if (!currentService) return null
 
-  // Resolve image URL: support Payload url (S3/production) and filename (local /media/)
-  let imageUrl: string | null = null
-  if (currentService.heroImage && typeof currentService.heroImage === 'object' && currentService.heroImage !== null) {
-    if ('url' in currentService.heroImage && currentService.heroImage.url) {
-      const url = String(currentService.heroImage.url)
-      imageUrl = url.startsWith('http') || url.startsWith('/')
-        ? url
-        : `/${url}`
-    } else if ('filename' in currentService.heroImage && currentService.heroImage.filename) {
-      imageUrl = `/media/${currentService.heroImage.filename}`
-    }
-  }
-  if (!imageUrl) {
-    imageUrl = getServiceImagePath(currentService.title)
-  }
+  const imageUrl = encodeURI(getServiceImagePathBySlug(currentService.slug))
 
   const displayTitle = getLocalizedValue(currentService.title, currentService.titleAr, language)
   const displayDescription = getLocalizedValue(
@@ -174,29 +153,13 @@ export function ServicesShowcaseCarousel({ services }: ServicesShowcaseCarouselP
 
         {/* Right Column - Image */}
         <div className="relative h-[400px] lg:h-[600px] rounded-2xl overflow-hidden order-1 lg:order-2 bg-logo-gray/10">
-          {imageUrl ? (
-            <>
-              <Image
-                src={imageUrl}
-                alt={displayTitle}
-                fill
-                className="object-cover"
-                priority={currentIndex === 0}
-              />
-              {/* Gradient Overlay at Bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              {/* Service Title Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
-                <p className="text-white text-xl lg:text-2xl font-display font-semibold">
-                  {displayTitle}
-                </p>
-              </div>
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-logo-blue/20 to-logo-navy/20">
-              <p className="text-logo-navy text-lg font-medium">No image available</p>
-            </div>
-          )}
+          <img src={imageUrl} alt={displayTitle} className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+            <p className="text-white text-xl lg:text-2xl font-display font-semibold">
+              {displayTitle}
+            </p>
+          </div>
         </div>
       </div>
     </div>

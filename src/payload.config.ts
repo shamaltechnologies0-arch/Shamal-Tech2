@@ -1,5 +1,5 @@
 
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
@@ -150,17 +150,12 @@ export default buildConfig({
 
   email: emailAdapter,
 
-  /** ✅ FIXED MONGODB CONFIG - Connection pool limits for M0/Vercel serverless */
-  db: mongooseAdapter({
-    url: process.env.MONGODB_URI!,
-    connectOptions: {
-      // M0 cluster limit: 500 connections. Vercel serverless spawns many instances.
-      // Default maxPoolSize=100 per instance exhausts the limit quickly.
-      // Use 5 connections per instance to stay under 500 total.
-      maxPoolSize: process.env.VERCEL ? 5 : 10,
-      minPoolSize: 0,
-      maxIdleTimeMS: 60000,
+  // SQLite keeps the same Payload collection/global structure as SQL tables.
+  db: sqliteAdapter({
+    client: {
+      url: process.env.DATABASE_URL || 'file:./data/payload.db',
     },
+    blocksAsJSON: true,
   }),
 
   collections: [
@@ -212,7 +207,7 @@ export default buildConfig({
     
     // Add localhost for development
     if (process.env.NODE_ENV === 'development') {
-      origins.push('http://localhost:3000')
+      origins.push('https://localhost:3000')
     }
     
     return origins
@@ -249,7 +244,7 @@ export default buildConfig({
     
     // Add localhost for development
     if (process.env.NODE_ENV === 'development') {
-      origins.push('http://localhost:3000')
+      origins.push('https://localhost:3000')
     }
     
     return origins

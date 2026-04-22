@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import Autoplay from 'embla-carousel-autoplay'
-import { getServiceImagePath } from '../../utilities/getServiceImage'
+import { getServiceImagePathBySlug } from '../../utilities/getServiceImage'
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getLocalizedValue } from '../../lib/localization'
 
@@ -17,10 +16,6 @@ type SerializedService = {
   slug: string | null
   heroDescription: string | null
   heroDescriptionAr?: string | null
-  heroImage: {
-    url?: string
-    id?: string
-  } | null
 }
 import {
   Carousel,
@@ -101,60 +96,7 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
         <CarouselContent className="-ml-2 md:-ml-4">
           {validServices.map((service, index) => {
             const isActive = isHovered === index || current === index
-            // Use CMS heroImage if available, otherwise fallback to mapped service image
-            // Handle different PayloadCMS image formats
-            // IMPORTANT: Each service must resolve its own image independently
-            // Resolve image URL for THIS specific service
-            // CRITICAL: Each service must resolve its own image independently
-            // We use service.id and service.title to ensure uniqueness
-            const serviceTitle = service?.title || ''
-            
-            let imageUrl: string
-            
-            try {
-              // Check if THIS specific service has a heroImage uploaded in CMS
-              // We explicitly check the service's own heroImage property
-              const heroImage = service?.heroImage
-              
-              if (heroImage) {
-                // heroImage exists for this service
-                if (typeof heroImage === 'object' && heroImage !== null) {
-                  // It's an object (populated media relationship)
-                  if ('url' in heroImage && heroImage.url) {
-                    const mediaUrl = typeof heroImage.url === 'string' ? heroImage.url : String(heroImage.url)
-                    // Validate URL is not empty and is a valid string
-                    if (mediaUrl && mediaUrl.trim() !== '' && mediaUrl !== 'undefined' && mediaUrl !== 'null') {
-                      // This specific service has its own CMS image - use it
-                      imageUrl = mediaUrl
-                    } else {
-                      // Invalid URL - use fallback for this service
-                      imageUrl = getServiceImagePath(serviceTitle)
-                    }
-                  } else {
-                    // Object exists but no url property - use fallback for this service
-                    imageUrl = getServiceImagePath(serviceTitle)
-                  }
-                } else if (typeof heroImage === 'string') {
-                  // heroImage is a string (ID, not populated) - use fallback for this service
-                  imageUrl = getServiceImagePath(serviceTitle)
-                } else {
-                  // Unknown format - use fallback for this service
-                  imageUrl = getServiceImagePath(serviceTitle)
-                }
-              } else {
-                // No heroImage for this service - use mapped fallback based on THIS service's title
-                imageUrl = getServiceImagePath(serviceTitle)
-              }
-            } catch (error) {
-              // If anything goes wrong, use fallback
-              console.error('Error resolving image for service:', serviceTitle, error)
-              imageUrl = getServiceImagePath(serviceTitle)
-            }
-            
-            // Final validation - ensure imageUrl is always a valid string
-            if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
-              imageUrl = getServiceImagePath(serviceTitle) || '/placeholder-service.jpg'
-            }
+            const imageUrl = encodeURI(getServiceImagePathBySlug(service.slug))
 
             return (
               <CarouselItem
@@ -163,21 +105,26 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div className="relative transition-opacity duration-300 ease-out opacity-100">
+                <div
+                  className="relative transition-all duration-500 ease-out"
+                  style={{
+                    transform: isActive ? 'scale(1.05)' : 'scale(0.95)',
+                    opacity: isActive ? 1 : 0.75,
+                    zIndex: isActive ? 10 : 1,
+                  }}
+                >
                   <Link
                     href={`/services/${service.slug}`}
                     className="block relative h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-xl overflow-hidden group cursor-pointer"
                   >
                     {/* Background Image */}
                     <div className="absolute inset-0">
-                      <Image
-                        key={`${service.id}-${imageUrl}`}
+                      <img
                         src={imageUrl}
                         alt={getLocalizedValue(service.title, service.titleAr, language) || 'Service'}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 30vw"
-                        priority={index < 3}
+                        className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out ${
+                          isActive ? 'scale-110' : 'scale-100'
+                        }`}
                       />
                       {/* Overlay gradient */}
                       <div

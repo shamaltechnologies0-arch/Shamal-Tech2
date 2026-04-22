@@ -1045,7 +1045,7 @@ Create a comprehensive database seeder script to populate initial data:
    - Create sample users for each role (optional)
 
 2. **Services Collection:**
-   - Seed all 12 services with initial content:
+   - Seed all 13 services with initial content:
      - Aerial Survey
      - Construction Monitoring
      - Asset Inspection
@@ -1058,6 +1058,7 @@ Create a comprehensive database seeder script to populate initial data:
      - AI Application Development
      - Agriculture Monitoring
      - Special Projects
+     - Traffic Count & Traffice Analysis
    - Each service with placeholder content, hero images, benefits, applications, technologies, FAQs
 
 3. **Sectors Content:**

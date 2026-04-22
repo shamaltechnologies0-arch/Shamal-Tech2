@@ -73,6 +73,13 @@ export default async function CareersPage() {
       heroBackgroundImageSrc = `/media/${media.filename}`
     }
   }
+  if (!heroBackgroundImageSrc) {
+    heroBackgroundImageSrc = '/media/hero-banners/hero-careers.png'
+  }
+  const heroBackgroundAlt =
+    heroBackgroundImage && typeof heroBackgroundImage === 'object'
+      ? (heroBackgroundImage as { alt?: string }).alt || 'Careers hero background'
+      : 'Careers hero background'
 
   return (
     <main className="flex flex-col">
@@ -83,7 +90,7 @@ export default async function CareersPage() {
             <div className="absolute inset-0 z-0">
               <Image
                 src={heroBackgroundImageSrc}
-                alt={heroBackgroundImage.alt || 'Careers hero background'}
+                alt={heroBackgroundAlt}
                 fill
                 className="object-cover"
                 priority

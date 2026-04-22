@@ -19,6 +19,8 @@ export const revalidateService: CollectionAfterChangeHook<Service> = ({
       revalidatePath('/services')
       // Revalidate homepage carousel (services appear there too)
       revalidatePath('/')
+      // Revalidate cached service collection queries used by homepage/services pages
+      revalidateTag('collection_services')
       revalidateTag('services-sitemap')
     }
 
@@ -28,6 +30,8 @@ export const revalidateService: CollectionAfterChangeHook<Service> = ({
       revalidatePath(oldPath)
       // Revalidate homepage carousel when service is unpublished
       revalidatePath('/')
+      // Revalidate cached service collection queries used by homepage/services pages
+      revalidateTag('collection_services')
       revalidateTag('services-sitemap')
     }
   }
@@ -47,6 +51,8 @@ export const revalidateDelete: CollectionAfterDeleteHook<Service> = ({
     revalidatePath('/services')
     // Revalidate homepage carousel to remove deleted service
     revalidatePath('/')
+    // Revalidate cached service collection queries used by homepage/services pages
+    revalidateTag('collection_services')
     revalidateTag('services-sitemap')
   }
   return doc

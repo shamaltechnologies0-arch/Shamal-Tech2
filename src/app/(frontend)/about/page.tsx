@@ -372,8 +372,18 @@ export default async function AboutPage() {
             </>
           ) : (
             <>
-              {/* Fallback: Static gradient background if no image or video */}
-              <div className="absolute inset-0 bg-gradient-to-br from-logo-blue via-logo-navy to-logo-navy" />
+              {/* Fallback: use static hero video from public media folder */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ minHeight: '100%', minWidth: '100%' }}
+              >
+                <source src="/media/hero-banners/hero-about.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               {/* Dark overlay for text readability */}
               <div className="absolute inset-0 bg-black/50" />
             </>

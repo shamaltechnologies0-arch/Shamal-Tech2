@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { adminOnly } from '../../access/adminOnly'
+import { adminOnly, adminOnlyOrFirstUser } from '../../access/adminOnly'
 import { authenticated } from '../../access/authenticated'
 import { setInvitationToken, sendUserInvitation } from '../../hooks/sendUserInvitation'
 
@@ -8,7 +8,7 @@ export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     admin: authenticated,
-    create: adminOnly,
+    create: adminOnlyOrFirstUser,
     delete: adminOnly,
     read: authenticated,
     update: authenticated,
@@ -18,7 +18,16 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
     description: 'Admin users. New users will receive an invitation email to set their password. When updating, leave password fields blank to keep current password.',
   },
-  auth: true,
+  auth: {
+    tokenExpiration: 7200,
+    cookies: {
+      secure:
+        process.env.NODE_ENV === 'production' ||
+        (process.env.NEXT_PUBLIC_SERVER_URL || '').startsWith('https://'),
+      sameSite: 'lax',
+    },
+    token: 'payload-token',
+  },
   fields: [
     {
       name: 'name',

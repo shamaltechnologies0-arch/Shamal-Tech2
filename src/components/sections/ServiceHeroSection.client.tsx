@@ -1,13 +1,12 @@
 'use client'
 
-import Image from 'next/image'
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getLocalizedValue } from '../../lib/localization'
 import { CinematicReveal } from '../../utilities/animations'
 import { ParallaxElement } from './ParallaxElement'
 import { ScrollSection } from './ScrollSection'
 import { Badge } from '../ui/badge'
-import { getServiceImagePathBySlug, getServiceImagePath } from '../../utilities/getServiceImage'
+import { getServiceImagePathBySlug } from '../../utilities/getServiceImage'
 import { getCommonTranslations } from '../../lib/translations/common'
 
 interface ServiceHeroSectionProps {
@@ -16,7 +15,6 @@ interface ServiceHeroSectionProps {
   titleAr?: string | null
   heroDescription?: string | null
   heroDescriptionAr?: string | null
-  heroImage?: { url?: string } | string | null
 }
 
 export function ServiceHeroSection({
@@ -25,35 +23,18 @@ export function ServiceHeroSection({
   titleAr,
   heroDescription,
   heroDescriptionAr,
-  heroImage,
 }: ServiceHeroSectionProps) {
   const { language } = useLanguage()
   const t = getCommonTranslations(language)
   const displayTitle = getLocalizedValue(title, titleAr, language)
   const displayDescription = getLocalizedValue(heroDescription, heroDescriptionAr, language)
 
-  const imageSrc = (() => {
-    if (heroImage) {
-      if (typeof heroImage === 'string') {
-        return getServiceImagePathBySlug(slug) || getServiceImagePath(displayTitle || '')
-      }
-      if (typeof heroImage === 'object' && heroImage?.url) {
-        return heroImage.url
-      }
-    }
-    return getServiceImagePathBySlug(slug) || getServiceImagePath(displayTitle || '')
-  })()
+  const imageSrc = encodeURI(getServiceImagePathBySlug(slug))
 
   return (
     <ScrollSection id="hero" heroHeight bgVariant="gradient" parallax>
       <div className="absolute inset-0 z-0">
-        <Image
-          src={imageSrc}
-          alt={displayTitle || 'Service'}
-          fill
-          className="object-cover"
-          priority
-        />
+        <img src={imageSrc} alt={displayTitle || 'Service'} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50" />
       </div>
       <div className="relative z-10 container mx-auto px-4 py-20 w-full">
