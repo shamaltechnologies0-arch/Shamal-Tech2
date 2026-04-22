@@ -7,11 +7,28 @@ function normalizePublicServerUrl(url: string): string {
   return /^https?:\/\//i.test(t) ? t : `https://${t}`
 }
 
+function isLocalhostLikeHost(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0'
+}
+
+function shouldIgnoreConfiguredPublicURL(normalizedUrl: string): boolean {
+  // In deployed runtimes (Vercel/AWS), localhost URLs break admin/API host resolution.
+  const isDeployed = !!(process.env.VERCEL || process.env.VERCEL_URL || process.env.AWS_APP_ID)
+  if (!isDeployed) return false
+
+  try {
+    const { hostname } = new URL(normalizedUrl)
+    return isLocalhostLikeHost(hostname)
+  } catch {
+    return false
+  }
+}
+
 export const getServerSideURL = () => {
   // Priority: NEXT_PUBLIC_SERVER_URL > AWS Amplify > Vercel > localhost
   if (process.env.NEXT_PUBLIC_SERVER_URL) {
     const normalized = normalizePublicServerUrl(process.env.NEXT_PUBLIC_SERVER_URL)
-    if (normalized) return normalized
+    if (normalized && !shouldIgnoreConfiguredPublicURL(normalized)) return normalized
   }
 
   // AWS Amplify support
@@ -23,11 +40,11 @@ export const getServerSideURL = () => {
   }
 
   // Vercel support - check both VERCEL_URL (runtime) and VERCEL_PROJECT_PRODUCTION_URL (production)
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
   }
 
   // Fallback to localhost for development
