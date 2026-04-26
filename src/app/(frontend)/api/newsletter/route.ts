@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Save to PayloadCMS (SQLite) as the only source of truth
+    // Save to Payload (MongoDB) as the only source of truth
     const subscription = await payload.create({
       collection: 'newsletter-subscriptions',
       data: {

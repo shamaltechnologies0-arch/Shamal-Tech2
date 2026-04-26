@@ -126,9 +126,11 @@ export default function BackupRecoveryCenter() {
     >
       <h2 style={{ marginTop: 0, marginBottom: '0.5rem' }}>Backup &amp; Recovery Center</h2>
       <p style={{ marginTop: 0, color: 'var(--theme-elevation-600)', fontSize: '13px' }}>
-        Full Payload export (collections + globals), optional SQLite snapshot, S3 media manifest, and
-        restore-oriented metadata — uploaded to S3 under <code>database-backups/</code>. Admin
-        only.
+        ZIP to S3 under <code>database-backups/</code>: <code>payload-export.json</code> (all
+        collections + globals) and <code>mongo-raw/*.jsonl</code> (one extended-JSON line per
+        MongoDB document, suitable for inspection or custom restore). Admin only; requires S3 env
+        vars. For a classic BSON dump on a machine with MongoDB tools, run{' '}
+        <code>pnpm backup:mongo</code> locally.
       </p>
 
       {error ? (

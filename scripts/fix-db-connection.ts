@@ -1,47 +1,38 @@
 import 'dotenv/config'
 
-// Validate SQLite/libsql DATABASE_URL format
 function testConnectionString() {
-  const dbUrl = process.env.DATABASE_URL
-  
+  const dbUrl = process.env.MONGODB_URI || process.env.DATABASE_URI
+
   if (!dbUrl) {
-    console.error('❌ DATABASE_URL is not set in environment variables')
+    console.error('❌ MONGODB_URI (or DATABASE_URI) is not set in environment variables')
     process.exit(1)
   }
-  
-  console.log('Current DATABASE_URL format:')
-  console.log(dbUrl)
-  
-  // Check for common issues
+
+  console.log('Current MongoDB URI (redacted):')
+  console.log(dbUrl.replace(/:[^:@]+@/, ':****@'))
+
   const issues: string[] = []
-  
-  // Local SQLite path examples: file:./data/payload.db or file:/absolute/path/payload.db
-  // Remote libsql example: libsql://db-name.turso.io
-  if (dbUrl === ':memory:') {
-    console.log('ℹ️  Using in-memory SQLite DB')
-  } else if (dbUrl.startsWith('libsql://')) {
-    console.log('ℹ️  Using remote libsql database URL')
-  } else if (!(dbUrl.startsWith('file:') && dbUrl.endsWith('.db'))) {
-    issues.push('For local SQLite, DATABASE_URL should usually be file:... and end with .db')
+
+  if (!dbUrl.startsWith('mongodb://') && !dbUrl.startsWith('mongodb+srv://')) {
+    issues.push('URI should start with mongodb:// or mongodb+srv://')
   }
-  
+
   if (issues.length > 0) {
     console.log('\n⚠️  Potential issues found:')
-    issues.forEach(issue => console.log(`  - ${issue}`))
+    issues.forEach((issue) => console.log(`  - ${issue}`))
   } else {
-    console.log('\n✅ Connection string format looks correct')
+    console.log('\n✅ Connection string format looks OK')
   }
-  
+
   return dbUrl
 }
 
-// Main
 try {
   testConnectionString()
-  console.log('\nTo fix authentication issues:')
-  console.log('1. For local SQLite, set DATABASE_URL=file:./data/payload.db')
-  console.log('2. Ensure the app has write permission to the folder')
-  console.log('3. For Turso/libsql, use libsql:// URL and auth token if required')
+  console.log('\nTips:')
+  console.log('1. Atlas: Network Access → allow Vercel IPs or 0.0.0.0/0 for testing')
+  console.log('2. Atlas: Database user with read/write on the target database')
+  console.log('3. Set the same MONGODB_URI on Vercel for Production, Preview, and Build')
 } catch (error) {
   console.error('Error:', error)
   process.exit(1)

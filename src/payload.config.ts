@@ -1,5 +1,4 @@
-
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
@@ -40,23 +39,15 @@ import { plugins } from './plugins'
 import { defaultLexical } from './fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
-const defaultSqliteFileUrl = 'file:./data/payload.db'
-const databaseUrl = process.env.DATABASE_URL || defaultSqliteFileUrl
+const mongoFromEnv = process.env.MONGODB_URI || process.env.DATABASE_URI || ''
+/** Local builds may omit env; Vercel must define MONGODB_URI (also for the build step). */
+const mongoURL =
+  mongoFromEnv ||
+  (process.env.VERCEL === '1' ? '' : 'mongodb://127.0.0.1:27017/shamal-payload')
 
-/**
- * Only deployed Node serverless invocations (not the Vercel build VM, not `next build` workers).
- * `VERCEL=1` is set during builds too, so we must not key off that alone.
- */
-const isVercelDeployedNodeServerless =
-  process.env.VERCEL === '1' &&
-  process.env.VERCEL_ENV !== 'development' &&
-  (Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) ||
-    (typeof process.env.AWS_EXECUTION_ENV === 'string' &&
-      process.env.AWS_EXECUTION_ENV.startsWith('AWS_Lambda_')))
-
-if (isVercelDeployedNodeServerless && databaseUrl.startsWith('file:')) {
+if (!mongoURL) {
   throw new Error(
-    'Payload cannot use a local SQLite file on Vercel at runtime. Set DATABASE_URL to a remote libSQL URL (e.g. Turso: libsql://…) and DATABASE_AUTH_TOKEN from your provider, then redeploy. Local development can keep DATABASE_URL=file:./data/payload.db. See: https://payloadcms.com/posts/guides/how-to-set-up-payload-with-sqlite-and-turso-for-deployment-on-vercel',
+    'Missing MONGODB_URI or DATABASE_URI on Vercel. Add your Atlas connection string under Project → Settings → Environment Variables (Production, Preview, and Build).',
   )
 }
 
@@ -172,15 +163,8 @@ export default buildConfig({
 
   email: emailAdapter,
 
-  // SQLite via libSQL: local file for dev, or Turso / other libsql:// remote URL on Vercel.
-  db: sqliteAdapter({
-    client: {
-      url: databaseUrl,
-      ...(process.env.DATABASE_AUTH_TOKEN
-        ? { authToken: process.env.DATABASE_AUTH_TOKEN }
-        : {}),
-    },
-    blocksAsJSON: true,
+  db: mongooseAdapter({
+    url: mongoURL,
   }),
 
   collections: [
