@@ -8,6 +8,9 @@ import {
 } from '@/lib/training/clickup'
 import { getStripeKeys } from '@/lib/training/env'
 import { notifyPaymentSuccess } from '@/lib/training/n8n'
+import configPromise from '@/payload.config'
+import { recordAnalyticsEventTrusted } from '@/lib/analytics/recordEvent'
+import { getPayload } from 'payload'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,6 +72,27 @@ export async function POST(req: Request) {
       amount,
       currency,
     })
+
+    try {
+      const payload = await getPayload({ config: configPromise })
+      await recordAnalyticsEventTrusted(payload, {
+        sessionId: `training:${userId}`,
+        eventType: 'PURCHASE_SUCCESS',
+        pageUrl: '/training/dashboard',
+        orderId: session.id,
+        metaData: {
+          amount,
+          currency,
+          courseId,
+          source: 'training-stripe',
+        },
+        source: 'direct',
+        deviceType: 'unknown',
+        browser: 'Other',
+      })
+    } catch (analyticsErr) {
+      console.error('Stripe webhook analytics write failed', analyticsErr)
+    }
   } catch (e) {
     console.error('Stripe webhook handler error', e)
     return NextResponse.json({ error: 'Processing failed' }, { status: 500 })

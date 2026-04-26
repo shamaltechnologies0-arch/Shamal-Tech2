@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { useTrainingUser } from '@/hooks/useTrainingUser'
+import { trackPublicEvent } from '@/lib/analytics/client'
 
 /**
  * Registration — creates ClickUp user task, fires /webhook/new-user via server.
@@ -41,6 +42,11 @@ export default function TrainingRegisterPage() {
         setError(data.error || 'Registration failed')
         return
       }
+      trackPublicEvent({
+        eventType: 'NEW_CUSTOMER_REGISTERED',
+        pageUrl: '/training/register',
+        metaData: { area: 'training' },
+      })
       await refresh()
       router.replace('/training/dashboard')
     } finally {

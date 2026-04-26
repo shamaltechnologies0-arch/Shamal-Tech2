@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
+import { recordAnalyticsEventTrusted } from '@/lib/analytics/recordEvent'
 import { sendNewsletterNotification } from '../../../../lib/email'
 
 export async function POST(request: Request) {
@@ -53,6 +54,20 @@ export async function POST(request: Request) {
     } catch (error) {
       // Log error but don't fail the subscription since CMS record is already saved
       console.error('Failed to send newsletter notification email:', error)
+    }
+
+    try {
+      await recordAnalyticsEventTrusted(payload, {
+        sessionId: `srv:newsletter:${subscription.id}`,
+        eventType: 'NEWSLETTER_JOINED',
+        pageUrl: '/',
+        metaData: { newsletterSubscriptionId: subscription.id },
+        source: 'direct',
+        deviceType: 'unknown',
+        browser: 'Other',
+      })
+    } catch (e) {
+      console.error('Analytics NEWSLETTER_JOINED failed', e)
     }
 
     // Return success with subscription ID for reference

@@ -32,6 +32,9 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1037.0",
+    "@aws-sdk/lib-storage": "^3.1037.0",
+    "@aws-sdk/s3-request-presigner": "^3.1037.0",
     "@maizzle/framework": "^5.3.1",
     "@payloadcms/admin-bar": "3.71.1",
     "@payloadcms/db-sqlite": "3.71.1",
@@ -57,6 +60,7 @@
     "@types/nodemailer": "^7.0.4",
     "@types/react": "19.2.1",
     "animejs": "^4.3.6",
+    "archiver": "^7.0.1",
     "autoprefixer": "^10.4.23",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.0",
@@ -91,6 +95,7 @@
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "1.56.1",
     "@testing-library/react": "16.3.0",
+    "@types/archiver": "^7.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/escape-html": "^1.0.2",
     "@types/node": "22.5.4",

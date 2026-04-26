@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { Career } from './collections/Career'
+import { AnalyticsEvents } from './collections/AnalyticsEvents'
 import { ChatSummaries } from './collections/ChatSummaries'
 import { Employees } from './collections/Employees'
 import { ContactSubmissions } from './collections/ContactSubmissions'
@@ -102,6 +103,7 @@ export default buildConfig({
     },
     components: {
       beforeLogin: ['/components/BeforeLogin'],
+      beforeDashboard: ['/components/AdminDashboardBefore#default'],
       graphics: {
         Logo: '/components/AdminLogo#default',
       },
@@ -159,6 +161,7 @@ export default buildConfig({
   }),
 
   collections: [
+    AnalyticsEvents,
     Pages,
     Posts,
     Media,

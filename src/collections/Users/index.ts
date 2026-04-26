@@ -30,6 +30,25 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
+      name: 'roles',
+      type: 'select',
+      hasMany: true,
+      required: false,
+      defaultValue: ['admin'],
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Author', value: 'author' },
+        { label: 'Designer', value: 'designer' },
+        { label: 'Sales', value: 'sales' },
+        { label: 'Career', value: 'career' },
+        { label: 'Marketing', value: 'marketing' },
+      ],
+      admin: {
+        description:
+          'Admin unlocks full system access (including analytics). Leave empty on legacy accounts until set.',
+      },
+    },
+    {
       name: 'name',
       type: 'text',
       required: true,

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../../../providers/Language/LanguageContext'
 import { getCommonTranslations } from '../../../lib/translations/common'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ import { Badge } from '../../../components/ui/badge'
 import { Button } from '../../../components/ui/button'
 import { ArrowRight, Check } from 'lucide-react'
 import { cn } from '../../../utilities/ui'
+import { trackPublicEvent } from '@/lib/analytics/client'
 
 type Product = {
   id: string
@@ -37,14 +38,27 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
   const { language } = useLanguage()
   const t = getCommonTranslations(language)
   const [activeCategory, setActiveCategory] = useState<'drones' | 'payloads' | 'other'>('drones')
+  const viewedProducts = useRef(new Set<string>())
+
+  const activeProducts = productsByCategory[activeCategory]
+
+  useEffect(() => {
+    for (const product of activeProducts) {
+      if (viewedProducts.current.has(product.id)) continue
+      viewedProducts.current.add(product.id)
+      trackPublicEvent({
+        eventType: 'PRODUCT_VIEW',
+        pageUrl: '/products',
+        productId: product.id,
+      })
+    }
+  }, [activeProducts])
 
   const categories = [
     { id: 'drones' as const, label: t.drones, count: productsByCategory.drones.length },
     { id: 'payloads' as const, label: t.payloads, count: productsByCategory.payloads.length },
     { id: 'other' as const, label: t.other, count: productsByCategory.other.length },
   ]
-
-  const activeProducts = productsByCategory[activeCategory]
 
   // Helper function to extract plain text from rich text object
   const extractTextFromRichText = (richText: any): string => {
@@ -121,7 +135,17 @@ export function ProductsClient({ productsByCategory, allProducts }: ProductsClie
         </CardHeader>
         <CardContent>
           <Button asChild className="w-full">
-            <Link href="/contact">
+            <Link
+              href="/contact"
+              onClick={() =>
+                trackPublicEvent({
+                  eventType: 'ADD_TO_CART',
+                  pageUrl: '/products',
+                  productId: product.id,
+                  metaData: { intent: 'request_quote' },
+                })
+              }
+            >
               {product.ctaText || t.requestQuote}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

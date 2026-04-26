@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
+import { recordAnalyticsEventTrusted } from '@/lib/analytics/recordEvent'
 import { sendContactNotification } from '../../../../lib/email'
 import { sendLeadResponseEmail, sendLeadNotificationEmail } from '../../../../lib/email/lead-email'
 
@@ -141,6 +142,20 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error('Failed to send contact notification:', error)
       // Continue even if email fails
+    }
+
+    try {
+      await recordAnalyticsEventTrusted(payload, {
+        sessionId: `srv:contact:${submission.id}`,
+        eventType: 'CONTACT_SUBMITTED',
+        pageUrl: '/contact',
+        metaData: { contactSubmissionId: submission.id },
+        source: 'direct',
+        deviceType: 'unknown',
+        browser: 'Other',
+      })
+    } catch (e) {
+      console.error('Analytics CONTACT_SUBMITTED failed', e)
     }
 
     return NextResponse.json(

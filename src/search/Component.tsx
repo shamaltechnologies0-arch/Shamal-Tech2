@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react'
 import { useDebounce } from '../utilities/useDebounce'
 import { useRouter } from 'next/navigation'
 
+import { trackPublicEvent } from '@/lib/analytics/client'
+
 export const Search: React.FC = () => {
   const [value, setValue] = useState('')
   const router = useRouter()
@@ -14,6 +16,16 @@ export const Search: React.FC = () => {
   useEffect(() => {
     router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
   }, [debouncedValue, router])
+
+  useEffect(() => {
+    const q = debouncedValue.trim()
+    if (q.length < 2) return
+    trackPublicEvent({
+      eventType: 'SEARCH_USED',
+      pageUrl: `/search?q=${encodeURIComponent(q)}`,
+      searchKeyword: q,
+    })
+  }, [debouncedValue])
 
   return (
     <div>

@@ -4,7 +4,7 @@ import { cn } from '../../utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Rajdhani, Inter } from 'next/font/google'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
@@ -29,7 +29,7 @@ import { InitTheme } from '../../providers/Theme/InitTheme'
 import { InitLanguage } from '../../providers/Language/InitLanguage'
 import { mergeOpenGraph } from '../../utilities/mergeOpenGraph'
 import { Chatbot } from '../../components/Chatbot'
-import { getCachedGlobal } from '../../utilities/getGlobals'
+import { PublicSiteAnalytics } from '../../components/PublicSiteAnalytics'
 
 import './globals.css'
 import { getServerSideURL } from '../../utilities/getURL'
@@ -45,6 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
+          <Suspense fallback={null}>
+            <PublicSiteAnalytics />
+          </Suspense>
           <AdminBar
             adminBarProps={{
               preview: false,

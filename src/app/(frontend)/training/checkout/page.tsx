@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { Suspense, useEffect, useRef, useState } from 'react'
 
 import { useTrainingUser } from '@/hooks/useTrainingUser'
+import { trackPublicEvent } from '@/lib/analytics/client'
 
 const DEFAULT_COURSE_ID = 'drone-fundamentals'
 
@@ -37,6 +38,11 @@ function CheckoutInner() {
     if (!user) return
     setErr(null)
     setStarting(true)
+    trackPublicEvent({
+      eventType: 'CHECKOUT_INITIATED',
+      pageUrl: '/training/checkout',
+      metaData: { courseId },
+    })
     try {
       const res = await fetch('/api/training/checkout', {
         method: 'POST',
