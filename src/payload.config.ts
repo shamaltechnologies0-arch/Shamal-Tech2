@@ -43,13 +43,20 @@ import { getServerSideURL } from './utilities/getURL'
 const defaultSqliteFileUrl = 'file:./data/payload.db'
 const databaseUrl = process.env.DATABASE_URL || defaultSqliteFileUrl
 
-/** Vercel production/preview lambdas have no writable persistent disk; local SQLite file paths always fail. */
-const isVercelServerless =
-  process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'development'
+/**
+ * Only deployed Node serverless invocations (not the Vercel build VM, not `next build` workers).
+ * `VERCEL=1` is set during builds too, so we must not key off that alone.
+ */
+const isVercelDeployedNodeServerless =
+  process.env.VERCEL === '1' &&
+  process.env.VERCEL_ENV !== 'development' &&
+  (Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) ||
+    (typeof process.env.AWS_EXECUTION_ENV === 'string' &&
+      process.env.AWS_EXECUTION_ENV.startsWith('AWS_Lambda_')))
 
-if (isVercelServerless && databaseUrl.startsWith('file:')) {
+if (isVercelDeployedNodeServerless && databaseUrl.startsWith('file:')) {
   throw new Error(
-    'Payload cannot use a local SQLite file on Vercel. Set DATABASE_URL to a remote libSQL URL (e.g. Turso: libsql://…) and DATABASE_AUTH_TOKEN from your provider. Local development can keep DATABASE_URL=file:./data/payload.db. See: https://payloadcms.com/posts/guides/how-to-set-up-payload-with-sqlite-and-turso-for-deployment-on-vercel',
+    'Payload cannot use a local SQLite file on Vercel at runtime. Set DATABASE_URL to a remote libSQL URL (e.g. Turso: libsql://…) and DATABASE_AUTH_TOKEN from your provider, then redeploy. Local development can keep DATABASE_URL=file:./data/payload.db. See: https://payloadcms.com/posts/guides/how-to-set-up-payload-with-sqlite-and-turso-for-deployment-on-vercel',
   )
 }
 
