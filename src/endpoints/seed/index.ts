@@ -1,5 +1,6 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
+import { assertDestructiveSeedAllowed } from '../../utilities/allowDestructiveSeed'
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
 import { home } from './home'
@@ -44,6 +45,7 @@ export const seed = async ({
   payload: Payload
   req: PayloadRequest
 }): Promise<void> => {
+  assertDestructiveSeedAllowed('database seed')
   payload.logger.info('Seeding database...')
 
   // we need to clear the media directory before seeding

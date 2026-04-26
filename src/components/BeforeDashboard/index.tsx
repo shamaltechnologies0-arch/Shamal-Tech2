@@ -1,12 +1,15 @@
 import { Banner } from '@payloadcms/ui/elements/Banner'
 import React from 'react'
 
+import { isDestructiveSeedUiShown } from '../../utilities/allowDestructiveSeed'
 import { SeedButton } from './SeedButton'
 import './index.scss'
 
 const baseClass = 'before-dashboard'
 
 const BeforeDashboard: React.FC = () => {
+  const showSeed = isDestructiveSeedUiShown()
+
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
@@ -14,14 +17,24 @@ const BeforeDashboard: React.FC = () => {
       </Banner>
       Here&apos;s what to do next:
       <ul className={`${baseClass}__instructions`}>
-        <li>
-          <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
-          <a href="/" target="_blank">
-            visit your website
-          </a>
-          {' to see the results.'}
-        </li>
+        {showSeed ? (
+          <li>
+            <SeedButton />
+            {
+              ' with a few pages, posts, and projects to jump-start your new site, then '
+            }
+            <a href="/" target="_blank">
+              visit your website
+            </a>
+            {' to see the results.'}
+          </li>
+        ) : (
+          <li>
+            {
+              'Template “seed database” is hidden in production so your services and content are not wiped. Use dev locally for seeding, or restore from Backup & Recovery in the dashboard.'
+            }
+          </li>
+        )}
         <li>
           {'Modify your '}
           <a

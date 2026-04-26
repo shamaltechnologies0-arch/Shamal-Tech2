@@ -40,6 +40,19 @@ import { plugins } from './plugins'
 import { defaultLexical } from './fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
+const defaultSqliteFileUrl = 'file:./data/payload.db'
+const databaseUrl = process.env.DATABASE_URL || defaultSqliteFileUrl
+
+/** Vercel production/preview lambdas have no writable persistent disk; local SQLite file paths always fail. */
+const isVercelServerless =
+  process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'development'
+
+if (isVercelServerless && databaseUrl.startsWith('file:')) {
+  throw new Error(
+    'Payload cannot use a local SQLite file on Vercel. Set DATABASE_URL to a remote libSQL URL (e.g. Turso: libsql://…) and DATABASE_AUTH_TOKEN from your provider. Local development can keep DATABASE_URL=file:./data/payload.db. See: https://payloadcms.com/posts/guides/how-to-set-up-payload-with-sqlite-and-turso-for-deployment-on-vercel',
+  )
+}
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -152,10 +165,13 @@ export default buildConfig({
 
   email: emailAdapter,
 
-  // SQLite keeps the same Payload collection/global structure as SQL tables.
+  // SQLite via libSQL: local file for dev, or Turso / other libsql:// remote URL on Vercel.
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URL || 'file:./data/payload.db',
+      url: databaseUrl,
+      ...(process.env.DATABASE_AUTH_TOKEN
+        ? { authToken: process.env.DATABASE_AUTH_TOKEN }
+        : {}),
     },
     blocksAsJSON: true,
   }),

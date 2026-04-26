@@ -1,11 +1,19 @@
 import { createLocalReq, getPayload } from 'payload'
 import { seed } from '../../../../endpoints/seed'
 import config from '../../../../payload.config'
+import { assertDestructiveSeedAllowed } from '../../../../utilities/allowDestructiveSeed'
 import { headers } from 'next/headers'
 
 export const maxDuration = 60 // This function can run for a maximum of 60 seconds
 
 export async function POST(): Promise<Response> {
+  try {
+    assertDestructiveSeedAllowed('POST /next/seed')
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Seeding is not allowed.'
+    return new Response(msg, { status: 403 })
+  }
+
   const payload = await getPayload({ config })
   const requestHeaders = await headers()
 

@@ -3,6 +3,12 @@ declare global {
     interface ProcessEnv {
       PAYLOAD_SECRET: string
       DATABASE_URL: string
+      /** Turso / libSQL remote auth (required with libsql:// URLs on Vercel) */
+      DATABASE_AUTH_TOKEN?: string
+      /** Opt in to destructive full seed (deletes collections) when NODE_ENV=production */
+      ALLOW_DANGEROUS_SEED?: string
+      /** Show template seed button in admin on production (still blocked unless ALLOW_DANGEROUS_SEED) */
+      NEXT_PUBLIC_SHOW_ADMIN_SEED_BUTTON?: string
       NEXT_PUBLIC_SERVER_URL: string
       VERCEL_PROJECT_PRODUCTION_URL: string
       // Email Configuration (Nodemailer)
