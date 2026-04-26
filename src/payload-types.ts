@@ -122,7 +122,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   fallbackLocale: null;
   globals: {
@@ -193,9 +193,9 @@ export interface UserAuthOperations {
  * via the `definition` "analytics-events".
  */
 export interface AnalyticsEvent {
-  id: number;
+  id: string;
   sessionId: string;
-  userId?: (number | null) | User;
+  userId?: (string | null) | User;
   eventType:
     | 'PAGE_VIEW'
     | 'PRODUCT_VIEW'
@@ -208,7 +208,7 @@ export interface AnalyticsEvent {
     | 'CONTACT_SUBMITTED'
     | 'NEWSLETTER_JOINED';
   pageUrl: string;
-  productId?: (number | null) | Product;
+  productId?: (string | null) | Product;
   orderId?: string | null;
   /**
    * Traffic bucket (e.g. google_organic, direct)
@@ -240,13 +240,13 @@ export interface AnalyticsEvent {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   /**
    * Admin unlocks full system access (including analytics). Leave empty on legacy accounts until set.
    */
   roles?: ('admin' | 'author' | 'designer' | 'sales' | 'career' | 'marketing')[] | null;
   name: string;
-  profilePicture?: (number | null) | Media;
+  profilePicture?: (string | null) | Media;
   /**
    * Indicates if the user has set their password
    */
@@ -274,7 +274,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt?: string | null;
   caption?: {
     root: {
@@ -366,13 +366,13 @@ export interface Media {
  * via the `definition` "products".
  */
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   /**
    * Arabic product name displayed when Arabic language is selected
    */
   nameAr?: string | null;
-  images: (number | Media)[];
+  images: (string | Media)[];
   description?: {
     root: {
       type: string;
@@ -436,7 +436,7 @@ export interface Product {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     description?: string | null;
     keywords?: string | null;
   };
@@ -454,7 +454,7 @@ export interface Product {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number;
+  id: string;
   title: string;
   /**
    * Arabic title for the page when Arabic language is selected
@@ -485,11 +485,11 @@ export interface Page {
             reference?:
               | ({
                   relationTo: 'pages';
-                  value: number | Page;
+                  value: string | Page;
                 } | null)
               | ({
                   relationTo: 'posts';
-                  value: number | Post;
+                  value: string | Post;
                 } | null);
             url?: string | null;
             label: string;
@@ -505,7 +505,7 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    media?: (number | null) | Media;
+    media?: (string | null) | Media;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
@@ -513,7 +513,7 @@ export interface Page {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
@@ -531,7 +531,7 @@ export interface Page {
  * via the `definition` "posts".
  */
 export interface Post {
-  id: number;
+  id: string;
   title: string;
   /**
    * Arabic title displayed when Arabic language is selected
@@ -539,11 +539,11 @@ export interface Post {
   titleAr?: string | null;
   date: string;
   author?: string | null;
-  featuredImage?: (number | null) | Media;
-  media?: (number | Media)[] | null;
+  featuredImage?: (string | null) | Media;
+  media?: (string | Media)[] | null;
   description?: string | null;
   descriptionAr?: string | null;
-  heroImage?: (number | null) | Media;
+  heroImage?: (string | null) | Media;
   content: {
     root: {
       type: string;
@@ -579,18 +579,18 @@ export interface Post {
   } | null;
   category?: ('news' | 'technology' | 'industry-insights' | 'case-studies' | 'updates') | null;
   tags?: string[] | null;
-  relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
+  relatedPosts?: (string | Post)[] | null;
+  categories?: (string | Category)[] | null;
   meta?: {
     title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
-  authors?: (number | User)[] | null;
+  authors?: (string | User)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -611,7 +611,7 @@ export interface Post {
  * via the `definition` "categories".
  */
 export interface Category {
-  id: number;
+  id: string;
   title: string;
   /**
    * Arabic title displayed when Arabic language is selected
@@ -622,10 +622,10 @@ export interface Category {
    */
   generateSlug?: boolean | null;
   slug: string;
-  parent?: (number | null) | Category;
+  parent?: (string | null) | Category;
   breadcrumbs?:
     | {
-        doc?: (number | null) | Category;
+        doc?: (string | null) | Category;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -662,11 +662,11 @@ export interface CallToActionBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: number | Page;
+                value: string | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: number | Post;
+                value: string | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -716,11 +716,11 @@ export interface ContentBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: number | Page;
+                value: string | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: number | Post;
+                value: string | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -745,7 +745,7 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  media: number | Media;
+  media: string | Media;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -772,12 +772,12 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
-  categories?: (number | Category)[] | null;
+  categories?: (string | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
         relationTo: 'posts';
-        value: number | Post;
+        value: string | Post;
       }[]
     | null;
   id?: string | null;
@@ -789,7 +789,7 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  form: number | Form;
+  form: string | Form;
   enableIntro?: boolean | null;
   introContent?: {
     root: {
@@ -815,7 +815,7 @@ export interface FormBlock {
  * via the `definition` "forms".
  */
 export interface Form {
-  id: number;
+  id: string;
   title: string;
   fields?:
     | (
@@ -989,7 +989,7 @@ export interface Form {
  * via the `definition` "services".
  */
 export interface Service {
-  id: number;
+  id: string;
   title: string;
   /**
    * Arabic title displayed when Arabic language is selected
@@ -999,7 +999,7 @@ export interface Service {
    * Controls the order/position of this service on the homepage carousel and services page. Lower numbers appear first. If not set, services are sorted by creation date.
    */
   order?: number | null;
-  heroImage?: (number | null) | Media;
+  heroImage?: (string | null) | Media;
   heroTitle: string;
   heroTitleAr?: string | null;
   heroDescription?: string | null;
@@ -1010,7 +1010,7 @@ export interface Service {
         titleAr?: string | null;
         description?: string | null;
         descriptionAr?: string | null;
-        icon?: (number | null) | Media;
+        icon?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1020,7 +1020,7 @@ export interface Service {
         titleAr?: string | null;
         description?: string | null;
         descriptionAr?: string | null;
-        image?: (number | null) | Media;
+        image?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1030,7 +1030,7 @@ export interface Service {
         nameAr?: string | null;
         description?: string | null;
         descriptionAr?: string | null;
-        icon?: (number | null) | Media;
+        icon?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1082,7 +1082,7 @@ export interface Service {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     description?: string | null;
     keywords?: string | null;
   };
@@ -1100,7 +1100,7 @@ export interface Service {
  * via the `definition` "career".
  */
 export interface Career {
-  id: number;
+  id: string;
   title: string;
   /**
    * Arabic job title displayed when Arabic language is selected
@@ -1115,7 +1115,7 @@ export interface Career {
    */
   gender?: ('male' | 'female' | 'no-preference') | null;
   status: 'draft' | 'published' | 'closed';
-  featuredImage?: (number | null) | Media;
+  featuredImage?: (string | null) | Media;
   description: {
     root: {
       type: string;
@@ -1176,7 +1176,7 @@ export interface Career {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     description?: string | null;
     keywords?: string | null;
   };
@@ -1194,13 +1194,13 @@ export interface Career {
  * via the `definition` "contact-submissions".
  */
 export interface ContactSubmission {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone?: string | null;
   company?: string | null;
   subject?: string | null;
-  services?: (number | Service)[] | null;
+  services?: (string | Service)[] | null;
   message: string;
   submittedAt?: string | null;
   status?: ('new' | 'read' | 'replied' | 'archived') | null;
@@ -1214,7 +1214,7 @@ export interface ContactSubmission {
  * via the `definition` "employees".
  */
 export interface Employee {
-  id: number;
+  id: string;
   fullName: string;
   /**
    * Arabic name for profile when user selects Arabic language
@@ -1225,7 +1225,7 @@ export interface Employee {
    * Arabic job title for profile when user selects Arabic language
    */
   positionArabic?: string | null;
-  profileImage: number | Media;
+  profileImage: string | Media;
   phoneNumber: string;
   businessEmail: string;
   /**
@@ -1236,11 +1236,11 @@ export interface Employee {
   /**
    * PDF file - Company profile in Arabic
    */
-  companyProfileArabic?: (number | null) | Media;
+  companyProfileArabic?: (string | null) | Media;
   /**
    * PDF file - Company profile in English
    */
-  companyProfileEnglish?: (number | null) | Media;
+  companyProfileEnglish?: (string | null) | Media;
   /**
    * Optional: Public folder link containing both Arabic & English PDFs. If set, this will be shown instead of individual PDF buttons.
    */
@@ -1265,7 +1265,7 @@ export interface Employee {
  * via the `definition` "leads".
  */
 export interface Lead {
-  id: number;
+  id: string;
   /**
    * Full name of the lead
    */
@@ -1289,7 +1289,7 @@ export interface Lead {
   /**
    * Services the lead is interested in
    */
-  services?: (number | Service)[] | null;
+  services?: (string | Service)[] | null;
   /**
    * Initial message from the lead
    */
@@ -1313,7 +1313,7 @@ export interface Lead {
   /**
    * User responsible for following up with this lead
    */
-  assignedTo?: (number | null) | User;
+  assignedTo?: (string | null) | User;
   /**
    * Estimated value of this lead in SAR
    */
@@ -1342,7 +1342,7 @@ export interface Lead {
         /**
          * User who completed this follow-up
          */
-        completedBy?: (number | null) | User;
+        completedBy?: (string | null) | User;
         id?: string | null;
       }[]
     | null;
@@ -1390,7 +1390,7 @@ export interface Lead {
  * via the `definition` "newsletter-subscriptions".
  */
 export interface NewsletterSubscription {
-  id: number;
+  id: string;
   email: string;
   subscribedAt?: string | null;
   status?: ('active' | 'unsubscribed') | null;
@@ -1403,7 +1403,7 @@ export interface NewsletterSubscription {
  * via the `definition` "seo-keywords".
  */
 export interface SeoKeyword {
-  id: number;
+  id: string;
   keyword: string;
   category: 'primary' | 'secondary' | 'long-tail' | 'service-specific' | 'sector-specific';
   description?: string | null;
@@ -1411,15 +1411,15 @@ export interface SeoKeyword {
     | (
         | {
             relationTo: 'pages';
-            value: number | Page;
+            value: string | Page;
           }
         | {
             relationTo: 'services';
-            value: number | Service;
+            value: string | Service;
           }
         | {
             relationTo: 'products';
-            value: number | Product;
+            value: string | Product;
           }
       )[]
     | null;
@@ -1433,10 +1433,10 @@ export interface SeoKeyword {
  * via the `definition` "issue-reports".
  */
 export interface IssueReport {
-  id: number;
+  id: string;
   title?: string | null;
   description: string;
-  screenshot?: (number | null) | Media;
+  screenshot?: (string | null) | Media;
   userId: string;
   userName: string;
   userEmail: string;
@@ -1450,7 +1450,7 @@ export interface IssueReport {
  * via the `definition` "chat-summaries".
  */
 export interface ChatSummary {
-  id: number;
+  id: string;
   userName?: string | null;
   userEmail?: string | null;
   selectedItem?: string | null;
@@ -1480,7 +1480,7 @@ export interface ChatSummary {
  * via the `definition` "redirects".
  */
 export interface Redirect {
-  id: number;
+  id: string;
   /**
    * You will need to rebuild the website when changing this field.
    */
@@ -1490,11 +1490,11 @@ export interface Redirect {
     reference?:
       | ({
           relationTo: 'pages';
-          value: number | Page;
+          value: string | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: number | Post;
+          value: string | Post;
         } | null);
     url?: string | null;
   };
@@ -1506,8 +1506,8 @@ export interface Redirect {
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
-  id: number;
-  form: number | Form;
+  id: string;
+  form: string | Form;
   submissionData?:
     | {
         field: string;
@@ -1525,18 +1525,18 @@ export interface FormSubmission {
  * via the `definition` "search".
  */
 export interface Search {
-  id: number;
+  id: string;
   title?: string | null;
   priority?: number | null;
   doc: {
     relationTo: 'posts';
-    value: number | Post;
+    value: string | Post;
   };
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
   };
   categories?:
     | {
@@ -1554,7 +1554,7 @@ export interface Search {
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number;
+  id: string;
   key: string;
   data:
     | {
@@ -1571,7 +1571,7 @@ export interface PayloadKv {
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
-  id: number;
+  id: string;
   /**
    * Input data provided to the job
    */
@@ -1663,92 +1663,92 @@ export interface PayloadJob {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'analytics-events';
-        value: number | AnalyticsEvent;
+        value: string | AnalyticsEvent;
       } | null)
     | ({
         relationTo: 'pages';
-        value: number | Page;
+        value: string | Page;
       } | null)
     | ({
         relationTo: 'posts';
-        value: number | Post;
+        value: string | Post;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
+        value: string | Media;
       } | null)
     | ({
         relationTo: 'categories';
-        value: number | Category;
+        value: string | Category;
       } | null)
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'services';
-        value: number | Service;
+        value: string | Service;
       } | null)
     | ({
         relationTo: 'products';
-        value: number | Product;
+        value: string | Product;
       } | null)
     | ({
         relationTo: 'career';
-        value: number | Career;
+        value: string | Career;
       } | null)
     | ({
         relationTo: 'contact-submissions';
-        value: number | ContactSubmission;
+        value: string | ContactSubmission;
       } | null)
     | ({
         relationTo: 'employees';
-        value: number | Employee;
+        value: string | Employee;
       } | null)
     | ({
         relationTo: 'leads';
-        value: number | Lead;
+        value: string | Lead;
       } | null)
     | ({
         relationTo: 'newsletter-subscriptions';
-        value: number | NewsletterSubscription;
+        value: string | NewsletterSubscription;
       } | null)
     | ({
         relationTo: 'seo-keywords';
-        value: number | SeoKeyword;
+        value: string | SeoKeyword;
       } | null)
     | ({
         relationTo: 'issue-reports';
-        value: number | IssueReport;
+        value: string | IssueReport;
       } | null)
     | ({
         relationTo: 'chat-summaries';
-        value: number | ChatSummary;
+        value: string | ChatSummary;
       } | null)
     | ({
         relationTo: 'redirects';
-        value: number | Redirect;
+        value: string | Redirect;
       } | null)
     | ({
         relationTo: 'forms';
-        value: number | Form;
+        value: string | Form;
       } | null)
     | ({
         relationTo: 'form-submissions';
-        value: number | FormSubmission;
+        value: string | FormSubmission;
       } | null)
     | ({
         relationTo: 'search';
-        value: number | Search;
+        value: string | Search;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -1758,10 +1758,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -1781,7 +1781,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -2714,7 +2714,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "header".
  */
 export interface Header {
-  id: number;
+  id: string;
   navItems?:
     | {
         link: {
@@ -2723,11 +2723,11 @@ export interface Header {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: number | Page;
+                value: string | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: number | Post;
+                value: string | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -2747,7 +2747,7 @@ export interface Header {
  * via the `definition` "footer".
  */
 export interface Footer {
-  id: number;
+  id: string;
   navItems?:
     | {
         link: {
@@ -2756,11 +2756,11 @@ export interface Footer {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: number | Page;
+                value: string | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: number | Post;
+                value: string | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -2780,13 +2780,13 @@ export interface Footer {
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
-  id: number;
+  id: string;
   siteName: string;
   siteNameAr?: string | null;
   siteDescription?: string | null;
   siteDescriptionAr?: string | null;
-  logo?: (number | null) | Media;
-  favicon?: (number | null) | Media;
+  logo?: (string | null) | Media;
+  favicon?: (string | null) | Media;
   contactInfo?: {
     phone?: string | null;
     email?: string | null;
@@ -2842,7 +2842,7 @@ export interface SiteSetting {
  * via the `definition` "homepage-content".
  */
 export interface HomepageContent {
-  id: number;
+  id: string;
   hero: {
     title: string;
     titleAr?: string | null;
@@ -2850,7 +2850,7 @@ export interface HomepageContent {
     subtitleAr?: string | null;
     ctaText?: string | null;
     ctaTextAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   /**
    * KPI statistics displayed in the "Our Impact" section (e.g. Projects Completed, Client Satisfaction). Drag to reorder.
@@ -2895,7 +2895,7 @@ export interface HomepageContent {
     titleAr?: string | null;
     description?: string | null;
     descriptionAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   sectors?: {
     /**
@@ -2907,7 +2907,7 @@ export interface HomepageContent {
     titleAr?: string | null;
     description?: string | null;
     descriptionAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
     /**
      * Select and reorder sectors to display on the homepage. Drag items to change the sequence. If empty, all sectors will be displayed in their default order.
      */
@@ -2948,7 +2948,7 @@ export interface HomepageContent {
     /**
      * Image or video to display in the left column below the description
      */
-    imageColumn?: (number | null) | Media;
+    imageColumn?: (string | null) | Media;
     /**
      * Rich text content to display in the right column below the description. Use headings, paragraphs, and bullet lists.
      */
@@ -2989,7 +2989,7 @@ export interface HomepageContent {
     /**
      * Image or video to display on the left side
      */
-    leftColumnMedia?: (number | null) | Media;
+    leftColumnMedia?: (string | null) | Media;
     /**
      * Add text blocks with different types (heading, bullets, paragraph)
      */
@@ -3013,7 +3013,7 @@ export interface HomepageContent {
       | null;
     ctaText?: string | null;
     ctaTextAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   blogPreview?: {
     title?: string | null;
@@ -3022,17 +3022,17 @@ export interface HomepageContent {
     descriptionAr?: string | null;
     ctaText?: string | null;
     ctaTextAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
     /**
      * Select specific blog posts to display on homepage. If empty, latest posts will be shown.
      */
     featuredPosts?:
       | {
-          post: number | Post;
+          post: string | Post;
           /**
            * Override the post featured image with a custom image for homepage display
            */
-          customImage?: (number | null) | Media;
+          customImage?: (string | null) | Media;
           id?: string | null;
         }[]
       | null;
@@ -3054,7 +3054,7 @@ export interface HomepageContent {
     ctaTextAr?: string | null;
     secondaryCtaText?: string | null;
     secondaryCtaTextAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3064,7 +3064,7 @@ export interface HomepageContent {
  * via the `definition` "about-page-content".
  */
 export interface AboutPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title (e.g. "Our Story")
@@ -3078,11 +3078,11 @@ export interface AboutPageContent {
     /**
      * Upload an image for the hero background. If no image is uploaded, the video will be used as fallback.
      */
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     /**
      * Upload a video for the hero background. Video will be used if no image is uploaded. Recommended: MP4 format, optimized for web.
      */
-    video?: (number | null) | Media;
+    video?: (string | null) | Media;
   };
   vision?: {
     title?: string | null;
@@ -3091,7 +3091,7 @@ export interface AboutPageContent {
     descriptionAr?: string | null;
     content?: string | null;
     contentAr?: string | null;
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
   };
   mission?: {
     title?: string | null;
@@ -3100,7 +3100,7 @@ export interface AboutPageContent {
     descriptionAr?: string | null;
     content?: string | null;
     contentAr?: string | null;
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
   };
   whyChooseUs?: {
     /**
@@ -3129,7 +3129,7 @@ export interface AboutPageContent {
           /**
            * Image displayed in the sticky right column (desktop)
            */
-          image?: (number | null) | Media;
+          image?: (string | null) | Media;
           id?: string | null;
         }[]
       | null;
@@ -3138,7 +3138,7 @@ export interface AboutPageContent {
     | {
         name: string;
         nameAr?: string | null;
-        image?: (number | null) | Media;
+        image?: (string | null) | Media;
         description?: string | null;
         descriptionAr?: string | null;
         id?: string | null;
@@ -3150,7 +3150,7 @@ export interface AboutPageContent {
         titleAr?: string | null;
         description?: string | null;
         descriptionAr?: string | null;
-        icon?: (number | null) | Media;
+        icon?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -3201,7 +3201,7 @@ export interface AboutPageContent {
          * Bio content should not exceed 700 characters for Arabic.
          */
         bioAr?: string | null;
-        image?: (number | null) | Media;
+        image?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -3230,7 +3230,7 @@ export interface AboutPageContent {
    */
   clients?:
     | {
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
       }[]
     | null;
@@ -3241,7 +3241,7 @@ export interface AboutPageContent {
     | {
         name: string;
         nameAr?: string | null;
-        image: number | Media;
+        image: string | Media;
         review: string;
         reviewAr?: string | null;
         id?: string | null;
@@ -3253,7 +3253,7 @@ export interface AboutPageContent {
         titleAr?: string | null;
         description?: string | null;
         descriptionAr?: string | null;
-        icon?: (number | null) | Media;
+        icon?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -3265,7 +3265,7 @@ export interface AboutPageContent {
  * via the `definition` "posts-page-content".
  */
 export interface PostsPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title
@@ -3279,7 +3279,7 @@ export interface PostsPageContent {
      */
     description?: string | null;
     descriptionAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   seo?: {
     /**
@@ -3293,7 +3293,7 @@ export interface PostsPageContent {
     /**
      * Social sharing image (1200x630px recommended)
      */
-    ogImage?: (number | null) | Media;
+    ogImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3303,7 +3303,7 @@ export interface PostsPageContent {
  * via the `definition` "careers-page-content".
  */
 export interface CareersPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title
@@ -3317,7 +3317,7 @@ export interface CareersPageContent {
      */
     description?: string | null;
     descriptionAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   seo?: {
     /**
@@ -3331,7 +3331,7 @@ export interface CareersPageContent {
     /**
      * Social sharing image (1200x630px recommended)
      */
-    ogImage?: (number | null) | Media;
+    ogImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3341,7 +3341,7 @@ export interface CareersPageContent {
  * via the `definition` "contact-page-content".
  */
 export interface ContactPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title
@@ -3355,7 +3355,7 @@ export interface ContactPageContent {
      */
     subtitle?: string | null;
     subtitleAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   seo?: {
     /**
@@ -3369,7 +3369,7 @@ export interface ContactPageContent {
     /**
      * Social sharing image (1200x630px recommended)
      */
-    ogImage?: (number | null) | Media;
+    ogImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3379,7 +3379,7 @@ export interface ContactPageContent {
  * via the `definition` "products-page-content".
  */
 export interface ProductsPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title
@@ -3393,7 +3393,7 @@ export interface ProductsPageContent {
      */
     subtitle?: string | null;
     subtitleAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   seo?: {
     /**
@@ -3407,7 +3407,7 @@ export interface ProductsPageContent {
     /**
      * Social sharing image (1200x630px recommended)
      */
-    ogImage?: (number | null) | Media;
+    ogImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3417,7 +3417,7 @@ export interface ProductsPageContent {
  * via the `definition` "services-page-content".
  */
 export interface ServicesPageContent {
-  id: number;
+  id: string;
   hero: {
     /**
      * Small label above the title (e.g. "Our Services")
@@ -3431,7 +3431,7 @@ export interface ServicesPageContent {
      */
     subtitle?: string | null;
     subtitleAr?: string | null;
-    backgroundImage?: (number | null) | Media;
+    backgroundImage?: (string | null) | Media;
   };
   seo?: {
     /**
@@ -3445,7 +3445,7 @@ export interface ServicesPageContent {
     /**
      * Social sharing image (1200x630px recommended)
      */
-    ogImage?: (number | null) | Media;
+    ogImage?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3455,7 +3455,7 @@ export interface ServicesPageContent {
  * via the `definition` "sectors-content".
  */
 export interface SectorsContent {
-  id: number;
+  id: string;
   sectors?:
     | {
         name: string;
@@ -3463,7 +3463,7 @@ export interface SectorsContent {
         slug: string;
         description?: string | null;
         descriptionAr?: string | null;
-        image?: (number | null) | Media;
+        image?: (string | null) | Media;
         /**
          * Link to blog page or section
          */
@@ -3501,7 +3501,7 @@ export interface SectorsContent {
  * via the `definition` "seo-settings".
  */
 export interface SeoSetting {
-  id: number;
+  id: string;
   primaryKeywords?: string[] | null;
   secondaryKeywords?: string[] | null;
   longTailKeywords?: string[] | null;
@@ -3524,8 +3524,8 @@ export interface SeoSetting {
     | boolean
     | null;
   metaDescriptionTemplate?: string | null;
-  ogImageDefault?: (number | null) | Media;
-  twitterCardDefault?: (number | null) | Media;
+  ogImageDefault?: (string | null) | Media;
+  twitterCardDefault?: (string | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4104,14 +4104,14 @@ export interface TaskSchedulePublish {
     doc?:
       | ({
           relationTo: 'pages';
-          value: number | Page;
+          value: string | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: number | Post;
+          value: string | Post;
         } | null);
     global?: string | null;
-    user?: (number | null) | User;
+    user?: (string | null) | User;
   };
   output?: unknown;
 }

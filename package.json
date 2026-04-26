@@ -23,6 +23,7 @@
     "publish:services": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/publish-services.ts",
     "test:db": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/test-db-connection.ts",
     "reset:password": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/reset-admin-password.ts",
+    "clear:users": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/clear-all-users.ts",
     "backup:mongo": "bash scripts/mongo-dump-local.sh",
     "test:s3": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/test-s3-connection.ts",
     "fix:posts-meta": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/fix-posts-meta.ts",
