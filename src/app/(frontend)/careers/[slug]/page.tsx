@@ -8,6 +8,8 @@ import { cache } from 'react'
 import { LivePreviewListener } from '../../../../components/LivePreviewListener'
 import { CareerDetailContent } from '../../../../components/sections/CareerDetailContent.client'
 import type { Career } from '../../../../payload-types'
+import { getRequestLocale } from '../../../../lib/i18n/getRequestLocale'
+import { buildPageMetadata } from '../../../../lib/seo/pageMetadata'
 
 const getCareerBySlug = cache(async (slug: string): Promise<Career | null> => {
   const { isEnabled: draft } = await draftMode()
@@ -72,13 +74,23 @@ export async function generateMetadata({
     }
   }
 
-  const metaTitle = career.seo?.title || `${career.title} | Shamal Technologies Careers`
-  const metaDescription = career.seo?.description || ''
+  const locale = await getRequestLocale()
+  const isAr = locale === 'ar'
+  const titleAr = (career as { titleAr?: string | null }).titleAr
+  const metaTitle = isAr
+    ? `${titleAr || career.title} | وظائف شمل للتقنيات`
+    : career.seo?.title || `${career.title} | Shamal Technologies Careers`
+  const metaDescription =
+    (isAr ? (career as { descriptionAr?: string | null }).descriptionAr : career.seo?.description) ||
+    career.seo?.description ||
+    ''
 
-  return {
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: `/careers/${slug}`,
     title: metaTitle,
     description: metaDescription,
-  }
+  })
 }
 
 export default async function CareerPage({ params }: { params: Promise<{ slug: string }> }) {

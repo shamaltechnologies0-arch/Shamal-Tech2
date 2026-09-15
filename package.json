@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "NODE_OPTIONS=--no-deprecation next build",
-    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
+    "postbuild": "node scripts/clean-public-seo.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --experimental-https",
     "clean": "rm -rf .next",
     "dev:clean": "npm run clean && cross-env NODE_OPTIONS=--no-deprecation next dev --experimental-https",

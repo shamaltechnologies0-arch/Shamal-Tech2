@@ -1,10 +1,8 @@
-'use client'
-
-import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getRequestLocale } from '../../lib/i18n/getRequestLocale'
 import { getCommonTranslations } from '../../lib/translations/common'
 
-export function ProductsSeoIntro() {
-  const { language } = useLanguage()
+export async function ProductsSeoIntro() {
+  const language = await getRequestLocale()
   const t = getCommonTranslations(language).productsSeo
 
   return (

@@ -36,7 +36,7 @@ function refreshScrollTriggerAfterLayoutChange() {
 
 function applyDocumentLanguage(lang: Language) {
   if (typeof document === 'undefined') return
-  document.documentElement.setAttribute('lang', lang)
+  document.documentElement.setAttribute('lang', lang === 'ar' ? 'ar-SA' : 'en-SA')
   document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
 }
 

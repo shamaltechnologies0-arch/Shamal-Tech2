@@ -6,6 +6,8 @@ import { cache } from 'react'
 import configPromise from '@/payload.config'
 import { getPayload } from 'payload'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getRequestLocale } from '@/lib/i18n/getRequestLocale'
+import { buildPageMetadata } from '@/lib/seo/pageMetadata'
 
 import { ProfileContent } from './ProfileContent.client'
 
@@ -73,27 +75,23 @@ export async function generateMetadata({
     return { title: 'Profile Not Found' }
   }
 
+  const locale = await getRequestLocale()
+  const isAr = locale === 'ar'
+  const displayName = isAr && employee.fullNameArabic ? employee.fullNameArabic : employee.fullName
   const profileImageUrl =
     employee.profileImage && typeof employee.profileImage === 'object' && 'url' in employee.profileImage
       ? employee.profileImage.url
       : null
 
-  return {
-    title: `${employee.fullName} | Employee Profile`,
-    description: `Digital business card for ${employee.fullName}. Contact: ${employee.businessEmail || employee.phoneNumber || ''}`,
-    openGraph: {
-      title: `${employee.fullName} | Employee Profile`,
-      description: `Digital business card for ${employee.fullName}`,
-      images: profileImageUrl ? [profileImageUrl] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  }
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: `/profile/${slug}`,
+    title: isAr ? `${displayName} | الملف الوظيفي` : `${employee.fullName} | Employee Profile`,
+    description: isAr
+      ? `بطاقة عمل رقمية لـ ${displayName}. للتواصل: ${employee.businessEmail || employee.phoneNumber || ''}`
+      : `Digital business card for ${employee.fullName}. Contact: ${employee.businessEmail || employee.phoneNumber || ''}`,
+    images: profileImageUrl ? [{ url: profileImageUrl }] : undefined,
+  })
 }
 
 function getMediaUrl(url: string | null | undefined): string {

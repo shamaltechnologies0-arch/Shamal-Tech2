@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 
 import { getCachedGlobal } from '../../utilities/getGlobals'
-import { mergeOpenGraph } from '../../utilities/mergeOpenGraph'
 import { getServerSideURL } from '../../utilities/getURL'
 import { getRequestInternalPathname, getRequestLocale } from '../i18n/getRequestLocale'
-import { ogLocale } from '../i18n/locale'
-import { buildLanguageAlternates } from './alternates'
+import { htmlLang } from '../i18n/locale'
 import {
   allArabicKeywordsFlat,
   ARABIC_META_DESCRIPTION,
@@ -17,6 +15,7 @@ import {
   SITE_SEO_TITLE,
   TARGET_BRAND_KEYWORDS,
 } from './englishKeywords'
+import { buildPageMetadata, GEO_META } from './pageMetadata'
 
 type SeoSettingsDoc = {
   primaryKeywords?: string[] | null
@@ -46,8 +45,7 @@ export async function getSiteSeoMetadata(): Promise<Metadata> {
     ...(settings?.secondaryKeywords || []).slice(0, 12),
     ...(settings?.longTailKeywords || []).slice(0, 8),
   ]
-  const englishKeywords =
-    englishFromCms.length > 0 ? englishFromCms : allEnglishKeywordsFlat()
+  const englishKeywords = englishFromCms.length > 0 ? englishFromCms : allEnglishKeywordsFlat()
 
   const arabicFromCms = [
     ...(settings?.arabicPrimaryKeywords || []),
@@ -56,7 +54,6 @@ export async function getSiteSeoMetadata(): Promise<Metadata> {
   ]
   const arabicKeywords = arabicFromCms.length > 0 ? arabicFromCms : allArabicKeywordsFlat()
 
-  const siteUrl = getServerSideURL()
   const title = isAr ? ARABIC_SITE_TITLE : SITE_SEO_TITLE
   const description = isAr
     ? settings?.metaDescriptionTemplateAr || ARABIC_META_DESCRIPTION
@@ -65,24 +62,29 @@ export async function getSiteSeoMetadata(): Promise<Metadata> {
     ? [...new Set([...arabicKeywords, ...TARGET_BRAND_KEYWORDS])]
     : [...new Set([...TARGET_BRAND_KEYWORDS, ...englishKeywords])]
 
+  const page = buildPageMetadata({
+    locale,
+    pathWithoutLocale: path,
+    title,
+    description,
+    keywords,
+  })
+
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(getServerSideURL()),
     title: {
       default: title,
       template: isAr ? '%s | شمل للتقنيات' : '%s | Shamal Technologies',
     },
-    description,
-    keywords,
-    alternates: buildLanguageAlternates(path, locale, siteUrl),
-    openGraph: mergeOpenGraph({
-      title,
-      description,
-      locale: ogLocale(locale),
-      alternateLocale: isAr ? ['en_SA'] : ['ar_SA'],
-      url: path,
-    }),
+    description: page.description,
+    keywords: page.keywords,
+    robots: page.robots,
+    alternates: page.alternates,
+    openGraph: page.openGraph,
+    twitter: page.twitter,
     other: {
-      'content-language': isAr ? 'ar-SA' : 'en-SA',
+      ...GEO_META,
+      'content-language': htmlLang(locale),
       'og:locale:alternate': isAr ? 'en_SA' : 'ar_SA',
     },
     icons: {
@@ -92,11 +94,6 @@ export async function getSiteSeoMetadata(): Promise<Metadata> {
       ],
       shortcut: '/favicon-32.png',
       apple: '/apple-touch-icon.png',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      creator: '@shamaltechnologies',
-      site: '@shamaltechnologies',
     },
   }
 }

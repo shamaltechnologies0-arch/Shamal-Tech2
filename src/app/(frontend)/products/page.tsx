@@ -10,20 +10,28 @@ import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { getCachedPublishedProducts } from '../../../lib/cms/cached-queries'
 import { ProductsSeoIntro } from '../../../components/sections/ProductsSeoIntro.client'
 import { TARGET_BRAND_KEYWORDS } from '../../../lib/seo/englishKeywords'
+import { allArabicKeywordsFlat } from '../../../lib/seo/arabicKeywords'
 import { getOrganizationSchema } from '../../../lib/seo/structuredData'
 import { getServerSideURL } from '../../../utilities/getURL'
+import { getRequestLocale } from '../../../lib/i18n/getRequestLocale'
+import { buildPageMetadata } from '../../../lib/seo/pageMetadata'
 
 export const revalidate = 3600
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale()
   const productsPageContent = (await getCachedGlobal('products-page-content', 2)()) as {
     hero?: {
       title?: string
       subtitle?: string
+      titleAr?: string
+      subtitleAr?: string
     }
     seo?: {
       metaTitle?: string
       metaDescription?: string
+      metaTitleAr?: string
+      metaDescriptionAr?: string
       ogImage?: {
         url?: string
         alt?: string
@@ -31,20 +39,32 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   } | null
 
-  return {
-    title:
-      productsPageContent?.seo?.metaTitle ||
-      'DJI Products | Authorized DJI Drones Seller in Saudi Arabia',
-    description:
-      productsPageContent?.seo?.metaDescription ||
-      'Shop DJI products from Shamal Technologies, an authorized DJI drones seller and authorized DJI products seller. A drone company in Saudi Arabia offering DJI enterprise drones, payloads, docks, and geospatial technology for sale or lease.',
-    keywords: [
-      ...TARGET_BRAND_KEYWORDS,
-      'DJI enterprise drones',
-      'DJI Dock',
-      'drone equipment Saudi Arabia',
-    ],
-  }
+  const isAr = locale === 'ar'
+  const title = isAr
+    ? productsPageContent?.seo?.metaTitleAr ||
+      productsPageContent?.hero?.titleAr ||
+      'منتجات DJI | بائع طائرات DJI المعتمد في السعودية'
+    : productsPageContent?.seo?.metaTitle ||
+      'DJI Products | Authorized DJI Drones Seller in Saudi Arabia'
+  const description = isAr
+    ? productsPageContent?.seo?.metaDescriptionAr ||
+      productsPageContent?.hero?.subtitleAr ||
+      'تسوق منتجات DJI من شمل للتقنيات، بائع طائرات DJI المعتمد وبائع منتجات DJI المعتمد. شركة درون في السعودية توفر طائرات المؤسسات والحمولات ومنصات الإقلاع للبيع أو التأجير.'
+    : productsPageContent?.seo?.metaDescription ||
+      'Shop DJI products from Shamal Technologies, an authorized DJI drones seller and authorized DJI products seller. A drone company in Saudi Arabia offering DJI enterprise drones, payloads, docks, and geospatial technology for sale or lease.'
+
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: '/products',
+    title,
+    description,
+    keywords: isAr
+      ? [...allArabicKeywordsFlat().slice(0, 12), ...TARGET_BRAND_KEYWORDS]
+      : [...TARGET_BRAND_KEYWORDS, 'DJI enterprise drones', 'DJI Dock', 'drone equipment Saudi Arabia'],
+    images: productsPageContent?.seo?.ogImage?.url
+      ? [{ url: productsPageContent.seo.ogImage.url, alt: productsPageContent.seo.ogImage.alt || title }]
+      : undefined,
+  })
 }
 
 export default async function ProductsPage() {

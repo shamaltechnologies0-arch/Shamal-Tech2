@@ -1,37 +1,19 @@
 import type { Metadata } from 'next'
 
 import { getServerSideURL } from '../../utilities/getURL'
-import { mergeOpenGraph } from '../../utilities/mergeOpenGraph'
 import { LEGAL_COMPANY, type LegalDocument } from './types'
 import { getRequestLocale } from '../i18n/getRequestLocale'
-import { buildLanguageAlternates } from '../seo/alternates'
+import { buildPageMetadata } from '../seo/pageMetadata'
 
 export async function buildLegalMetadata(document: LegalDocument): Promise<Metadata> {
   const locale = await getRequestLocale()
-  return {
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: `/${document.slug}`,
     title: document.metaTitle,
     description: document.metaDescription,
     keywords: document.keywords,
-    alternates: buildLanguageAlternates(`/${document.slug}`, locale),
-    openGraph: mergeOpenGraph({
-      title: `${document.title} | ${LEGAL_COMPANY.name}`,
-      description: document.metaDescription,
-      url: `/${document.slug}`,
-      type: 'website',
-    }),
-    twitter: {
-      card: 'summary_large_image',
-      title: `${document.title} | ${LEGAL_COMPANY.name}`,
-      description: document.metaDescription,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-    other: {
-      'article:modified_time': document.lastUpdatedIso,
-    },
-  }
+  })
 }
 
 export function buildLegalJsonLd({

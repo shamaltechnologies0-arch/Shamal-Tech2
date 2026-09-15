@@ -1,5 +1,6 @@
 import { SITE_SEO_DESCRIPTION } from './englishKeywords'
 import { TARGET_BRAND_KEYWORDS } from './englishKeywords'
+import { ARABIC_META_DESCRIPTION } from './arabicKeywords'
 
 const DEFAULT_SITE_URL = 'https://shamal.sa'
 
@@ -22,10 +23,13 @@ export type OrganizationSchemaInput = {
   sameAs?: Array<string | null | undefined>
 }
 
-export function getOrganizationSchema(input: OrganizationSchemaInput = {}) {
+export function getOrganizationSchema(input: OrganizationSchemaInput & { locale?: 'en' | 'ar' } = {}) {
   const siteUrl = input.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL
-  const name = input.name || 'Shamal Technologies'
-  const description = input.description || SITE_SEO_DESCRIPTION
+  const locale = input.locale || 'en'
+  const name =
+    locale === 'ar' ? 'شمل للتقنيات' : input.name || 'Shamal Technologies'
+  const description =
+    locale === 'ar' ? ARABIC_META_DESCRIPTION : input.description || SITE_SEO_DESCRIPTION
   const sameAs = [
     ...DEFAULT_SOCIAL,
     ...(input.sameAs || []).filter((url): url is string => Boolean(url)),
@@ -122,15 +126,11 @@ export function getWebsiteSchema(siteUrl: string) {
     '@type': 'WebSite',
     '@id': `${siteUrl}/#website`,
     name: 'Shamal Technologies',
+    alternateName: ['شمل للتقنيات', 'شمال للتقنيات', 'Shamal Tech'],
     url: siteUrl,
     description: SITE_SEO_DESCRIPTION,
-    inLanguage: ['en', 'ar'],
+    inLanguage: ['en-SA', 'ar-SA'],
     publisher: { '@id': `${siteUrl}/#organization` },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${siteUrl}/search?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   }
 }
 
@@ -162,9 +162,11 @@ export const DRONE_COMPANY_FAQS = [
 ] as const
 
 export function getFaqSchema(siteUrl: string, locale: 'en' | 'ar' = 'en') {
+  const pageUrl = locale === 'ar' ? `${siteUrl}/ar` : siteUrl
   return {
     '@type': 'FAQPage',
-    '@id': `${siteUrl}/#drone-company-faq`,
+    '@id': `${pageUrl}#drone-company-faq`,
+    url: pageUrl,
     inLanguage: locale === 'ar' ? 'ar-SA' : 'en-SA',
     mainEntity: DRONE_COMPANY_FAQS.map((faq) => ({
       '@type': 'Question',
@@ -178,13 +180,23 @@ export function getFaqSchema(siteUrl: string, locale: 'en' | 'ar' = 'en') {
 }
 
 export function getHomeStructuredData(input: OrganizationSchemaInput & { locale?: 'en' | 'ar' } = {}) {
-  const siteUrl = input.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL
+  const siteUrl = (input.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '')
   const locale = input.locale || 'en'
+  const pageUrl = locale === 'ar' ? `${siteUrl}/ar` : siteUrl
   return {
     '@context': 'https://schema.org',
     '@graph': [
       getOrganizationSchema({ ...input, siteUrl }),
       getWebsiteSchema(siteUrl),
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: locale === 'ar' ? 'شمل للتقنيات | حلول الطائرات بدون طيار والمسح الجغرافي في السعودية' : 'Shamal Technologies | Drone & Geospatial Solutions in Saudi Arabia',
+        inLanguage: locale === 'ar' ? 'ar-SA' : 'en-SA',
+        isPartOf: { '@id': `${siteUrl}/#website` },
+        about: { '@id': `${siteUrl}/#organization` },
+      },
       getFaqSchema(siteUrl, locale),
     ],
   }

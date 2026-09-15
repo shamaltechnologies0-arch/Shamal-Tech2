@@ -3,11 +3,21 @@ import type { Metadata } from 'next'
 import { CompanyProfileDeck } from '../../../components/company-profile/CompanyProfileDeck.client'
 import { getCachedSiteSettings } from '../../../lib/cms/cached-queries'
 import CompanyProfilePageClient from './page.client'
+import { localizedPageMetadata } from '../../../lib/seo/localizedMetadata'
 
-export const metadata: Metadata = {
-  title: 'Company Profile | Shamal Technologies',
-  description:
-    'Interactive company profile for Shamal Technologies — a drone company in Saudi Arabia and authorized DJI products seller offering drone survey, LiDAR mapping, volumetric analysis, and geospatial solutions.',
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedPageMetadata({
+    en: {
+      title: 'Company Profile | Shamal Technologies',
+      description:
+        'Interactive company profile for Shamal Technologies — a drone company in Saudi Arabia and authorized DJI products seller offering drone survey, LiDAR mapping, volumetric analysis, and geospatial solutions.',
+    },
+    ar: {
+      title: 'الملف التعريفي | شمل للتقنيات',
+      description:
+        'الملف التعريفي لشمل للتقنيات — شركة درون في السعودية وبائع منتجات DJI المعتمد لخدمات المسح الجوي وLiDAR والتحليل الحجمي والحلول الجيومكانية.',
+    },
+  })
 }
 
 export const revalidate = 600

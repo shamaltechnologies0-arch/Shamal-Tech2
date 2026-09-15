@@ -7,8 +7,9 @@ import { ServiceHeroSection } from '../../../../components/sections/ServiceHeroS
 import { ServiceDetailContent } from '../../../../components/sections/ServiceDetailContent.client'
 import { ServiceBreadcrumb } from '../../../../components/sections/ServiceBreadcrumb.client'
 import { allArabicKeywordsFlat } from '../../../../lib/seo/arabicKeywords'
+import { TARGET_BRAND_KEYWORDS } from '../../../../lib/seo/englishKeywords'
 import { getRequestLocale } from '../../../../lib/i18n/getRequestLocale'
-import { buildLanguageAlternates } from '../../../../lib/seo/alternates'
+import { buildPageMetadata } from '../../../../lib/seo/pageMetadata'
 
 export const revalidate = 3600
 
@@ -93,31 +94,18 @@ export async function generateMetadata({
   const descriptionAr = (service as { heroDescriptionAr?: string }).heroDescriptionAr
   const isAr = locale === 'ar'
 
-  return {
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: `/services/${slug}`,
     title: isAr
       ? `${titleAr || service.title} | شمل للتقنيات`
       : service.seo?.title || `${service.title} | Shamal Technologies`,
     description: isAr
       ? descriptionAr || service.seo?.description || service.heroDescription || ''
       : service.seo?.description || service.heroDescription || '',
-    keywords: [
-      service.title,
-      titleAr,
-      ...allArabicKeywordsFlat().slice(0, 8),
-    ].filter(Boolean) as string[],
-    alternates: buildLanguageAlternates(`/services/${slug}`, locale),
-    openGraph: titleAr
-      ? {
-          alternateLocale: ['ar_SA'],
-        }
-      : undefined,
-    other: titleAr
-      ? {
-          'og:title:ar': titleAr,
-          ...(descriptionAr ? { 'og:description:ar': descriptionAr } : {}),
-        }
-      : undefined,
-  }
+    keywords: [service.title, titleAr, ...(isAr ? allArabicKeywordsFlat().slice(0, 8) : [...TARGET_BRAND_KEYWORDS])]
+      .filter((value): value is string => Boolean(value)),
+  })
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {

@@ -1,8 +1,9 @@
 import configPromise from '../../../../payload.config'
 import { getPayload } from 'payload'
-import { revalidateTag } from 'next/cache'
 
+import { getServerSideURL } from '../../../../utilities/getURL'
 import { expandSitemapWithArabic } from '../../../../lib/seo/sitemapLocales'
+import { renderSitemapUrlSet, withSitemapHreflang } from '../../../../lib/seo/sitemapXml'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600
@@ -24,7 +25,7 @@ export async function GET() {
     },
   })
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shamal.sa'
+  const baseUrl = getServerSideURL()
   const entries = expandSitemapWithArabic(
     [
       {
@@ -41,27 +42,12 @@ export async function GET() {
       })),
     ],
     baseUrl,
-  )
+  ).map((entry) => withSitemapHreflang(entry, baseUrl))
 
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${entries
-  .map(
-    (entry) => `  <url>
-    <loc>${entry.loc}</loc>
-    ${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ''}
-    <changefreq>${entry.changefreq || 'weekly'}</changefreq>
-    <priority>${entry.priority ?? 0.8}</priority>
-  </url>`,
-  )
-  .join('\n')}
-</urlset>`
-
-  return new Response(sitemap, {
+  return new Response(renderSitemapUrlSet(entries), {
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'application/xml; charset=utf-8',
       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate',
     },
   })
 }
-

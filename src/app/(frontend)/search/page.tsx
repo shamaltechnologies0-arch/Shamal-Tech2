@@ -7,6 +7,8 @@ import React from 'react'
 import { Search } from '../../../search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '../../../components/Card'
+import { localizedPageMetadata } from '../../../lib/seo/localizedMetadata'
+import { NOINDEX_ROBOTS } from '../../../lib/seo/pageMetadata'
 
 type Args = {
   searchParams: Promise<{
@@ -81,8 +83,19 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = await localizedPageMetadata({
+    en: {
+      title: 'Search | Shamal Technologies',
+      description: 'Search drone, DJI product, and geospatial articles from Shamal Technologies.',
+    },
+    ar: {
+      title: 'بحث | شمل للتقنيات',
+      description: 'ابحث في مقالات شمل للتقنيات عن الدرون ومنتجات DJI والحلول الجيومكانية.',
+    },
+  })
   return {
-    title: `Search | Shamal Technologies`,
+    ...metadata,
+    robots: NOINDEX_ROBOTS,
   }
 }

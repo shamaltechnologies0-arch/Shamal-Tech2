@@ -4,6 +4,7 @@ import config from '../../../../payload.config'
 import { unstable_cache } from 'next/cache'
 import { getServerSideURL } from '../../../../utilities/getURL'
 import { expandSitemapWithArabic } from '../../../../lib/seo/sitemapLocales'
+import { withSitemapHreflang } from '../../../../lib/seo/sitemapXml'
 
 const getPagesSitemap = unstable_cache(
   async () => {
@@ -64,10 +65,6 @@ const getPagesSitemap = unstable_cache(
         lastmod: dateFallback,
       },
       {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
         loc: `${SITE_URL}/posts`,
         lastmod: dateFallback,
       },
@@ -83,7 +80,7 @@ const getPagesSitemap = unstable_cache(
 
     const sitemap = results.docs
       ? results.docs
-          .filter((page) => Boolean(page?.slug))
+          .filter((page) => Boolean(page?.slug) && page.slug !== 'search' && page.slug !== 'admin')
           .map((page) => {
             return {
               loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
@@ -105,5 +102,8 @@ const getPagesSitemap = unstable_cache(
 export async function GET() {
   const sitemap = await getPagesSitemap()
 
-  return getServerSideSitemap(expandSitemapWithArabic(sitemap, getServerSideURL()))
+  const siteUrl = getServerSideURL()
+  return getServerSideSitemap(
+    expandSitemapWithArabic(sitemap, siteUrl).map((entry) => withSitemapHreflang(entry, siteUrl)),
+  )
 }

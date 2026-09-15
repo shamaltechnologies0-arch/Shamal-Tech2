@@ -12,6 +12,8 @@ import { ScrollSection } from '../../../components/sections/ScrollSection'
 import { ParallaxElement } from '../../../components/sections/ParallaxElement'
 import { CinematicReveal } from '../../../utilities/animations'
 import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
+import { getRequestLocale } from '../../../lib/i18n/getRequestLocale'
+import { buildPageMetadata } from '../../../lib/seo/pageMetadata'
 
 export const revalidate = 600
 
@@ -137,13 +139,19 @@ export default async function Page() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale()
   const postsPageContent = (await getCachedGlobal('posts-page-content', 2)()) as {
     hero?: {
       title?: string
+      titleAr?: string
+      description?: string
+      descriptionAr?: string
     }
     seo?: {
       metaTitle?: string
       metaDescription?: string
+      metaTitleAr?: string
+      metaDescriptionAr?: string
       ogImage?: {
         url?: string
         alt?: string
@@ -151,25 +159,28 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   } | null
 
-  const metaTitle =
-    postsPageContent?.seo?.metaTitle ||
-    postsPageContent?.hero?.title ||
-    'Blog Posts | Shamal Technologies'
-  const metaDescription = postsPageContent?.seo?.metaDescription || ''
-  const ogImage =
-    postsPageContent?.seo?.ogImage &&
-    typeof postsPageContent.seo.ogImage === 'object' &&
-    'url' in postsPageContent.seo.ogImage
-      ? (postsPageContent.seo.ogImage.url as string)
-      : undefined
+  const isAr = locale === 'ar'
+  const title = isAr
+    ? postsPageContent?.seo?.metaTitleAr ||
+      postsPageContent?.hero?.titleAr ||
+      'المدونة | شمل للتقنيات'
+    : postsPageContent?.seo?.metaTitle ||
+      postsPageContent?.hero?.title ||
+      'Blog Posts | Shamal Technologies'
+  const description = isAr
+    ? postsPageContent?.seo?.metaDescriptionAr ||
+      postsPageContent?.hero?.descriptionAr ||
+      'أحدث الرؤى حول الطائرات بدون طيار والمسح الجغرافي وحلول البيانات في السعودية.'
+    : postsPageContent?.seo?.metaDescription ||
+      'Insights on drone surveying, geospatial data, and DJI technology from Shamal Technologies in Saudi Arabia.'
 
-  return {
-    title: metaTitle,
-    description: metaDescription,
-    openGraph: {
-      title: metaTitle,
-      description: metaDescription,
-      images: ogImage ? [{ url: ogImage }] : undefined,
-    },
-  }
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: '/posts',
+    title,
+    description,
+    images: postsPageContent?.seo?.ogImage?.url
+      ? [{ url: postsPageContent.seo.ogImage.url as string, alt: title }]
+      : undefined,
+  })
 }

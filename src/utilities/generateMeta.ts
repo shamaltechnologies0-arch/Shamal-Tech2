@@ -2,10 +2,9 @@ import type { Metadata } from 'next'
 
 import type { Media, Page, Post, Config } from '../payload-types'
 
-import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 import { getRequestLocale } from '../lib/i18n/getRequestLocale'
-import { buildLanguageAlternates } from '../lib/seo/alternates'
+import { defaultKeywords, buildPageMetadata } from '../lib/seo/pageMetadata'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -26,31 +25,34 @@ export const generateMeta = async (args: {
 }): Promise<Metadata> => {
   const { doc } = args
   const locale = await getRequestLocale()
-
+  const isAr = locale === 'ar'
   const ogImage = getImageURL(doc?.meta?.image)
-
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Shamal Technologies'
-    : 'Shamal Technologies'
 
   const slug = Array.isArray(doc?.slug) ? doc?.slug.join('/') : doc?.slug
   const path = !slug || slug === 'home' ? '/' : `/${slug}`
 
-  return {
-    description: doc?.meta?.description,
-    alternates: buildLanguageAlternates(path, locale),
-    openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
-      title,
-      url: path,
-    }),
+  const titleAr = (doc as { titleAr?: string | null } | null)?.titleAr
+  const descriptionAr = (doc as { descriptionAr?: string | null } | null)?.descriptionAr
+  const pageTitle = (doc as { title?: string | null } | null)?.title
+  const brand = isAr ? 'شمل للتقنيات' : 'Shamal Technologies'
+
+  const rawTitle = isAr
+    ? titleAr || doc?.meta?.title || pageTitle || brand
+    : doc?.meta?.title || pageTitle || brand
+  const title = rawTitle.includes(brand) ? rawTitle : `${rawTitle} | ${brand}`
+
+  const description = isAr
+    ? descriptionAr || doc?.meta?.description || ''
+    : doc?.meta?.description || (doc as { description?: string | null } | null)?.description || ''
+
+  const extraKeywords = [pageTitle, titleAr].filter((value): value is string => Boolean(value))
+
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: path,
     title,
-  }
+    description,
+    keywords: [...extraKeywords, ...defaultKeywords(locale)],
+    images: ogImage ? [{ url: ogImage }] : undefined,
+  })
 }

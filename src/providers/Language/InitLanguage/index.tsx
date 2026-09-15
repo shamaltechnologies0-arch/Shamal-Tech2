@@ -12,11 +12,12 @@ export const InitLanguage: React.FC = () => {
     var path = window.location.pathname || '/'
     var isArabicUrl = path === '/ar' || path.indexOf('/ar/') === 0
     var languageToSet = isArabicUrl ? 'ar' : 'en'
-    var directionToSet = languageToSet === 'ar' ? 'rtl' : 'ltr'
+    var htmlLang = isArabicUrl ? 'ar-SA' : 'en-SA'
+    var directionToSet = isArabicUrl ? 'rtl' : 'ltr'
     try {
       window.localStorage.setItem('language', languageToSet)
     } catch (e) {}
-    document.documentElement.setAttribute('lang', languageToSet)
+    document.documentElement.setAttribute('lang', htmlLang)
     document.documentElement.setAttribute('dir', directionToSet)
   })();
   `,

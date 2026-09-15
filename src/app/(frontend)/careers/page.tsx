@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 
 import Image from 'next/image'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
+import { getRequestLocale } from '../../../lib/i18n/getRequestLocale'
+import { buildPageMetadata } from '../../../lib/seo/pageMetadata'
 import { CareersPageHero } from '../../../components/sections/CareersPageHero.client'
 import { CareersPageContent } from '../../../components/sections/CareersPageContent.client'
 import { safePayloadFindCached } from '../../../utilities/safePayloadQuery'
@@ -163,10 +165,19 @@ export default async function CareersPage() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale()
   const careersPageContent = (await getCachedGlobal('careers-page-content', 2)()) as {
+    hero?: {
+      title?: string
+      titleAr?: string
+      description?: string
+      descriptionAr?: string
+    }
     seo?: {
       metaTitle?: string
       metaDescription?: string
+      metaTitleAr?: string
+      metaDescriptionAr?: string
       ogImage?: {
         url?: string
         alt?: string
@@ -174,24 +185,27 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   } | null
 
-  const metaTitle = careersPageContent?.seo?.metaTitle || 'Careers | Shamal Technologies'
-  const metaDescription = careersPageContent?.seo?.metaDescription || 'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia.'
+  const isAr = locale === 'ar'
+  const title = isAr
+    ? careersPageContent?.seo?.metaTitleAr ||
+      careersPageContent?.hero?.titleAr ||
+      'الوظائف | شمل للتقنيات'
+    : careersPageContent?.seo?.metaTitle || 'Careers | Shamal Technologies'
+  const description = isAr
+    ? careersPageContent?.seo?.metaDescriptionAr ||
+      careersPageContent?.hero?.descriptionAr ||
+      'انضم إلى فريق شمل للتقنيات وساهم في حلول الطائرات بدون طيار والمسح الجغرافي في السعودية.'
+    : careersPageContent?.seo?.metaDescription ||
+      'Join our team and help shape the future of drone and geospatial solutions in Saudi Arabia.'
 
-  return {
-    title: metaTitle,
-    description: metaDescription,
-    openGraph: {
-      title: metaTitle,
-      description: metaDescription,
-      images: careersPageContent?.seo?.ogImage?.url
-        ? [
-            {
-              url: careersPageContent.seo.ogImage.url,
-              alt: careersPageContent.seo.ogImage.alt || metaTitle,
-            },
-          ]
-        : undefined,
-    },
-  }
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: '/careers',
+    title,
+    description,
+    images: careersPageContent?.seo?.ogImage?.url
+      ? [{ url: careersPageContent.seo.ogImage.url, alt: careersPageContent.seo.ogImage.alt || title }]
+      : undefined,
+  })
 }
 

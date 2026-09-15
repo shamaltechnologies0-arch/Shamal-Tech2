@@ -19,7 +19,7 @@ import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { getCachedPublishedServicesList } from '../../../lib/cms/cached-queries'
 import { safePayloadFind } from '../../../utilities/safePayloadQuery'
 import { getRequestLocale } from '../../../lib/i18n/getRequestLocale'
-import { buildLanguageAlternates } from '../../../lib/seo/alternates'
+import { buildPageMetadata } from '../../../lib/seo/pageMetadata'
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale()
@@ -58,11 +58,15 @@ export async function generateMetadata(): Promise<Metadata> {
       servicesPageContent?.hero?.subtitle ||
       'Aerial survey, LiDAR, GIS, drone inspection, and construction monitoring from Shamal Technologies across Saudi Arabia.'
 
-  return {
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: '/services',
     title,
     description,
-    alternates: buildLanguageAlternates('/services', locale),
-  }
+    images: servicesPageContent?.seo?.ogImage?.url
+      ? [{ url: servicesPageContent.seo.ogImage.url, alt: servicesPageContent.seo.ogImage.alt || title }]
+      : undefined,
+  })
 }
 
 export const revalidate = 3600

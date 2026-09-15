@@ -55,6 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 3600
 
 export default async function HomePage() {
+  const locale = await getRequestLocale()
   // Fetch independent globals and services in parallel (reduces TTFB vs sequential awaits)
   const [
     homepageContent,
@@ -715,6 +716,7 @@ export default async function HomePage() {
           __html: JSON.stringify(
             getHomeStructuredData({
               siteUrl: getServerSideURL(),
+              locale,
               name: siteSettings?.siteName,
               description: siteSettings?.siteDescription || SITE_SEO_DESCRIPTION,
               logoUrl:

@@ -1,10 +1,13 @@
 import { localePath } from '../i18n/locale'
 
-type SitemapEntry = {
+export type SitemapEntry = {
   loc: string
   lastmod?: string
   changefreq?: string
   priority?: number
+  alternates?: {
+    languages?: Record<string, string>
+  }
 }
 
 function toArabicLoc(loc: string, siteUrl: string): string | null {

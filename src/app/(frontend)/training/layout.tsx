@@ -1,10 +1,21 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-export const metadata: Metadata = {
-  title: 'Training | Shamal Technologies',
-  description:
-    'Professional drone and UAS training from Shamal Technologies — structured courses, progress tracking, and completion certificates.',
+import { localizedPageMetadata } from '../../../lib/seo/localizedMetadata'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedPageMetadata({
+    en: {
+      title: 'Training | Shamal Technologies',
+      description:
+        'Professional drone and UAS training from Shamal Technologies — structured courses, progress tracking, and completion certificates.',
+    },
+    ar: {
+      title: 'التدريب | شمل للتقنيات',
+      description:
+        'تدريب مهني على الطائرات بدون طيار من شمل للتقنيات — دورات منظمة، متابعة التقدم، وشهادات إتمام.',
+    },
+  })
 }
 
 /**

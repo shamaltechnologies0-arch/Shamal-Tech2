@@ -87,7 +87,7 @@ function splitPathExtras(path: string): [string, string] {
 }
 
 export function htmlLang(locale: Locale): string {
-  return locale === 'ar' ? 'ar' : 'en'
+  return locale === 'ar' ? 'ar-SA' : 'en-SA'
 }
 
 export function htmlDir(locale: Locale): 'rtl' | 'ltr' {

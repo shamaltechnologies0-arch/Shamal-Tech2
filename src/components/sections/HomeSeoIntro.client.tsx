@@ -1,16 +1,14 @@
-'use client'
-
 import { LocalizedLink as Link } from '../LocalizedLink'
 import { ArrowRight } from 'lucide-react'
 
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
-import { useLanguage } from '../../providers/Language/LanguageContext'
+import { getRequestLocale } from '../../lib/i18n/getRequestLocale'
 import { getCommonTranslations } from '../../lib/translations/common'
 import { DRONE_COMPANY_FAQS } from '../../lib/seo/structuredData'
 
-export function HomeSeoIntro() {
-  const { language } = useLanguage()
+export async function HomeSeoIntro() {
+  const language = await getRequestLocale()
   const t = getCommonTranslations(language).seoIntro
   const isRtl = language === 'ar'
 

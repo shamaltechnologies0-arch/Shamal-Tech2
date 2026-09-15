@@ -8,6 +8,8 @@ import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
+import { getRequestLocale } from '../../../../../lib/i18n/getRequestLocale'
+import { buildPageMetadata, NOINDEX_ROBOTS } from '../../../../../lib/seo/pageMetadata'
 
 export const revalidate = 600
 
@@ -72,9 +74,19 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
-  return {
-    title: `Blog Posts - Page ${pageNumber || '1'} | Shamal Technologies`,
-  }
+  const locale = await getRequestLocale()
+  const isAr = locale === 'ar'
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: `/posts/page/${pageNumber || '1'}`,
+    title: isAr
+      ? `المدونة — صفحة ${pageNumber || '1'} | شمل للتقنيات`
+      : `Blog Posts - Page ${pageNumber || '1'} | Shamal Technologies`,
+    description: isAr
+      ? 'أحدث الرؤى حول الطائرات بدون طيار والمسح الجغرافي في السعودية.'
+      : 'Insights on drone surveying and geospatial solutions in Saudi Arabia.',
+    robots: Number(pageNumber) > 1 ? NOINDEX_ROBOTS : undefined,
+  })
 }
 
 export async function generateStaticParams() {

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { getRequestInternalPathname, getRequestLocale } from '../i18n/getRequestLocale'
 import type { Locale } from '../i18n/locale'
-import { ogLocale } from '../i18n/locale'
 import { buildLanguageAlternates } from './alternates'
+import { buildPageMetadata } from './pageMetadata'
 
 type LocaleCopy = {
   title: string
@@ -16,18 +16,13 @@ export async function localizedPageMetadata(copy: { en: LocaleCopy; ar: LocaleCo
   const path = await getRequestInternalPathname()
   const fields = locale === 'ar' ? copy.ar : copy.en
 
-  return {
+  return buildPageMetadata({
+    locale,
+    pathWithoutLocale: path,
     title: fields.title,
     description: fields.description,
     keywords: fields.keywords,
-    alternates: buildLanguageAlternates(path, locale),
-    openGraph: {
-      title: fields.title,
-      description: fields.description,
-      locale: ogLocale(locale),
-      url: path,
-    },
-  }
+  })
 }
 
 export async function withLocaleAlternates(metadata: Metadata): Promise<Metadata> {
