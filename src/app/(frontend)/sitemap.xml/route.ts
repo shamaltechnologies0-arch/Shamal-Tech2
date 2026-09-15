@@ -1,5 +1,5 @@
-import { getServerSideURL } from '../../utilities/getURL'
-import { renderSitemapIndex } from '../../lib/seo/sitemapXml'
+import { getServerSideURL } from '@/utilities/getURL'
+import { renderSitemapIndex } from '@/lib/seo/sitemapXml'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600
