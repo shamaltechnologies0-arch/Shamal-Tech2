@@ -203,6 +203,9 @@ export async function generateMetadata(): Promise<Metadata> {
     pathWithoutLocale: '/careers',
     title,
     description,
+    keywords: isAr
+      ? ['وظائف شمل للتقنيات', 'وظائف درون السعودية']
+      : ['Shamal Technologies careers', 'drone jobs Saudi Arabia'],
     images: careersPageContent?.seo?.ogImage?.url
       ? [{ url: careersPageContent.seo.ogImage.url, alt: careersPageContent.seo.ogImage.alt || title }]
       : undefined,

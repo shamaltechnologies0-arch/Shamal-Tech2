@@ -11,11 +11,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'Company Profile | Shamal Technologies',
       description:
         'Interactive company profile for Shamal Technologies — a drone company in Saudi Arabia and authorized DJI products seller offering drone survey, LiDAR mapping, volumetric analysis, and geospatial solutions.',
+      keywords: ['Shamal Technologies company profile', 'drone company profile Saudi Arabia'],
     },
     ar: {
       title: 'الملف التعريفي | شمل للتقنيات',
       description:
         'الملف التعريفي لشمل للتقنيات — شركة درون في السعودية وبائع منتجات DJI المعتمد لخدمات المسح الجوي وLiDAR والتحليل الحجمي والحلول الجيومكانية.',
+      keywords: ['الملف التعريفي شمل للتقنيات', 'شركة درون السعودية'],
     },
   })
 }

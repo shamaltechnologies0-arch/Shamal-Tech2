@@ -5,6 +5,7 @@ import { getServerSideURL } from '../../utilities/getURL'
 import { localePath, ogLocale, type Locale } from '../i18n/locale'
 import { buildLanguageAlternates } from './alternates'
 import { allArabicKeywordsFlat, ARABIC_META_DESCRIPTION, ARABIC_SITE_TITLE } from './arabicKeywords'
+import { resolvePageKeywords } from './cmsKeywords'
 import {
   allEnglishKeywordsFlat,
   SITE_SEO_DESCRIPTION,
@@ -62,7 +63,7 @@ type PageSeoInput = {
   robots?: Metadata['robots']
 }
 
-export function buildPageMetadata({
+export async function buildPageMetadata({
   locale,
   pathWithoutLocale,
   title,
@@ -70,15 +71,20 @@ export function buildPageMetadata({
   keywords,
   images,
   robots = INDEXABLE_ROBOTS,
-}: PageSeoInput): Metadata {
+}: PageSeoInput): Promise<Metadata> {
   const isAr = locale === 'ar'
   const canonicalPath = localePath(pathWithoutLocale || '/', locale)
   const siteUrl = getServerSideURL()
+  const mergedKeywords = await resolvePageKeywords({
+    locale,
+    pathWithoutLocale,
+    extra: keywords,
+  })
 
   return {
     title,
     description,
-    keywords: keywords?.length ? keywords : defaultKeywords(locale),
+    keywords: mergedKeywords,
     robots,
     alternates: buildLanguageAlternates(pathWithoutLocale || '/', locale, siteUrl),
     openGraph: mergeOpenGraph({
@@ -99,6 +105,8 @@ export function buildPageMetadata({
     other: {
       'content-language': isAr ? 'ar-SA' : 'en-SA',
       'og:locale:alternate': isAr ? 'en_SA' : 'ar_SA',
+      'apple-mobile-web-app-title': isAr ? 'شمل للتقنيات' : 'Shamal Technologies',
+      'application-name': isAr ? 'شمل للتقنيات' : 'Shamal Technologies',
       ...GEO_META,
     },
   }

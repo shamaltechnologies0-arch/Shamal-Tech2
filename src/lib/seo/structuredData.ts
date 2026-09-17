@@ -21,6 +21,7 @@ export type OrganizationSchemaInput = {
   email?: string | null
   address?: string | null
   sameAs?: Array<string | null | undefined>
+  keywords?: string[]
 }
 
 export function getOrganizationSchema(input: OrganizationSchemaInput & { locale?: 'en' | 'ar' } = {}) {
@@ -64,6 +65,7 @@ export function getOrganizationSchema(input: OrganizationSchemaInput & { locale?
     },
     knowsAbout: [
       ...TARGET_BRAND_KEYWORDS,
+      ...(input.keywords || []).slice(0, 30),
       'Drone survey',
       'Geospatial solutions',
       'LiDAR',
@@ -193,6 +195,7 @@ export function getHomeStructuredData(input: OrganizationSchemaInput & { locale?
         '@id': `${pageUrl}#webpage`,
         url: pageUrl,
         name: locale === 'ar' ? 'شمل للتقنيات | حلول الطائرات بدون طيار والمسح الجغرافي في السعودية' : 'Shamal Technologies | Drone & Geospatial Solutions in Saudi Arabia',
+        keywords: (input.keywords || TARGET_BRAND_KEYWORDS).join(', '),
         inLanguage: locale === 'ar' ? 'ar-SA' : 'en-SA',
         isPartOf: { '@id': `${siteUrl}/#website` },
         about: { '@id': `${siteUrl}/#organization` },

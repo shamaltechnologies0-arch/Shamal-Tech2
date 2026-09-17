@@ -39,11 +39,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'About Us | Drone & Geospatial Company in Saudi Arabia',
       description:
         'Shamal Technologies is a drone and geospatial company in Saudi Arabia. Learn about our Jeddah team, aerial survey, LiDAR, GIS, and drone inspection work across the Kingdom.',
+      keywords: ['about Shamal Technologies', 'drone company Jeddah', 'geospatial company Saudi Arabia'],
     },
     ar: {
       title: 'من نحن | شمل للتقنيات — حلول الطائرات بدون طيار والمسح الجغرافي في السعودية',
       description:
         'شمل للتقنيات شركة سعودية لحلول الطائرات بدون طيار والمسح الجغرافي. تعرّف على فريق جدة وخدمات المسح الجوي وLiDAR ونظم المعلومات الجغرافية وفحص الأصول في المملكة.',
+      keywords: ['من نحن شمل للتقنيات', 'شركة درون جدة', 'حلول جغرافية السعودية'],
     },
   })
 }

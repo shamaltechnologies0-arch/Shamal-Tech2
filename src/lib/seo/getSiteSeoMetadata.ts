@@ -1,73 +1,38 @@
 import type { Metadata } from 'next'
 
-import { getCachedGlobal } from '../../utilities/getGlobals'
 import { getServerSideURL } from '../../utilities/getURL'
 import { getRequestInternalPathname, getRequestLocale } from '../i18n/getRequestLocale'
 import { htmlLang } from '../i18n/locale'
-import {
-  allArabicKeywordsFlat,
-  ARABIC_META_DESCRIPTION,
-  ARABIC_SITE_TITLE,
-} from './arabicKeywords'
-import {
-  allEnglishKeywordsFlat,
-  SITE_SEO_DESCRIPTION,
-  SITE_SEO_TITLE,
-  TARGET_BRAND_KEYWORDS,
-} from './englishKeywords'
+import { ARABIC_META_DESCRIPTION, ARABIC_SITE_TITLE, allArabicKeywordsFlat } from './arabicKeywords'
+import { getSeoSettingsDoc } from './cmsKeywords'
+import { SITE_SEO_DESCRIPTION, SITE_SEO_TITLE } from './englishKeywords'
 import { buildPageMetadata, GEO_META } from './pageMetadata'
 
 type SeoSettingsDoc = {
-  primaryKeywords?: string[] | null
-  secondaryKeywords?: string[] | null
-  longTailKeywords?: string[] | null
   arabicPrimaryKeywords?: string[] | null
   arabicSecondaryKeywords?: string[] | null
-  arabicLongTailKeywords?: string[] | null
+  metaDescriptionTemplate?: string | null
   metaDescriptionTemplateAr?: string | null
 }
 
 export async function getSiteSeoMetadata(): Promise<Metadata> {
-  let settings: SeoSettingsDoc | null = null
+  const [settings, locale, path] = await Promise.all([
+    getSeoSettingsDoc(),
+    getRequestLocale(),
+    getRequestInternalPathname(),
+  ])
 
-  try {
-    settings = (await getCachedGlobal('seo-settings', 0)()) as SeoSettingsDoc
-  } catch {
-    settings = null
-  }
-
-  const locale = await getRequestLocale()
-  const path = await getRequestInternalPathname()
   const isAr = locale === 'ar'
-
-  const englishFromCms = [
-    ...(settings?.primaryKeywords || []),
-    ...(settings?.secondaryKeywords || []).slice(0, 12),
-    ...(settings?.longTailKeywords || []).slice(0, 8),
-  ]
-  const englishKeywords = englishFromCms.length > 0 ? englishFromCms : allEnglishKeywordsFlat()
-
-  const arabicFromCms = [
-    ...(settings?.arabicPrimaryKeywords || []),
-    ...(settings?.arabicSecondaryKeywords || []).slice(0, 12),
-    ...(settings?.arabicLongTailKeywords || []).slice(0, 8),
-  ]
-  const arabicKeywords = arabicFromCms.length > 0 ? arabicFromCms : allArabicKeywordsFlat()
-
   const title = isAr ? ARABIC_SITE_TITLE : SITE_SEO_TITLE
   const description = isAr
     ? settings?.metaDescriptionTemplateAr || ARABIC_META_DESCRIPTION
-    : SITE_SEO_DESCRIPTION
-  const keywords = isAr
-    ? [...new Set([...arabicKeywords, ...TARGET_BRAND_KEYWORDS])]
-    : [...new Set([...TARGET_BRAND_KEYWORDS, ...englishKeywords])]
+    : settings?.metaDescriptionTemplate || SITE_SEO_DESCRIPTION
 
-  const page = buildPageMetadata({
+  const page = await buildPageMetadata({
     locale,
     pathWithoutLocale: path,
     title,
     description,
-    keywords,
   })
 
   return {
@@ -86,6 +51,8 @@ export async function getSiteSeoMetadata(): Promise<Metadata> {
       ...GEO_META,
       'content-language': htmlLang(locale),
       'og:locale:alternate': isAr ? 'en_SA' : 'ar_SA',
+      'apple-mobile-web-app-title': isAr ? 'شمل للتقنيات' : 'Shamal Technologies',
+      'application-name': isAr ? 'شمل للتقنيات' : 'Shamal Technologies',
     },
     icons: {
       icon: [

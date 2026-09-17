@@ -36,16 +36,29 @@ import { localizedPageMetadata } from '../../lib/seo/localizedMetadata'
 import { getHomeStructuredData } from '../../lib/seo/structuredData'
 import { getServerSideURL } from '../../utilities/getURL'
 import { getRequestLocale } from '../../lib/i18n/getRequestLocale'
+import { resolvePageKeywords } from '../../lib/seo/cmsKeywords'
 
 export async function generateMetadata(): Promise<Metadata> {
   return localizedPageMetadata({
     en: {
       title: SITE_SEO_TITLE,
       description: SITE_SEO_DESCRIPTION,
+      keywords: [
+        'Shamal Technologies',
+        'drone company in Saudi Arabia',
+        'DJI products Saudi Arabia',
+        'aerial survey Jeddah',
+      ],
     },
     ar: {
       title: ARABIC_SITE_TITLE,
       description: ARABIC_META_DESCRIPTION,
+      keywords: [
+        'شمل للتقنيات',
+        'شركة درون في السعودية',
+        'منتجات DJI السعودية',
+        'مسح جوي جدة',
+      ],
     },
   })
 }
@@ -63,6 +76,7 @@ export default async function HomePage() {
     aboutContent,
     sectorsContent,
     servicesResultInitial,
+    pageKeywords,
   ] = await Promise.all([
     getCachedGlobal('homepage-content', 1)() as Promise<{
     hero?: {
@@ -280,6 +294,7 @@ export default async function HomePage() {
         },
       },
     }),
+    resolvePageKeywords({ locale, pathWithoutLocale: '/' }),
   ])
 
   let servicesResult = servicesResultInitial
@@ -717,6 +732,7 @@ export default async function HomePage() {
             getHomeStructuredData({
               siteUrl: getServerSideURL(),
               locale,
+              keywords: pageKeywords,
               name: siteSettings?.siteName,
               description: siteSettings?.siteDescription || SITE_SEO_DESCRIPTION,
               logoUrl:

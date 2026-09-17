@@ -179,6 +179,9 @@ export async function generateMetadata(): Promise<Metadata> {
     pathWithoutLocale: '/posts',
     title,
     description,
+    keywords: isAr
+      ? ['مدونة شمل للتقنيات', 'مقالات درون السعودية']
+      : ['Shamal Technologies blog', 'drone surveying insights'],
     images: postsPageContent?.seo?.ogImage?.url
       ? [{ url: postsPageContent.seo.ogImage.url as string, alt: title }]
       : undefined,

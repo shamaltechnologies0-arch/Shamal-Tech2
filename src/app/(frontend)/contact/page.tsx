@@ -16,11 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'Contact Us | Drone & Geospatial Company in Saudi Arabia',
       description:
         'Contact Shamal Technologies in Jeddah for aerial survey, LiDAR, GIS, drone inspection, and authorized DJI products across Saudi Arabia.',
+      keywords: ['contact Shamal Technologies', 'drone company Jeddah contact'],
     },
     ar: {
       title: 'تواصل معنا | شمل للتقنيات في السعودية',
       description:
         'تواصل مع شمل للتقنيات في جدة لخدمات المسح الجوي وLiDAR ونظم المعلومات الجغرافية وفحص الأصول ومنتجات DJI المعتمدة في السعودية.',
+      keywords: ['تواصل شمل للتقنيات', 'شركة درون جدة'],
     },
   })
 }

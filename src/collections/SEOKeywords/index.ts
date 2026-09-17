@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 
+import { revalidateSEOKeywords, revalidateSEOKeywordsDelete } from './hooks/revalidateSEOKeywords'
+
 export const SEOKeywords: CollectionConfig = {
   slug: 'seo-keywords',
   access: {
@@ -13,6 +15,12 @@ export const SEOKeywords: CollectionConfig = {
   admin: {
     defaultColumns: ['keyword', 'language', 'category', 'priority', 'active'],
     useAsTitle: 'keyword',
+    description:
+      'Active keywords are merged into every public page meta keywords. Toggle Active off to stop using a phrase.',
+  },
+  hooks: {
+    afterChange: [revalidateSEOKeywords],
+    afterDelete: [revalidateSEOKeywordsDelete],
   },
   fields: [
     {

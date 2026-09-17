@@ -63,6 +63,9 @@ export async function generateMetadata(): Promise<Metadata> {
     pathWithoutLocale: '/services',
     title,
     description,
+    keywords: isAr
+      ? ['خدمات المسح الجوي', 'خدمات درون السعودية']
+      : ['aerial survey services', 'drone services Saudi Arabia'],
     images: servicesPageContent?.seo?.ogImage?.url
       ? [{ url: servicesPageContent.seo.ogImage.url, alt: servicesPageContent.seo.ogImage.alt || title }]
       : undefined,

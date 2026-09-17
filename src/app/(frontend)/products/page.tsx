@@ -9,8 +9,6 @@ import { CinematicReveal } from '../../../utilities/animations'
 import { getCachedGlobal } from '../../../utilities/getGlobals'
 import { getCachedPublishedProducts } from '../../../lib/cms/cached-queries'
 import { ProductsSeoIntro } from '../../../components/sections/ProductsSeoIntro.client'
-import { TARGET_BRAND_KEYWORDS } from '../../../lib/seo/englishKeywords'
-import { allArabicKeywordsFlat } from '../../../lib/seo/arabicKeywords'
 import { getOrganizationSchema } from '../../../lib/seo/structuredData'
 import { getServerSideURL } from '../../../utilities/getURL'
 import { getRequestLocale } from '../../../lib/i18n/getRequestLocale'
@@ -59,8 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     keywords: isAr
-      ? [...allArabicKeywordsFlat().slice(0, 12), ...TARGET_BRAND_KEYWORDS]
-      : [...TARGET_BRAND_KEYWORDS, 'DJI enterprise drones', 'DJI Dock', 'drone equipment Saudi Arabia'],
+      ? ['منتجات DJI', 'بائع DJI المعتمد', 'طائرات درون للبيع']
+      : ['DJI enterprise drones', 'DJI Dock', 'drone equipment Saudi Arabia'],
     images: productsPageContent?.seo?.ogImage?.url
       ? [{ url: productsPageContent.seo.ogImage.url, alt: productsPageContent.seo.ogImage.alt || title }]
       : undefined,

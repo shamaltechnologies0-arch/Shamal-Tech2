@@ -4,7 +4,7 @@ import type { Media, Page, Post, Config } from '../payload-types'
 
 import { getServerSideURL } from './getURL'
 import { getRequestLocale } from '../lib/i18n/getRequestLocale'
-import { defaultKeywords, buildPageMetadata } from '../lib/seo/pageMetadata'
+import { buildPageMetadata } from '../lib/seo/pageMetadata'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -52,7 +52,7 @@ export const generateMeta = async (args: {
     pathWithoutLocale: path,
     title,
     description,
-    keywords: [...extraKeywords, ...defaultKeywords(locale)],
+    keywords: extraKeywords,
     images: ogImage ? [{ url: ogImage }] : undefined,
   })
 }

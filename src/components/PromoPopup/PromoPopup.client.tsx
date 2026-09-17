@@ -3,16 +3,16 @@
 import { useCallback, useEffect, useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
-import { LocalizedLink as Link } from '../LocalizedLink'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { GraduationCap, ShoppingBag, X } from 'lucide-react'
 
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getCommonTranslations } from '../../lib/translations/common'
-import { stripLocalePrefix } from '../../lib/i18n/locale'
+import { localizeHref, stripLocalePrefix } from '../../lib/i18n/locale'
 import type { PromoPopupData, PromoPopupSectionData } from './types'
 import { DEFAULT_PROMO_POPUP } from './types'
+import { isExternalPromoHref, normalizePromoHref } from './promoHref'
 
 const STORAGE_KEY = 'shamal-promo-modal-dismissed-at'
 
@@ -75,6 +75,7 @@ type PromoPopupClientProps = {
 
 export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClientProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const titleId = useId()
   const reduceMotion = useReducedMotion()
   const { language } = useLanguage()
@@ -87,6 +88,7 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
   const { enabled, showIntervalDays, openDelayMs, sections } = data
   const localizedSections = sections.map((section) => {
     const copy = section.id === 'academy' ? t.promoPopup.academy : t.promoPopup.products
+    const fallbackHref = section.id === 'academy' ? '/training' : '/products'
     return {
       ...section,
       badge: copy.badge,
@@ -94,13 +96,40 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
       subtitle: copy.subtitle,
       ctaLabel: copy.ctaLabel,
       imageAlt: copy.imageAlt,
+      ctaHref: normalizePromoHref(section.ctaHref, fallbackHref),
     }
   })
 
-  const close = useCallback(() => {
+  const close = useCallback((event?: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
     persistDismissal()
     setOpen(false)
   }, [])
+
+  const navigateToSection = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+        persistDismissal()
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+      persistDismissal()
+
+      const destination = isExternalPromoHref(href) ? href : localizeHref(href, language)
+      setOpen(false)
+
+      if (isExternalPromoHref(destination)) {
+        window.location.assign(destination)
+        return
+      }
+
+      router.push(destination)
+    },
+    [language, router],
+  )
 
   useEffect(() => {
     setMounted(true)
@@ -121,10 +150,11 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
   useEffect(() => {
     if (!open) return
 
-    const previousOverflow = document.body.style.overflow
-    const previousTouchAction = document.body.style.touchAction
+    const html = document.documentElement
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = html.style.overflow
     document.body.style.overflow = 'hidden'
-    document.body.style.touchAction = 'none'
+    html.style.overflow = 'hidden'
     const resumeLenis = stopLenis()
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -133,8 +163,8 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      document.body.style.overflow = previousOverflow
-      document.body.style.touchAction = previousTouchAction
+      document.body.style.overflow = previousBodyOverflow
+      html.style.overflow = previousHtmlOverflow
       resumeLenis?.()
       window.removeEventListener('keydown', onKeyDown)
     }
@@ -142,7 +172,6 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
 
   if (!mounted || !enabled || hideForRoute) return null
 
-  // Avoid scale + backdrop-filter together — iOS Safari often renders that combo invisible.
   const overlayTransition = reduceMotion
     ? { duration: 0 }
     : { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const }
@@ -155,19 +184,21 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
     <AnimatePresence>
       {open ? (
         <div
-          className="fixed inset-0 z-[10050] flex items-stretch justify-center md:items-center md:p-6"
+          className="fixed inset-0 z-[11000] flex items-stretch justify-center md:items-center md:p-6"
           style={{ WebkitTransform: 'translateZ(0)' }}
         >
           <motion.button
             type="button"
             aria-label={t.promoPopup.closeOverlay}
-            className="absolute inset-0 bg-[#020810]/80 md:bg-[#020810]/70 md:backdrop-blur-md"
+            className="absolute inset-0 bg-[#020810]/80 md:bg-[#020810]/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={overlayTransition}
             onClick={close}
-          />
+          >
+            <span className="sr-only">{t.promoPopup.closeOverlay}</span>
+          </motion.button>
 
           <motion.div
             role="dialog"
@@ -175,92 +206,111 @@ export function PromoPopupClient({ data = DEFAULT_PROMO_POPUP }: PromoPopupClien
             aria-labelledby={titleId}
             lang={language}
             dir={isRtl ? 'rtl' : 'ltr'}
-            className="relative z-10 flex max-h-[100dvh] min-h-0 w-full flex-col overflow-y-auto overscroll-contain border border-white/15 bg-[linear-gradient(160deg,#0A3254_0%,#081c30_55%,#061220_100%)] shadow-[0_32px_80px_rgba(0,0,0,0.45)] md:max-h-[min(90vh,720px)] md:w-[1000px] md:max-w-[calc(100vw-3rem)] md:rounded-2xl md:bg-[linear-gradient(160deg,rgba(10,50,84,0.96)_0%,rgba(8,28,48,0.98)_55%,rgba(6,18,32,1)_100%)]"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
+            className="relative z-10 flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden border border-white/15 bg-[linear-gradient(160deg,#0A3254_0%,#081c30_55%,#061220_100%)] shadow-[0_32px_80px_rgba(0,0,0,0.45)] md:h-auto md:max-h-[min(90dvh,720px)] md:w-[1000px] md:max-w-[calc(100vw-3rem)] md:rounded-2xl md:bg-[linear-gradient(160deg,rgba(10,50,84,0.96)_0%,rgba(8,28,48,0.98)_55%,rgba(6,18,32,1)_100%)]"
+            style={{
+              paddingTop: 'env(safe-area-inset-top)',
+              paddingBottom: 'env(safe-area-inset-bottom)',
+            }}
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
             transition={modalTransition}
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
           >
             <span id={titleId} className="sr-only">
               {localizedSections.map((s) => s.title).join(` ${t.promoPopup.and} `)}
             </span>
 
-            <button
-              type="button"
-              onClick={close}
-              className="absolute end-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:end-4 md:top-4"
-              aria-label={t.promoPopup.close}
-            >
-              <X className="h-5 w-5" aria-hidden />
-            </button>
+            <div className="relative z-30 flex shrink-0 items-center justify-end px-3 py-2 md:pointer-events-none md:absolute md:inset-x-0 md:top-0 md:px-4 md:py-4">
+              <button
+                type="button"
+                onClick={close}
+                onPointerUp={(event) => {
+                  if (event.pointerType !== 'mouse') close(event)
+                }}
+                className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/15 text-white shadow-lg transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                style={{ touchAction: 'manipulation' }}
+                aria-label={t.promoPopup.close}
+              >
+                <X className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
 
-            <div className="flex min-h-0 flex-1 flex-col md:grid md:grid-cols-2 md:overflow-hidden">
-              {localizedSections.map((section, index) => (
-                <motion.section
-                  key={section.id}
-                  className={`relative flex flex-col justify-between gap-4 px-5 pb-6 pt-14 sm:px-7 sm:pb-8 sm:pt-16 md:min-h-0 md:gap-5 md:px-8 md:pb-9 md:pt-10 ${
-                    index === 0
-                      ? 'border-b border-white/10 md:border-b-0 md:border-e'
-                      : 'pb-10 md:pb-9'
-                  }`}
-                  initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0 }
-                      : { delay: 0.08 + index * 0.06, duration: 0.3, ease: [0.16, 1, 0.3, 1] }
-                  }
-                >
-                  <div className="space-y-3">
-                    <div
-                      className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white/80 ${
-                        isRtl ? 'tracking-normal' : 'uppercase tracking-[0.14em]'
-                      }`}
-                    >
-                      <SectionIcon id={section.id} />
-                      {section.badge}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="flex flex-col md:grid md:grid-cols-2">
+                {localizedSections.map((section, index) => (
+                  <motion.section
+                    key={section.id}
+                    className={`relative flex flex-col justify-between gap-3 px-5 pb-5 pt-2 sm:gap-4 sm:px-7 sm:pb-7 md:min-h-0 md:gap-5 md:px-8 md:pb-9 md:pt-14 ${
+                      index === 0
+                        ? 'border-b border-white/10 md:border-b-0 md:border-e'
+                        : 'pb-8 md:pb-9'
+                    }`}
+                    initial={reduceMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : { delay: 0.06 + index * 0.05, duration: 0.25, ease: [0.16, 1, 0.3, 1] }
+                    }
+                  >
+                    <div className="space-y-2.5 sm:space-y-3">
+                      <div
+                        className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white/80 ${
+                          isRtl ? 'tracking-normal' : 'uppercase tracking-[0.14em]'
+                        }`}
+                      >
+                        <SectionIcon id={section.id} />
+                        {section.badge}
+                      </div>
+                      <h2
+                        className={`font-[family-name:var(--font-rajdhani)] text-[1.4rem] font-bold leading-tight text-white sm:text-2xl md:text-[1.65rem] ${
+                          isRtl ? 'tracking-normal' : 'tracking-wide'
+                        }`}
+                      >
+                        {section.title}
+                      </h2>
+                      <p className="max-w-md text-sm leading-relaxed text-white/70 sm:text-[15px]">
+                        {section.subtitle}
+                      </p>
                     </div>
-                    <h2
-                      className={`font-[family-name:var(--font-rajdhani)] text-[1.55rem] font-bold leading-tight text-white sm:text-2xl md:text-[1.65rem] ${
+
+                    <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#061422] shadow-inner">
+                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(34,96,147,0.28),transparent_60%)]" />
+                      <div className="relative h-32 w-full sm:h-40 md:h-auto md:aspect-[5/3]">
+                        <Image
+                          src={section.imageSrc}
+                          alt={section.imageAlt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 500px"
+                          className={
+                            section.imageFit === 'contain'
+                              ? 'object-contain p-3 sm:p-6'
+                              : 'object-cover'
+                          }
+                          priority={index === 0}
+                        />
+                      </div>
+                    </div>
+
+                    <a
+                      href={
+                        isExternalPromoHref(section.ctaHref)
+                          ? section.ctaHref
+                          : localizeHref(section.ctaHref, language)
+                      }
+                      onClick={(event) => navigateToSection(event, section.ctaHref)}
+                      className={`inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#226093] to-[#0A3254] px-5 py-3.5 text-center text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,50,84,0.45)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:min-h-[52px] sm:text-[15px] ${
                         isRtl ? 'tracking-normal' : 'tracking-wide'
                       }`}
+                      style={{ touchAction: 'manipulation' }}
                     >
-                      {section.title}
-                    </h2>
-                    <p className="max-w-md text-sm leading-relaxed text-white/70 sm:text-[15px]">
-                      {section.subtitle}
-                    </p>
-                  </div>
-
-                  <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#061422] shadow-inner">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(34,96,147,0.28),transparent_60%)]" />
-                    <div className="relative aspect-[16/10] w-full md:aspect-[5/3]">
-                      <Image
-                        src={section.imageSrc}
-                        alt={section.imageAlt}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 500px"
-                        className={
-                          section.imageFit === 'contain'
-                            ? 'object-contain p-4 sm:p-6'
-                            : 'object-cover'
-                        }
-                        priority={index === 0}
-                      />
-                    </div>
-                  </div>
-
-                  <Link
-                    href={section.ctaHref}
-                    onClick={close}
-                    className={`inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#226093] to-[#0A3254] px-5 py-3.5 text-center text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,50,84,0.45)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:min-h-[52px] sm:text-[15px] ${
-                      isRtl ? 'tracking-normal' : 'tracking-wide'
-                    }`}
-                  >
-                    {section.ctaLabel}
-                  </Link>
-                </motion.section>
-              ))}
+                      {section.ctaLabel}
+                    </a>
+                  </motion.section>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>

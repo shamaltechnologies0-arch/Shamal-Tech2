@@ -5,6 +5,7 @@ import {
   type PromoPopupData,
   type PromoPopupSectionData,
 } from './types'
+import { normalizePromoHref } from './promoHref'
 
 type CmsSection = NonNullable<PromoPopupContent['academy']>
 
@@ -41,7 +42,7 @@ function mapSection(
     imageAlt: cms?.imageAlt?.trim() || mediaAlt || fallback.imageAlt,
     imageFit: cms?.imageFit === 'contain' || cms?.imageFit === 'cover' ? cms.imageFit : fallback.imageFit,
     ctaLabel: cms?.ctaLabel?.trim() || fallback.ctaLabel,
-    ctaHref: cms?.ctaHref?.trim() || fallback.ctaHref,
+    ctaHref: normalizePromoHref(cms?.ctaHref, fallback.ctaHref),
   }
 }
 

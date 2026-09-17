@@ -9,11 +9,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'Training | Shamal Technologies',
       description:
         'Professional drone and UAS training from Shamal Technologies — structured courses, progress tracking, and completion certificates.',
+      keywords: ['drone training Saudi Arabia', 'UAS training', 'Shamal Academy'],
     },
     ar: {
       title: 'التدريب | شمل للتقنيات',
       description:
         'تدريب مهني على الطائرات بدون طيار من شمل للتقنيات — دورات منظمة، متابعة التقدم، وشهادات إتمام.',
+      keywords: ['تدريب درون السعودية', 'أكاديمية شمل'],
     },
   })
 }

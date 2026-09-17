@@ -49,6 +49,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/admin/', '/api/', '/next/'],
       },
+      {
+        userAgent: 'Applebot',
+        allow: '/',
+        disallow: ['/admin/', '/api/', '/next/'],
+      },
     ],
     sitemap: sitemaps,
     host,

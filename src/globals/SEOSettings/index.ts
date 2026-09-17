@@ -2,11 +2,20 @@ import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 
+import { revalidateSEOSettings } from './hooks/revalidateSEOSettings'
+
 export const SEOSettings: GlobalConfig = {
   slug: 'seo-settings',
   access: {
     read: anyone,
     update: anyone,
+  },
+  hooks: {
+    afterChange: [revalidateSEOSettings],
+  },
+  admin: {
+    description:
+      'Keywords saved here are applied to every public page (meta keywords, Open Graph, and JSON-LD). Save this global after edits so the live site cache refreshes.',
   },
   fields: [
     {
@@ -14,6 +23,9 @@ export const SEOSettings: GlobalConfig = {
       type: 'text',
       hasMany: true,
       label: 'Primary SEO Keywords',
+      admin: {
+        description: 'These phrases are injected into every public page meta tag after you save.',
+      },
       defaultValue: [
         'DJI Products',
         'Drone company',

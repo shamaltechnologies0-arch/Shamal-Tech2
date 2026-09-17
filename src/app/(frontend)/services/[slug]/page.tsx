@@ -6,8 +6,6 @@ import { unstable_cache } from 'next/cache'
 import { ServiceHeroSection } from '../../../../components/sections/ServiceHeroSection.client'
 import { ServiceDetailContent } from '../../../../components/sections/ServiceDetailContent.client'
 import { ServiceBreadcrumb } from '../../../../components/sections/ServiceBreadcrumb.client'
-import { allArabicKeywordsFlat } from '../../../../lib/seo/arabicKeywords'
-import { TARGET_BRAND_KEYWORDS } from '../../../../lib/seo/englishKeywords'
 import { getRequestLocale } from '../../../../lib/i18n/getRequestLocale'
 import { buildPageMetadata } from '../../../../lib/seo/pageMetadata'
 
@@ -103,7 +101,7 @@ export async function generateMetadata({
     description: isAr
       ? descriptionAr || service.seo?.description || service.heroDescription || ''
       : service.seo?.description || service.heroDescription || '',
-    keywords: [service.title, titleAr, ...(isAr ? allArabicKeywordsFlat().slice(0, 8) : [...TARGET_BRAND_KEYWORDS])]
+    keywords: [service.title, titleAr, isAr ? 'خدمات درون' : 'drone services']
       .filter((value): value is string => Boolean(value)),
   })
 }
