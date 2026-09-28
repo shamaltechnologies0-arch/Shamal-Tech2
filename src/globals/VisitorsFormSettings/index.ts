@@ -13,7 +13,7 @@ export const VisitorsFormSettings: GlobalConfig = {
   admin: {
     group: 'CRM',
     description:
-      'Control the visitors form at /client-form (or /events/client-form): event banner image, submission collection, and email alerts.',
+      'Control the visitors form at /events/client-form: event banner image, submission collection, and email alerts.',
   },
   hooks: {
     afterChange: [revalidateVisitorsForm],

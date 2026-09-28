@@ -73,6 +73,12 @@ export async function middleware(request: NextRequest) {
 
   const { locale, pathname: internalPath } = parseLocalePath(originalPath)
 
+  if (internalPath === '/client-form') {
+    const url = request.nextUrl.clone()
+    url.pathname = locale === 'ar' ? '/ar/events/client-form' : '/events/client-form'
+    return NextResponse.redirect(url, 308)
+  }
+
   if (isMaintenanceMode() && !isMaintenanceBypassPath(internalPath)) {
     return maintenanceMiddlewareResponse(request)
   }

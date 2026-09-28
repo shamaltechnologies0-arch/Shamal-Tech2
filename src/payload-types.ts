@@ -4441,7 +4441,7 @@ export interface SeoSetting {
   createdAt?: string | null;
 }
 /**
- * Control the visitors form at /client-form (or /events/client-form): event banner image, submission collection, and email alerts.
+ * Control the visitors form at /events/client-form: event banner image, submission collection, and email alerts.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "visitors-form-settings".
