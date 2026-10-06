@@ -2,7 +2,7 @@
  * Shared Shamal Technologies HTML email shell for form auto-replies.
  */
 
-import { SHAMAL_LOGO_PRIMARY } from '@/lib/company-profile/assets'
+const SHAMAL_LOGO_PRIMARY = '/logo-primary.svg'
 
 export interface ShamalFormEmailLayoutOptions {
   pageTitle: string

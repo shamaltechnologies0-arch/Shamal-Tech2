@@ -10,31 +10,28 @@ import { stripLocalePrefix } from '../../lib/i18n/locale'
 
 function getLayoutFlags(pathname: string) {
   const isMinimalLayout = pathname.startsWith('/profile/') || pathname.startsWith('/employee/')
-  const isCompanyProfile = pathname === '/company-profile'
   return {
     isMinimalLayout,
-    hideFooter: isMinimalLayout || isCompanyProfile,
-    hideSiteHeader: isCompanyProfile,
-    hideChatbot: isMinimalLayout || pathname.startsWith('/training') || isCompanyProfile,
-    hidePromoPopup: isMinimalLayout || isCompanyProfile,
+    hideFooter: isMinimalLayout,
+    hideChatbot: isMinimalLayout || pathname.startsWith('/training'),
+    hidePromoPopup: isMinimalLayout,
   }
 }
 
 /**
  * Renders site chrome only when needed. Avoids Header/Footer CMS fetches on
- * routes that hide them (company profile, employee cards, etc.).
+ * routes that hide them (employee cards, etc.).
  */
 export async function LayoutChrome({ children }: { children: React.ReactNode }) {
   const headerStore = await headers()
   const pathname = stripLocalePrefix(
     headerStore.get('x-internal-pathname') || headerStore.get('x-pathname') || '',
   )
-  const { isMinimalLayout, hideFooter, hideSiteHeader, hideChatbot, hidePromoPopup } =
-    getLayoutFlags(pathname)
+  const { isMinimalLayout, hideFooter, hideChatbot, hidePromoPopup } = getLayoutFlags(pathname)
 
   return (
     <>
-      {isMinimalLayout ? <ProfileHeader /> : !hideSiteHeader ? <Header /> : null}
+      {isMinimalLayout ? <ProfileHeader /> : <Header />}
       {children}
       {!hideFooter ? <Footer /> : null}
       {!hideChatbot ? <Chatbot /> : null}

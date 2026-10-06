@@ -1526,6 +1526,8 @@ export interface NewsletterSubscription {
   createdAt: string;
 }
 /**
+ * Active keywords are merged into every public page meta keywords. Toggle Active off to stop using a phrase.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seo-keywords".
  */
@@ -4135,6 +4137,23 @@ export interface PostsPageContent {
      */
     ogImage?: (string | null) | Media;
   };
+  /**
+   * Shown at the end of every blog post. Update this section once to change the call to action on all posts.
+   */
+  cta?: {
+    badge?: string | null;
+    badgeAr?: string | null;
+    title?: string | null;
+    titleAr?: string | null;
+    description?: string | null;
+    descriptionAr?: string | null;
+    buttonLabel?: string | null;
+    buttonLabelAr?: string | null;
+    /**
+     * Internal path such as /contact, or a full URL.
+     */
+    buttonHref?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4398,11 +4417,16 @@ export interface SectorsContent {
   createdAt?: string | null;
 }
 /**
+ * Keywords saved here are applied to every public page (meta keywords, Open Graph, and JSON-LD). Save this global after edits so the live site cache refreshes.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seo-settings".
  */
 export interface SeoSetting {
   id: string;
+  /**
+   * These phrases are injected into every public page meta tag after you save.
+   */
   primaryKeywords?: string[] | null;
   secondaryKeywords?: string[] | null;
   longTailKeywords?: string[] | null;
@@ -4958,6 +4982,19 @@ export interface PostsPageContentSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
         ogImage?: T;
+      };
+  cta?:
+    | T
+    | {
+        badge?: T;
+        badgeAr?: T;
+        title?: T;
+        titleAr?: T;
+        description?: T;
+        descriptionAr?: T;
+        buttonLabel?: T;
+        buttonLabelAr?: T;
+        buttonHref?: T;
       };
   updatedAt?: T;
   createdAt?: T;

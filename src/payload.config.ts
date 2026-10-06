@@ -1,6 +1,12 @@
+import dns from 'node:dns'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
+
+// Windows Node often refuses MongoDB Atlas SRV lookups on the default resolver.
+if (process.platform === 'win32' && process.env.NODE_ENV !== 'production') {
+  dns.setServers(['1.1.1.1', '8.8.8.8'])
+}
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'

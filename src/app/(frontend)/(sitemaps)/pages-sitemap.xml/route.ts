@@ -53,10 +53,6 @@ const getPagesSitemap = unstable_cache(
         lastmod: dateFallback,
       },
       {
-        loc: `${SITE_URL}/company-profile`,
-        lastmod: dateFallback,
-      },
-      {
         loc: `${SITE_URL}/training`,
         lastmod: dateFallback,
       },

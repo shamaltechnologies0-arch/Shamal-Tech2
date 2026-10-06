@@ -14,7 +14,6 @@ const CORE_PATHS = [
   '/contact',
   '/posts',
   '/careers',
-  '/company-profile',
 ]
 
 export async function GET() {

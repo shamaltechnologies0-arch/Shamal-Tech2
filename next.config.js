@@ -56,6 +56,14 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
       // Allow images from the server URL
       ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
         try {
@@ -97,7 +105,6 @@ const nextConfig = {
     },
     optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog'],
   },
-  serverExternalPackages: ['pptxgenjs'],
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

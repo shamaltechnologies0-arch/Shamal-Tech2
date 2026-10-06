@@ -5,10 +5,21 @@ import React from 'react'
 import type { Post } from '../../payload-types'
 
 import { Media } from '../../components/Media'
-import { formatDateTime } from '../../utilities/formatDateTime'
 import { useLanguage } from '../../providers/Language/LanguageContext'
 import { getCommonTranslations } from '../../lib/translations/common'
 import { getLocalizedValue } from '../../lib/localization'
+
+function formatPostTimestamp(value: string, language: 'en' | 'ar') {
+  return new Date(value).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hourCycle: 'h12',
+    timeZone: 'Asia/Riyadh',
+  })
+}
 
 export const PostHeroClient: React.FC<{
   post: Post
@@ -64,15 +75,7 @@ export const PostHeroClient: React.FC<{
               <div className="flex flex-col gap-1">
                 <p className="text-sm">{t.datePublished}</p>
 
-                <time dateTime={publishedAt}>
-                  {language === 'ar'
-                    ? new Date(publishedAt).toLocaleDateString('ar-SA', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : formatDateTime(publishedAt)}
-                </time>
+                <time dateTime={publishedAt}>{formatPostTimestamp(publishedAt, language)}</time>
               </div>
             )}
           </div>

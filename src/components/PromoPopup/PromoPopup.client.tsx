@@ -20,7 +20,6 @@ const HIDDEN_PATH_PREFIXES = [
   '/training',
   '/products',
   '/admin',
-  '/company-profile',
   '/profile/',
   '/employee/',
   '/api',

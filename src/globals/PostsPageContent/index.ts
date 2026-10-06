@@ -93,6 +93,76 @@ export const PostsPageContent: GlobalConfig = {
         },
       ],
     },
+    {
+      name: 'cta',
+      type: 'group',
+      label: 'Blog Call to Action',
+      admin: {
+        description:
+          'Shown at the end of every blog post. Update this section once to change the call to action on all posts.',
+      },
+      fields: [
+        {
+          name: 'badge',
+          type: 'text',
+          label: 'Badge',
+          defaultValue: 'Work With Us',
+        },
+        {
+          name: 'badgeAr',
+          type: 'text',
+          label: 'Badge (Arabic)',
+          defaultValue: 'اعمل معنا',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Title',
+          defaultValue: 'Plan a Compliant Drone Survey',
+        },
+        {
+          name: 'titleAr',
+          type: 'text',
+          label: 'Title (Arabic)',
+          defaultValue: 'خطّط لمسح جوي متوافق مع الأنظمة',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Description',
+          defaultValue:
+            'Shamal Technologies supports construction, engineering, and mining teams with GACA-aligned aerial mapping, LiDAR, and geospatial data across Saudi Arabia.',
+        },
+        {
+          name: 'descriptionAr',
+          type: 'textarea',
+          label: 'Description (Arabic)',
+          defaultValue:
+            'تدعم شمل للتقنيات فرق الإنشاءات والهندسة والتعدين بالمسح الجوي وخرائط الليدار والبيانات الجيومكانية المتوافقة مع متطلبات الهيئة العامة للطيران المدني في المملكة العربية السعودية.',
+        },
+        {
+          name: 'buttonLabel',
+          type: 'text',
+          label: 'Button Label',
+          defaultValue: 'Talk to Our Team',
+        },
+        {
+          name: 'buttonLabelAr',
+          type: 'text',
+          label: 'Button Label (Arabic)',
+          defaultValue: 'تواصل مع فريقنا',
+        },
+        {
+          name: 'buttonHref',
+          type: 'text',
+          label: 'Button Link',
+          defaultValue: '/contact',
+          admin: {
+            description: 'Internal path such as /contact, or a full URL.',
+          },
+        },
+      ],
+    },
   ],
 }
 

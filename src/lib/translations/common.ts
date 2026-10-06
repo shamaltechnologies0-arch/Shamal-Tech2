@@ -15,7 +15,6 @@ export const commonTranslations = {
       blog: 'Blog',
       blogs: 'Blogs',
       contact: 'Contact',
-      companyProfile: 'Company Profile',
     },
     // Footer
     footer: {
@@ -298,7 +297,6 @@ export const commonTranslations = {
       blog: 'المدونة',
       blogs: 'المدونة',
       contact: 'تواصل معنا',
-      companyProfile: 'الملف التعريفي للشركة',
     },
     // Footer
     footer: {

@@ -181,6 +181,79 @@ export function getFaqSchema(siteUrl: string, locale: 'en' | 'ar' = 'en') {
   }
 }
 
+export function getBlogPostingSchema(input: {
+  siteUrl: string
+  locale?: 'en' | 'ar'
+  path: string
+  title: string
+  description: string
+  imageUrl?: string | null
+  datePublished?: string | null
+  dateModified?: string | null
+  authorName?: string | null
+  keywords?: string[]
+}) {
+  const siteUrl = input.siteUrl.replace(/\/$/, '')
+  const locale = input.locale || 'en'
+  const pageUrl = `${siteUrl}${locale === 'ar' ? '/ar' : ''}${input.path}`
+  const homeUrl = locale === 'ar' ? `${siteUrl}/ar` : siteUrl
+  const postsUrl = `${siteUrl}${locale === 'ar' ? '/ar' : ''}/posts`
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      getOrganizationSchema({ siteUrl, locale }),
+      getWebsiteSchema(siteUrl),
+      {
+        '@type': 'BlogPosting',
+        '@id': `${pageUrl}#article`,
+        headline: input.title,
+        description: input.description,
+        image: input.imageUrl ? [input.imageUrl] : undefined,
+        datePublished: input.datePublished || undefined,
+        dateModified: input.dateModified || input.datePublished || undefined,
+        inLanguage: locale === 'ar' ? 'ar-SA' : 'en-SA',
+        keywords: input.keywords?.length ? input.keywords.join(', ') : undefined,
+        articleSection: locale === 'ar' ? 'رؤى القطاع' : 'Industry Insights',
+        author: {
+          '@type': 'Person',
+          name: input.authorName || (locale === 'ar' ? 'شمل للتقنيات' : 'Shamal Technologies'),
+        },
+        publisher: { '@id': `${siteUrl}/#organization` },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': pageUrl,
+        },
+        isPartOf: { '@id': `${siteUrl}/#website` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: locale === 'ar' ? 'الرئيسية' : 'Home',
+            item: homeUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: locale === 'ar' ? 'المدونة' : 'Blog',
+            item: postsUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: input.title,
+            item: pageUrl,
+          },
+        ],
+      },
+    ],
+  }
+}
+
 export function getHomeStructuredData(input: OrganizationSchemaInput & { locale?: 'en' | 'ar' } = {}) {
   const siteUrl = (input.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '')
   const locale = input.locale || 'en'

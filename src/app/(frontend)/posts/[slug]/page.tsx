@@ -11,8 +11,15 @@ import type { Post } from '../../../../payload-types'
 
 import { PostContentClient } from './PostContentClient'
 import { PostHeroClient } from '../../../../heros/PostHero/PostHeroClient'
+import { BlogCTASection } from '../../../../components/sections/BlogCTASection.client'
 import { generateMeta } from '../../../../utilities/generateMeta'
+import { getCachedGlobal } from '../../../../utilities/getGlobals'
+import { getServerSideURL } from '../../../../utilities/getURL'
+import { getRequestLocale } from '../../../../lib/i18n/getRequestLocale'
+import { getLocalizedValue } from '../../../../lib/localization'
+import { getBlogPostingSchema } from '../../../../lib/seo/structuredData'
 import PageClient from './page.client'
+import type { Media } from '../../../../payload-types'
 
 export async function generateStaticParams() {
   try {
@@ -69,6 +76,29 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
+  const [locale, postsPageContent] = await Promise.all([
+    getRequestLocale(),
+    getCachedGlobal('posts-page-content', 0)().catch(() => null),
+  ])
+  const title = getLocalizedValue(post.title, post.titleAr, locale)
+  const description = getLocalizedValue(
+    post.meta?.description || post.description,
+    post.descriptionAr,
+    locale,
+  )
+  const structuredData = getBlogPostingSchema({
+    siteUrl: getServerSideURL(),
+    locale,
+    path: url,
+    title,
+    description,
+    imageUrl: absoluteMediaUrl(post.meta?.image || post.featuredImage || post.heroImage),
+    datePublished: post.publishedAt || post.date,
+    dateModified: post.updatedAt,
+    authorName: post.author,
+    keywords: (post.tags || []).filter((tag): tag is string => Boolean(tag)),
+  })
+
   return (
     <article className="pt-16 pb-16">
       <PageClient />
@@ -89,6 +119,13 @@ export default async function Post({ params: paramsPromise }: Args) {
           )}
         </div>
       </div>
+
+      <BlogCTASection {...(postsPageContent?.cta || {})} />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </article>
   )
 }
@@ -98,8 +135,34 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug })
+  const metadata = await generateMeta({ doc: post, path: `/posts/${decodedSlug}` })
+  if (!post) return metadata
 
-  return generateMeta({ doc: post })
+  const publishedTime = post.publishedAt || post.date || undefined
+  const brandedTitle = typeof metadata.title === 'string' ? metadata.title : undefined
+
+  return {
+    ...metadata,
+    title: brandedTitle ? { absolute: brandedTitle } : metadata.title,
+    authors: post.author ? [{ name: post.author }] : undefined,
+    category: post.category || undefined,
+    openGraph: {
+      ...metadata.openGraph,
+      type: 'article',
+      publishedTime,
+      modifiedTime: post.updatedAt || publishedTime,
+      authors: post.author ? [post.author] : undefined,
+      tags: (post.tags || []).filter((tag): tag is string => Boolean(tag)),
+    },
+  }
+}
+
+function absoluteMediaUrl(image?: string | Media | null) {
+  if (!image || typeof image === 'string') return null
+  const raw = image.sizes?.og?.url || image.url
+  if (!raw) return null
+  if (raw.startsWith('http')) return raw
+  return `${getServerSideURL()}${raw.startsWith('/') ? raw : `/${raw}`}`
 }
 
 const queryPostBySlug = async ({ slug }: { slug: string }) =>

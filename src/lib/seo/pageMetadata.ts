@@ -101,6 +101,7 @@ export async function buildPageMetadata({
       description,
       creator: '@shamaltechnologies',
       site: '@shamaltechnologies',
+      images: images?.map((image) => image.url),
     },
     other: {
       'content-language': isAr ? 'ar-SA' : 'en-SA',

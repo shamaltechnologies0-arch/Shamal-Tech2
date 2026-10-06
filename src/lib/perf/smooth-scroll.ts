@@ -2,7 +2,6 @@
  * Routes where Lenis smooth scroll is disabled (native scroll is faster and avoids GSAP ticker overhead).
  */
 const SMOOTH_SCROLL_DISABLED_PREFIXES = [
-  '/company-profile',
   '/profile/',
   '/employee/',
   '/products/quote',
