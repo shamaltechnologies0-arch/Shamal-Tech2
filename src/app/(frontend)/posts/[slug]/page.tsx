@@ -11,7 +11,7 @@ import type { Post } from '../../../../payload-types'
 
 import { PostContentClient } from './PostContentClient'
 import { PostHeroClient } from '../../../../heros/PostHero/PostHeroClient'
-import { BlogCTASection } from '../../../../components/sections/BlogCTASection.client'
+import { ContactCTASection } from '../../../../components/sections/ContactCTASection.client'
 import { generateMeta } from '../../../../utilities/generateMeta'
 import { getCachedGlobal } from '../../../../utilities/getGlobals'
 import { getServerSideURL } from '../../../../utilities/getURL'
@@ -76,10 +76,20 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
-  const [locale, postsPageContent] = await Promise.all([
+  const [locale, homepageContent] = await Promise.all([
     getRequestLocale(),
-    getCachedGlobal('posts-page-content', 0)().catch(() => null),
+    getCachedGlobal('homepage-content', 1)().catch(() => null),
   ])
+  const contactCTA = homepageContent?.contactCTA
+  const backgroundImage =
+    contactCTA?.backgroundImage &&
+    typeof contactCTA.backgroundImage === 'object' &&
+    'url' in contactCTA.backgroundImage
+      ? {
+          url: contactCTA.backgroundImage.url || undefined,
+          alt: contactCTA.backgroundImage.alt || undefined,
+        }
+      : undefined
   const title = getLocalizedValue(post.title, post.titleAr, locale)
   const description = getLocalizedValue(
     post.meta?.description || post.description,
@@ -100,7 +110,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   })
 
   return (
-    <article className="pt-16 pb-16">
+    <article className="pt-16">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -120,7 +130,20 @@ export default async function Post({ params: paramsPromise }: Args) {
         </div>
       </div>
 
-      <BlogCTASection {...(postsPageContent?.cta || {})} />
+      <ContactCTASection
+        compact
+        badge={contactCTA?.badge || undefined}
+        badgeAr={contactCTA?.badgeAr || undefined}
+        title={contactCTA?.title || undefined}
+        titleAr={contactCTA?.titleAr || undefined}
+        description={contactCTA?.description || undefined}
+        descriptionAr={contactCTA?.descriptionAr || undefined}
+        primaryCtaText={contactCTA?.ctaText || undefined}
+        primaryCtaTextAr={contactCTA?.ctaTextAr || undefined}
+        secondaryCtaText={contactCTA?.secondaryCtaText || undefined}
+        secondaryCtaTextAr={contactCTA?.secondaryCtaTextAr || undefined}
+        backgroundImage={backgroundImage}
+      />
 
       <script
         type="application/ld+json"

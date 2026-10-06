@@ -27,6 +27,8 @@ interface ContactCTASectionProps {
     url?: string
     alt?: string
   } | null
+  /** Shorter band for blog posts. The homepage keeps the full-screen height. */
+  compact?: boolean
 }
 
 export function ContactCTASection({
@@ -41,6 +43,7 @@ export function ContactCTASection({
   secondaryCtaText = 'Explore Services',
   secondaryCtaTextAr,
   backgroundImage,
+  compact = false,
 }: ContactCTASectionProps) {
   const { language } = useLanguage()
   const displayBadge = getLocalizedValue(badge, badgeAr, language)
@@ -51,7 +54,13 @@ export function ContactCTASection({
   const isRtl = language === 'ar'
 
   return (
-    <ScrollSection id="contact" fullViewport bgVariant="gradient" parallax>
+    <ScrollSection
+      id={compact ? 'blog-cta' : 'contact'}
+      fullViewport={!compact}
+      bgVariant="gradient"
+      parallax={!compact}
+      className={compact ? 'py-10 md:py-14' : undefined}
+    >
       {backgroundImage?.url && (
         <div className="absolute inset-0 z-0">
           <Image
@@ -69,14 +78,20 @@ export function ContactCTASection({
         <ParallaxElement speed={0.2} direction="up">
           <CinematicReveal delay={0.2} duration={1.2} scale>
             <Card className="max-w-4xl mx-auto border-2 border-logo-blue/30 shadow-2xl bg-background/95 backdrop-blur-sm">
-              <CardHeader className="text-center space-y-6">
+              <CardHeader className={compact ? 'space-y-3 pb-2 text-center' : 'space-y-6 text-center'}>
                 <Badge
                   variant="outline"
                   className="w-fit mx-auto border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold"
                 >
                   {displayBadge}
                 </Badge>
-                <CardTitle className="text-display-large font-display font-bold text-foreground">
+                <CardTitle
+                  className={
+                    compact
+                      ? 'font-display text-3xl font-bold text-foreground md:text-4xl'
+                      : 'text-display-large font-display font-bold text-foreground'
+                  }
+                >
                   <span className="text-gradient">{displayTitle}</span>
                 </CardTitle>
                 {displayDescription && (
@@ -85,12 +100,12 @@ export function ContactCTASection({
                   </CardDescription>
                 )}
               </CardHeader>
-              <CardContent className="text-center space-y-6">
+              <CardContent className={compact ? 'space-y-0 pt-2 text-center' : 'space-y-6 text-center'}>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
-                    className="text-base px-8 h-14 bg-logo-blue hover:bg-logo-blue/90"
+                    className={`bg-logo-blue px-8 text-base hover:bg-logo-blue/90 ${compact ? 'h-12' : 'h-14'}`}
                   >
                     <Link href="/contact">
                       {displayPrimaryCta}
@@ -103,7 +118,7 @@ export function ContactCTASection({
                     asChild
                     size="lg"
                     variant="outline"
-                    className="text-base px-8 h-14 border-2 border-logo-navy text-logo-navy hover:bg-logo-navy hover:text-white"
+                    className={`border-2 border-logo-navy px-8 text-base text-logo-navy hover:bg-logo-navy hover:text-white ${compact ? 'h-12' : 'h-14'}`}
                   >
                     <Link href="/services">{displaySecondaryCta}</Link>
                   </Button>
