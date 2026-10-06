@@ -3,10 +3,13 @@ import type { Metadata } from 'next'
 import type { Media, Page, Post, Config } from '../payload-types'
 
 import { getServerSideURL } from './getURL'
+import { toPublicMediaFileUrl } from './getMediaUrl'
 import { getRequestLocale } from '../lib/i18n/getRequestLocale'
 import { buildPageMetadata } from '../lib/seo/pageMetadata'
 
 function withServerUrl(pathOrUrl: string) {
+  const stored = toPublicMediaFileUrl(pathOrUrl)
+  if (stored) return stored
   if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl
   const serverUrl = getServerSideURL().replace(/\/$/, '')
   return `${serverUrl}${pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`}`

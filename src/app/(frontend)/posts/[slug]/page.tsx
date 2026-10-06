@@ -15,6 +15,7 @@ import { ContactCTASection } from '../../../../components/sections/ContactCTASec
 import { generateMeta } from '../../../../utilities/generateMeta'
 import { getCachedGlobal } from '../../../../utilities/getGlobals'
 import { getServerSideURL } from '../../../../utilities/getURL'
+import { toPublicMediaFileUrl } from '../../../../utilities/getMediaUrl'
 import { getRequestLocale } from '../../../../lib/i18n/getRequestLocale'
 import { getLocalizedValue } from '../../../../lib/localization'
 import { getBlogPostingSchema } from '../../../../lib/seo/structuredData'
@@ -184,6 +185,8 @@ function absoluteMediaUrl(image?: string | Media | null) {
   if (!image || typeof image === 'string') return null
   const raw = image.sizes?.og?.url || image.url
   if (!raw) return null
+  const stored = toPublicMediaFileUrl(raw)
+  if (stored) return stored
   if (raw.startsWith('http')) return raw
   return `${getServerSideURL()}${raw.startsWith('/') ? raw : `/${raw}`}`
 }
