@@ -187,6 +187,6 @@ const queryPostBySlug = async ({ slug }: { slug: string }) =>
 
       return result.docs?.[0] || null
     },
-    ['posts', 'bySlug', slug],
+    ['posts', 'bySlug', slug, 'media'],
     { tags: ['collection_posts'], revalidate }
   )()

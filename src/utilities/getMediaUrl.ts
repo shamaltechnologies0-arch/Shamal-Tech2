@@ -17,6 +17,18 @@ export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | 
   // Check if URL already has http/https protocol
   if (url.startsWith('http://') || url.startsWith('https://')) {
     const cdnUrl = toCdnMediaUrl(url)
+    // Payload stamps localhost into file URLs from NEXT_PUBLIC_SERVER_URL. Keep those
+    // root-relative so the image loads from whichever host is actually serving the page.
+    try {
+      const parsed = new URL(cdnUrl)
+      const isLoopback = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1'
+      if (isLoopback && parsed.pathname.startsWith('/api/media/')) {
+        const relative = `${parsed.pathname}${parsed.search}`
+        return cacheTag ? `${relative}?${cacheTag}` : relative
+      }
+    } catch {
+      // Keep the original URL when it cannot be parsed.
+    }
     return cacheTag ? `${cdnUrl}?${cacheTag}` : cdnUrl
   }
 
