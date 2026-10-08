@@ -1042,6 +1042,13 @@ export interface Service {
   heroTitleAr?: string | null;
   heroDescription?: string | null;
   heroDescriptionAr?: string | null;
+  overviewTitle?: string | null;
+  overviewTitleAr?: string | null;
+  /**
+   * Longer introduction shown below the hero on the service page.
+   */
+  overview?: string | null;
+  overviewAr?: string | null;
   benefits?:
     | {
         title: string;
@@ -2642,6 +2649,10 @@ export interface ServicesSelect<T extends boolean = true> {
   heroTitleAr?: T;
   heroDescription?: T;
   heroDescriptionAr?: T;
+  overviewTitle?: T;
+  overviewTitleAr?: T;
+  overview?: T;
+  overviewAr?: T;
   benefits?:
     | T
     | {

@@ -128,6 +128,7 @@ const EXTRA_EN_TO_AR: Record<string, string> = {
   'special projects': 'المشاريع الخاصة',
   'traffic count & traffice analysis': 'عدّ المرور وتحليل الحركة المرورية',
   'traffic count & traffic analysis': 'عدّ المرور وتحليل الحركة المرورية',
+  'traffic count & traffic analysis': 'عدّ المرور وتحليل الحركة المرورية',
 }
 
 function normalizeLookupKey(value: string): string {

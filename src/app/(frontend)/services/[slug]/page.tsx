@@ -121,6 +121,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         slug={slug}
         title={service.title}
         titleAr={(service as { titleAr?: string }).titleAr}
+        heroTitle={service.heroTitle}
+        heroTitleAr={(service as { heroTitleAr?: string }).heroTitleAr}
         heroDescription={service.heroDescription}
         heroDescriptionAr={(service as { heroDescriptionAr?: string }).heroDescriptionAr}
       />

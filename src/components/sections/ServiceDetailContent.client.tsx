@@ -57,6 +57,10 @@ function ServiceDetailContentInner({
       answer?: unknown
       answerAr?: unknown
     }>
+    overviewTitle?: string
+    overviewTitleAr?: string
+    overview?: string
+    overviewAr?: string
     ctaTitle?: string
     ctaTitleAr?: string
     ctaDescription?: string
@@ -67,9 +71,45 @@ function ServiceDetailContentInner({
 }) {
   const { language } = useLanguage()
   const t = getCommonTranslations(language)
+  const overviewTitle = getLocalizedValue(service.overviewTitle, service.overviewTitleAr, language)
+  const overview = getLocalizedValue(service.overview, service.overviewAr, language)
 
   return (
     <>
+      {overview && (
+        <ScrollSection id="overview" flexible bgVariant="2" parallax>
+          <div className="container mx-auto px-4 w-full">
+            <ParallaxElement speed={0.3} direction="up">
+              <CinematicReveal delay={0.2} duration={1.2}>
+                <div className="max-w-4xl mx-auto text-center space-y-6">
+                  <Badge
+                    variant="outline"
+                    className="mb-6 border-logo-blue text-logo-blue bg-logo-blue/10 px-4 py-1.5 text-sm font-semibold"
+                  >
+                    {language === 'ar' ? 'نظرة عامة' : 'Overview'}
+                  </Badge>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight">
+                    <span className="text-gradient">
+                      {overviewTitle || (language === 'ar' ? 'نظرة عامة على الخدمة' : 'Service Overview')}
+                    </span>
+                  </h2>
+                  <div className="space-y-6">
+                    {overview.split(/\n\n+/).map((paragraph, index) => (
+                      <p
+                        key={`${index}-${paragraph.slice(0, 24)}`}
+                        className="text-lg md:text-xl text-logo-navy font-medium leading-relaxed"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </CinematicReveal>
+            </ParallaxElement>
+          </div>
+        </ScrollSection>
+      )}
+
       {/* Benefits Section */}
       {service.benefits && service.benefits.length > 0 && (
         <ScrollSection id="benefits" flexible bgVariant="1" parallax>
@@ -90,8 +130,8 @@ function ServiceDetailContentInner({
                   </h2>
                   <p className="text-xl md:text-2xl text-logo-navy max-w-3xl mx-auto font-medium leading-relaxed">
                     {language === 'ar'
-                      ? 'اكتشف مزايا اختيار خدمتنا'
-                      : 'Discover the advantages of choosing our service'}
+                      ? 'ما تحصل عليه عندما تتولى شمل التخطيط والتنفيذ والتسليم'
+                      : 'What you gain when Shamal plans, flies, and delivers the work'}
                   </p>
                 </div>
               </CinematicReveal>
@@ -163,8 +203,8 @@ function ServiceDetailContentInner({
                   </h2>
                   <p className="text-xl md:text-2xl text-logo-navy max-w-3xl mx-auto font-medium leading-relaxed">
                     {language === 'ar'
-                      ? 'التطبيقات العملية لخدمتنا'
-                      : 'Real-world applications of our service'}
+                      ? 'أين تُستخدم هذه الخدمة في مشاريع المملكة العربية السعودية'
+                      : 'Where this service is applied across projects in Saudi Arabia'}
                   </p>
                 </div>
               </CinematicReveal>
@@ -233,8 +273,8 @@ function ServiceDetailContentInner({
                   </h2>
                   <p className="text-xl md:text-2xl text-logo-navy max-w-3xl mx-auto font-medium leading-relaxed">
                     {language === 'ar'
-                      ? 'أدوات ومنصات حديثة نستخدمها'
-                      : 'Cutting-edge tools and platforms we utilize'}
+                      ? 'الطائرات والحساسات وطرق المعالجة التي يقوم عليها التسليم'
+                      : 'Aircraft, sensors, and processing methods behind the deliverable'}
                   </p>
                 </div>
               </CinematicReveal>
@@ -304,8 +344,8 @@ function ServiceDetailContentInner({
                   </h2>
                   <p className="text-xl md:text-2xl text-logo-navy max-w-3xl mx-auto font-medium leading-relaxed">
                     {language === 'ar'
-                      ? 'أسئلة شائعة حول خدمتنا'
-                      : 'Common questions about our service'}
+                      ? 'إجابات عملية حول النطاق والمخرجات وكيف يبدأ المشروع'
+                      : 'Practical answers on scope, outputs, and how a project starts'}
                   </p>
                 </div>
               </CinematicReveal>

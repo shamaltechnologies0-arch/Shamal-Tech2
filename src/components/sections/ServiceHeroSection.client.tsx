@@ -13,6 +13,8 @@ interface ServiceHeroSectionProps {
   slug: string
   title?: string | null
   titleAr?: string | null
+  heroTitle?: string | null
+  heroTitleAr?: string | null
   heroDescription?: string | null
   heroDescriptionAr?: string | null
 }
@@ -21,12 +23,16 @@ export function ServiceHeroSection({
   slug,
   title,
   titleAr,
+  heroTitle,
+  heroTitleAr,
   heroDescription,
   heroDescriptionAr,
 }: ServiceHeroSectionProps) {
   const { language } = useLanguage()
   const t = getCommonTranslations(language)
   const displayTitle = getLocalizedValue(title, titleAr, language)
+  const displaySubtitle = getLocalizedValue(heroTitle, heroTitleAr, language)
+  const showSubtitle = Boolean(displaySubtitle) && displaySubtitle !== displayTitle
   const displayDescription = getLocalizedValue(heroDescription, heroDescriptionAr, language)
 
   const imageSrc = encodeURI(getServiceImagePathBySlug(slug))
@@ -50,8 +56,13 @@ export function ServiceHeroSection({
               <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold tracking-tight text-white drop-shadow-lg">
                 {displayTitle}
               </h1>
+              {showSubtitle && (
+                <p className="text-2xl md:text-3xl lg:text-4xl font-display font-semibold text-white/95 max-w-3xl mx-auto leading-snug drop-shadow-md">
+                  {displaySubtitle}
+                </p>
+              )}
               {displayDescription && (
-                <p className="text-xl md:text-2xl lg:text-3xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
+                <p className="text-base md:text-lg lg:text-xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
                   {displayDescription}
                 </p>
               )}

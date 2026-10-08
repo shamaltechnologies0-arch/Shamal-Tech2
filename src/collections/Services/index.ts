@@ -97,6 +97,29 @@ export const Services: CollectionConfig = {
               label: 'Hero Description (Arabic)',
             },
             {
+              name: 'overviewTitle',
+              type: 'text',
+              label: 'Overview Heading',
+            },
+            {
+              name: 'overviewTitleAr',
+              type: 'text',
+              label: 'Overview Heading (Arabic)',
+            },
+            {
+              name: 'overview',
+              type: 'textarea',
+              label: 'Service Overview',
+              admin: {
+                description: 'Longer introduction shown below the hero on the service page.',
+              },
+            },
+            {
+              name: 'overviewAr',
+              type: 'textarea',
+              label: 'Service Overview (Arabic)',
+            },
+            {
               name: 'benefits',
               type: 'array',
               label: 'Service Benefits',

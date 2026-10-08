@@ -2,6 +2,7 @@ import type { Payload, PayloadRequest } from 'payload'
 import { ensureMediaFromPublicFile } from '../../lib/cms/ensureMediaFromPublicFile'
 import { syncSeoKeywordsFromPublicFile } from '../../lib/seo/syncKeywordsFromPublicTxt'
 import { seedProducts } from './products'
+import { isPlaceholderService, toServiceDocument } from './service-content'
 
 const SERVICE_DEFINITIONS = [
   { name: 'Aerial Survey', slug: 'aerial-survey' },
@@ -16,7 +17,7 @@ const SERVICE_DEFINITIONS = [
   { name: 'AI Application Development', slug: 'ai-application-development' },
   { name: 'Agriculture Monitoring', slug: 'agriculture-monitoring' },
   { name: 'Special Projects', slug: 'special-projects' },
-  { name: 'Traffic Count & Traffice Analysis', slug: 'traffic-count-traffice-analysis' },
+  { name: 'Traffic Count & Traffic Analysis', slug: 'traffic-count-traffic-analysis' },
 ]
 
 const SERVICE_NAME_AR_MAP: Record<string, string> = {
@@ -32,7 +33,7 @@ const SERVICE_NAME_AR_MAP: Record<string, string> = {
   'AI Application Development': 'تطوير تطبيقات الذكاء الاصطناعي',
   'Agriculture Monitoring': 'مراقبة الزراعة',
   'Special Projects': 'المشاريع الخاصة',
-  'Traffic Count & Traffice Analysis': 'عدّ المرور وتحليل الحركة المرورية',
+  'Traffic Count & Traffic Analysis': 'عدّ المرور وتحليل الحركة المرورية',
 }
 
 export const shamalSeed = async ({
@@ -102,124 +103,21 @@ export const shamalSeed = async ({
       const mediaItems = await payload.find({ collection: 'media', limit: 1, req })
       const heroImageId = sharedServiceHeroImageId || mediaItems.docs[0]?.id
 
+      const professional = toServiceDocument(serviceSlug)
+      if (!professional) {
+        throw new Error(`Missing professional service content for ${serviceSlug}`)
+      }
+
       const service = await payload.create({
         collection: 'services',
         data: {
           _status: 'published',
           title: serviceName,
+          titleAr: serviceNameAr,
           slug: serviceSlug,
+          generateSlug: false,
           heroImage: heroImageId || undefined,
-          heroTitle: `${serviceName} - Professional Drone Services`,
-          heroTitleAr: `${serviceNameAr} - خدمات طائرات بدون طيار احترافية`,
-          heroDescription: `Expert ${serviceName} services in Saudi Arabia.`,
-          heroDescriptionAr: `خدمات ${serviceNameAr} متقدمة باحترافية عالية داخل المملكة العربية السعودية.`,
-          benefits: [
-            {
-              title: 'Expert Team',
-              titleAr: 'فريق متخصص',
-              description: 'Certified professionals with years of experience',
-              descriptionAr: 'خبراء معتمدون بخبرة عملية واسعة في تنفيذ المشاريع.',
-            },
-            {
-              title: 'Latest Technology',
-              titleAr: 'أحدث التقنيات',
-              description: 'State-of-the-art equipment and software',
-              descriptionAr: 'معدات وأنظمة برمجية حديثة بمعايير تشغيل احترافية.',
-            },
-          ],
-          applications: [
-            {
-              title: 'Industry Applications',
-              titleAr: 'تطبيقات قطاعية',
-              description: 'Wide range of industry applications',
-              descriptionAr: 'حلول عملية تغطي نطاقاً واسعاً من احتياجات القطاعات المختلفة.',
-            },
-          ],
-          technologies: [
-            {
-              name: 'Advanced Drones',
-              nameAr: 'طائرات متقدمة بدون طيار',
-              description: 'Latest drone technology',
-              descriptionAr: 'تقنيات حديثة للطائرات بدون طيار تدعم الدقة والكفاءة.',
-            },
-          ],
-          faqs: [
-            {
-              question: `What is ${serviceName}?`,
-              questionAr: `ما هي خدمة ${serviceNameAr}؟`,
-              answer: {
-                root: {
-                  type: 'root',
-                  children: [
-                    {
-                      type: 'paragraph',
-                      children: [
-                        {
-                          type: 'text',
-                          text: `${serviceName} is a specialized service we offer.`,
-                          detail: 0,
-                          format: 0,
-                          mode: 'normal',
-                          style: '',
-                          version: 1,
-                        },
-                      ],
-                      direction: 'ltr',
-                      format: '',
-                      indent: 0,
-                      textFormat: 0,
-                      version: 1,
-                    },
-                  ],
-                  direction: 'ltr',
-                  format: '',
-                  indent: 0,
-                  version: 1,
-                },
-              },
-              answerAr: {
-                root: {
-                  type: 'root',
-                  children: [
-                    {
-                      type: 'paragraph',
-                      children: [
-                        {
-                          type: 'text',
-                          text: `${serviceNameAr} هي خدمة تخصصية نقدمها وفق أعلى المعايير المهنية.`,
-                          detail: 0,
-                          format: 0,
-                          mode: 'normal',
-                          style: '',
-                          version: 1,
-                        },
-                      ],
-                      direction: 'rtl',
-                      format: '',
-                      indent: 0,
-                      textFormat: 0,
-                      version: 1,
-                    },
-                  ],
-                  direction: 'rtl',
-                  format: '',
-                  indent: 0,
-                  version: 1,
-                },
-              },
-            },
-          ],
-          ctaTitle: 'Get Started Today',
-          ctaTitleAr: 'ابدأ اليوم',
-          ctaDescription: 'Contact us to learn more about our services',
-          ctaDescriptionAr: 'تواصل معنا لمعرفة المزيد حول خدماتنا وحلولنا المتكاملة.',
-          ctaButtonText: 'Contact Us',
-          ctaButtonTextAr: 'تواصل معنا',
-          seo: {
-            title: `${serviceName} | Shamal Technologies`,
-            description: `Professional ${serviceName} services in Saudi Arabia.`,
-            keywords: `${serviceName}, drone services, Saudi Arabia`,
-          },
+          ...professional,
         },
         context: {
           disableRevalidate: true,
@@ -230,6 +128,31 @@ export const shamalSeed = async ({
       payload.logger.info(`✓ Created service: ${serviceName}`)
     } else {
       const current = existing.docs[0]
+      const professional = toServiceDocument(serviceSlug)
+      if (professional && isPlaceholderService(current)) {
+        const currentSeo = current.seo && typeof current.seo === 'object' ? current.seo : undefined
+        const patched = await payload.update({
+          collection: 'services',
+          id: current.id,
+          data: {
+            ...professional,
+            heroImage: current.heroImage || sharedServiceHeroImageId || undefined,
+            _status: 'published',
+            seo: {
+              ...professional.seo,
+              ...(currentSeo && 'image' in currentSeo && currentSeo.image
+                ? { image: currentSeo.image }
+                : {}),
+            },
+          },
+          context: {
+            disableRevalidate: true,
+          },
+          req,
+        })
+        services.push(patched)
+        payload.logger.info(`✓ Replaced placeholder service content: ${serviceName}`)
+      } else {
       const patched = await payload.update({
         collection: 'services',
         id: current.id,
@@ -370,6 +293,7 @@ export const shamalSeed = async ({
       })
       services.push(patched)
       payload.logger.info(`✓ Service exists and was validated: ${serviceName}`)
+      }
     }
   }
 
