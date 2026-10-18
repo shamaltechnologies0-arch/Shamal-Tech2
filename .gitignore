@@ -15,6 +15,13 @@ public/sitemap*.xml
 shamal.env
 test.env
 
+# Local lead exports (phone numbers)
+dropped-leads-phones.txt
+dropped-leads-phones.xlsx
+
+# Local ClickUp file copies
+/clickup-files/
+
 # Playwright
 node_modules/
 /test-results/
