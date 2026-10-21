@@ -4518,15 +4518,15 @@ export interface VisitorsFormSetting {
 export interface FormNotificationSetting {
   id: string;
   /**
-   * Internal recipient for contact form submissions at /contact. Falls back to r.mohammed@shamal.sa if empty or invalid.
+   * Internal recipient for contact form submissions at /contact. Falls back to a.alhabashi@shamal.sa if empty or invalid.
    */
   contactFormRecipientEmail: string;
   /**
-   * Internal recipient for product quotation requests. Falls back to k.shami@shamal.sa if empty or invalid.
+   * Internal recipient for product quotation requests. Falls back to a.alhabashi@shamal.sa if empty or invalid.
    */
   quotationFormRecipientEmail: string;
   /**
-   * Internal recipient for training interest form submissions. Falls back to k.shami@shamal.sa if empty or invalid.
+   * Internal recipient for training interest form submissions. Falls back to a.alhabashi@shamal.sa if empty or invalid.
    */
   trainingFormRecipientEmail: string;
   /**

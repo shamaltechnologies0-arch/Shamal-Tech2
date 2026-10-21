@@ -35,7 +35,7 @@ export const ClickUpAssigneeSettings: React.FC = () => {
         rows.push({ email: data.trainingFormClickUpAssigneeEmail.trim() })
       }
 
-      setAssignees(rows.length > 0 ? rows : [{ email: 'k.shami@shamal.sa' }])
+      setAssignees(rows.length > 0 ? rows : [{ email: 'a.alhabashi@shamal.sa' }])
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load settings')
     } finally {

@@ -1,10 +1,10 @@
 /** Default internal recipient when admin setting is empty or invalid. */
-export const CONTACT_FORM_DEFAULT_RECIPIENT_EMAIL = 'r.mohammed@shamal.sa'
+export const CONTACT_FORM_DEFAULT_RECIPIENT_EMAIL = 'a.alhabashi@shamal.sa'
 
 /** Default internal recipient for quotation and training interest forms. */
-export const QUOTATION_FORM_DEFAULT_RECIPIENT_EMAIL = 'k.shami@shamal.sa'
+export const QUOTATION_FORM_DEFAULT_RECIPIENT_EMAIL = 'a.alhabashi@shamal.sa'
 
-export const TRAINING_FORM_DEFAULT_RECIPIENT_EMAIL = 'k.shami@shamal.sa'
+export const TRAINING_FORM_DEFAULT_RECIPIENT_EMAIL = 'a.alhabashi@shamal.sa'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 

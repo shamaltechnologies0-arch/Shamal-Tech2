@@ -5,9 +5,9 @@
 
 const API = 'https://api.clickup.com/api/v2'
 
-export const CLICKUP_ASSIGNEE_CONTACT_EMAIL = 'r.mohammed@shamal.sa'
-export const CLICKUP_ASSIGNEE_QUOTE_EMAIL = 'k.shami@shamal.sa'
-export const CLICKUP_ASSIGNEE_TRAINING_INTEREST_DEFAULT_EMAIL = 'k.shami@shamal.sa'
+export const CLICKUP_ASSIGNEE_CONTACT_EMAIL = 'a.alhabashi@shamal.sa'
+export const CLICKUP_ASSIGNEE_QUOTE_EMAIL = 'a.alhabashi@shamal.sa'
+export const CLICKUP_ASSIGNEE_TRAINING_INTEREST_DEFAULT_EMAIL = 'a.alhabashi@shamal.sa'
 
 const emailToUserIdCache = new Map<string, number>()
 

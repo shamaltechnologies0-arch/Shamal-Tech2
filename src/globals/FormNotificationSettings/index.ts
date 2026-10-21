@@ -18,33 +18,33 @@ export const FormNotificationSettings: GlobalConfig = {
       name: 'contactFormRecipientEmail',
       type: 'email',
       label: 'Contact Form Recipient Email',
-      defaultValue: 'r.mohammed@shamal.sa',
+      defaultValue: 'a.alhabashi@shamal.sa',
       required: true,
       admin: {
         description:
-          'Internal recipient for contact form submissions at /contact. Falls back to r.mohammed@shamal.sa if empty or invalid.',
+          'Internal recipient for contact form submissions at /contact. Falls back to a.alhabashi@shamal.sa if empty or invalid.',
       },
     },
     {
       name: 'quotationFormRecipientEmail',
       type: 'email',
       label: 'Quotation Form Recipient Email',
-      defaultValue: 'k.shami@shamal.sa',
+      defaultValue: 'a.alhabashi@shamal.sa',
       required: true,
       admin: {
         description:
-          'Internal recipient for product quotation requests. Falls back to k.shami@shamal.sa if empty or invalid.',
+          'Internal recipient for product quotation requests. Falls back to a.alhabashi@shamal.sa if empty or invalid.',
       },
     },
     {
       name: 'trainingFormRecipientEmail',
       type: 'email',
       label: 'Training Interest Form Recipient Email',
-      defaultValue: 'k.shami@shamal.sa',
+      defaultValue: 'a.alhabashi@shamal.sa',
       required: true,
       admin: {
         description:
-          'Internal recipient for training interest form submissions. Falls back to k.shami@shamal.sa if empty or invalid.',
+          'Internal recipient for training interest form submissions. Falls back to a.alhabashi@shamal.sa if empty or invalid.',
       },
     },
     {
@@ -61,7 +61,7 @@ export const FormNotificationSettings: GlobalConfig = {
           type: 'array',
           label: 'ClickUp task assignees',
           minRows: 1,
-          defaultValue: [{ email: 'k.shami@shamal.sa' }],
+          defaultValue: [{ email: 'a.alhabashi@shamal.sa' }],
           admin: {
             description:
               'ClickUp workspace members assigned to every training interest task. Must be valid @shamal.sa emails in your ClickUp workspace.',
